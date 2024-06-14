@@ -1,0 +1,160 @@
+<script>
+    $(function () {
+        request_data(1, true)
+    })
+
+    // 请求数据
+    function request_data(page, reset) {
+        let ip = '';
+        let statu = '';
+        let username = '';
+        let site_name = '';
+        let telephone = '';
+        if (reset) {
+            $("input[name='ip']").val(ip);
+            $("select[name='statu']").val(statu);
+            $("input[name='username']").val(username);
+            $("input[name='site_name']").val(site_name);
+            $("input[name='telephone']").val(telephone);
+        } else {
+            ip = $.trim($("input[name='ip']").val());
+            statu = $.trim($("select[name='statu']").val());
+            username = $.trim($("input[name='username']").val());
+            site_name = $.trim($("input[name='site_name']").val());
+            telephone = $.trim($("input[name='telephone']").val());
+        }
+        $("#table_loading").css('display', 'flex');
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': leavingMesgPageUrl,
+            'data': { 'action': 'get_leavingMessage_datas', 'page': page ? page : 1, 'ip': ip, 'username': username, 'site_name': site_name, 'telephone': telephone, 'statu': statu },
+            'success': function (data) {
+                if (data.code === 200) {
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.table_html);
+                    $(".dataTableBottom").empty().append(data.data.dataTableBottom_html);
+                    $("#table_loading").css('display', 'none');
+                    if (data.data.is_not_data) {
+                        $("#jk_not_data").css('display', 'flex')
+                    } else {
+                        $("#jk_not_data").css('display', 'none')
+                    }
+                }
+            }
+        })
+    }
+
+    function data_del_func(action, data_uuid, msg) {
+        xtalert.alertConfirm({
+            'msg': msg,
+            'confirmCallback': function () {
+                xtajax.post({
+                    'url': leavingMesgPageUrl,
+                    'data': { 'action': action, 'data_uuid': data_uuid },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            xtalert.alertSuccessToast('删除成功！');
+                            let ttd = setTimeout(function () {
+                                let page = parseInt($(".pages").attr('data-crrpage'));
+                                request_data(page);
+                            }, 1000)
+                        } else {
+                            xtalert.alertError(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    // 更新问题处理状态
+    function post_leaving_statu(action, data_uuid, msg) {
+        xtalert.alertConfirm({
+            'msg': msg,
+            'confirmCallback': function () {
+                xtajax.post({
+                    'url': leavingMesgPageUrl,
+                    'data': { 'data_uuid': data_uuid, 'action': action },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            websocket_emit(socket_app, 'leavingMessage', { 'action': 'update_leavingCount', 'site_code': site_code });
+                            xtalert.alertSuccessToast('数据更新成功！')
+                            let ttt = setTimeout(function () {
+                                request_data(1);
+                            }, 1000)
+                        } else {
+                            return xtalert.alertError('数据处理失败！')
+                        }
+                    }
+                })
+
+            }
+        })
+    }
+
+</script>
+
+<div class="navHead hidden--mobile">
+    <span>客户留言</span>
+</div>
+
+<div class="dataTableBox">
+    <div class="dataList">
+        <div class="form-inline" style="margin-bottom: 10px;border-bottom: 1px solid #dee2e6;margin-top: 10px;">
+            <lable class="hidden--mobile">搜索：</lable>
+            <select class="form-control mb-2 mr-sm-2" name="statu" aria-label="">
+                <option value="">处理状态</option>
+                <option value="1">已处理</option>
+                <option value="0">未处理</option>
+            </select>
+            <input type="text" class="form-control mb-2 mr-sm-2" name="ip" value="{{ ip or '' }}" placeholder="IP"
+                style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="username" value="{{ username or '' }}"
+                placeholder="姓名" style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="telephone" value="{{ telephone or '' }}"
+                placeholder="电话" style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="site_name" value="{{ site_name or '' }}"
+                placeholder="渠道名称" style="color: #666666; font-size: 13px;" aria-label="">
+            <div class="d-flex justify-content-center">
+                <span class="btn btn-primary mb-2 subBtn mr-1" style="padding: 4px 11px; " onclick="request_data(1)"><i
+                        class="iconfont icon-sousuo"></i></span>
+                <span class="btn btn-default cancelBnt mr-1" style="padding: 5px 11px; margin-bottom: 7px; "
+                    onclick="request_data(1, true)"><i class="iconfont icon-zhongzhi1"
+                        style="font-size: 13px;"></i></span>
+                <span class="btn btn-primary mb-2 mr-1 subBtn" onclick="post_update_statu('allLyCl','66')">批量处理</span>
+                <span class="btn btn-primary mb-2 subBtn"
+                    onclick="post_update_statu('leaMexportData','66', '确定导出当前数据？')">导出当前数据</span>
+            </div>
+        </div>
+        <div class="table-scroll">
+            <table class="table table-hover text-center table-bordered" style="min-width: 800px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>渠道</td>
+                        <td width="260">访客ID</td>
+                        <td>IP</td>
+                        <td>姓名</td>
+                        <td>电话</td>
+                        <td>邮箱</td>
+                        <td>留言内容</td>
+                        <td>时间</td>
+                        <td>处理状态</td>
+                        <td>处理人</td>
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="jk_not_data"
+                style="position: relative; overflow: hidden; margin:30px auto; height: 300px; display: none; justify-content: center; align-items: center;">
+                <i class="iconfont icon-wushuju" style="font-size: 80px; color: #c6f1f3;"></i>
+            </div>
+            <div id="table_loading">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="dataTableBottom"></div>
+</div>

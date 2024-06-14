@@ -1,0 +1,125 @@
+<style>
+    /*其它设置*/
+    .otherSetup{width: 100%;height: 100%;box-sizing: border-box;overflow-y: auto;overflow-x: hidden;}
+    .otherSetup .ukefu-webim-prop{background: #fff;margin: 0;border: 0;padding: 20px;}
+    .iconfont.icon-kaiguanguan{color: rgb(210, 210, 210);}
+    .iconfont.icon-kaiguan4{color: rgb(0, 201, 209);}
+    .iconfont.icon-duoxuankuangweixuan{color: #c2c2c2;}
+    .iconfont.icon-duoxuankuang-fuxuan{color: rgb(0, 201, 209);}
+
+</style>
+<script>
+
+    $(function () {
+        $("#setupBoxLoading").css('display', 'flex');
+        resetOtherConfig()
+    })
+
+    // 提交其它设置内容
+    function post_data_other_setup() {
+        let cms_ip_whitelist = $.trim($("#cms_ip_whitelist").val());
+        let google_verify_statu = $.trim($("#google_verify_statu").val());
+        let _data = {
+            'action': 'saveOtherSetupData',
+            'cms_ip_whitelist': cms_ip_whitelist,
+            'google_verify_statu': google_verify_statu,
+        }
+        xtajax.post({
+            'url': '/site_admin/otherSetup',
+            'data': _data,
+            'success': function (data) {
+                if (data.code === 200){
+                    xtalert.alertSuccessToast('数据提交成功！');
+                }else{
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+    // 重置系统其他配置
+    function resetOtherConfig() {
+        xtajax.post({
+            'url': '/site_admin/otherSetup',
+            'data': {'action': 'getOtherConfig'},
+            'success': function (data) {
+                if (data.code === 200){
+                    let resut_data = data.data;
+                    if (resut_data.cms_ip_whitelist){
+                        $("#cms_ip_whitelist").val(resut_data.cms_ip_whitelist);
+                    }else{
+                        $("#cms_ip_whitelist").val('');
+                    }
+                    if (resut_data.google_verify_statu === true){
+                        $("#google_verify_statu").val('1');
+                        $("#google_verify_statu").next().removeClass('icon-kaiguanguan').addClass('icon-kaiguan4');
+                    }else {
+                        $("#google_verify_statu").val('0');
+                        $("#google_verify_statu").next().removeClass('icon-kaiguan4').addClass('icon-kaiguanguan');
+                    }
+                    $("#setupBoxLoading").css('display', 'none');
+                }else{
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+</script>
+
+<!--其它设置-->
+<div class="otherSetup">
+
+    <div class="alert alert-primary" role="alert">
+        <i class="iconfont icon-tishi" style="color: rgb(24, 128, 255); font-size: 18px; vertical-align: -2px; margin-right: 3px;"></i> 部分设置保存后，需刷新页面后起效！
+    </div>
+
+    <div class="groupHead">
+        <div>
+            <span>其它设置</span>
+        </div>
+        <div>
+            <span class="kfConfirmBtn" onclick="post_data_other_setup()">提交</span>
+            <span class="kfCancelBtn" onclick="resetOtherConfig()">重置</span>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="row" style="max-width: 600px;">
+            <div class="col-lg-12 mt-3">
+                <div class="row">
+                    <div class="col-lg-8" style="color:#3c6082;">系统登录IP白名单</div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 mt-3 pointer">
+                        <textarea class="form-control" id="cms_ip_whitelist" rows="4" aria-label="" placeholder="系统登录IP白名单，一行一个"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="ukefu-webim-prop" style="padding-left: 0; padding-right: 0px;">
+            <div class="row" style="max-width: 600px; margin-bottom: 0px;">
+            <div class="col-lg-12 mt-3 mb-4">
+                <div class="row">
+                    <div class="col-lg-12" style="color:#3c6082;">登录谷歌验证，需要使用Google Authenticator客户端，扫描二维码，进行获取动态验证码</div>
+                </div>
+            </div>
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8" style="color:#3c6082;">登录谷歌验证开关</div>
+                        <div class="col-lg-4">
+                            <input type="hidden" alt="" aria-label="" value="0" id="google_verify_statu">
+                            <i class="iconfont icon-kaiguanguan pointer float-right" style="font-size: 40px;" onclick="switch_func($(this))"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

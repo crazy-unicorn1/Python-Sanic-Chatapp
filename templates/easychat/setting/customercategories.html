@@ -1,0 +1,137 @@
+<script>
+    $(function () {
+        fatch_data_list(1);
+    })
+
+    //加载列表数据
+    function fatch_data_list(page) {
+        $(".categoryCustomers").find(".qrDataList").find('.qr_loading').show(0);
+        $(".categoryCustomers").find(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': '/site_admin/categoryCustomers',
+            'data': { 'action': 'category_customers_html', 'page': page },
+            'success': function (data) {
+                debugger
+                if (data.code === 200) {
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.html);
+                    $(".categoryCustomers").find(".qrDataBottom").empty().append(data.data.page_html);
+                    $(".categoryCustomers").find(".qrDataList").find('.qr_loading').hide(0);
+                    $(".categoryCustomers").find(".qrDataList").find('.table').show(0);
+                } else {
+                    xtalert.alertErrorToast('Customers Category Fetch Error!')
+                }
+            }
+        })
+    }
+
+    // Category
+    function post_category_data(action, data_uuid) {
+        debugger
+        if (!action) { return }
+        let pr_title = $.trim($("#category_title").val())
+        let site_code = $.trim($("#site_code").val())
+        if (!pr_title) { return xtalert.showValidationError('请输入标题！') }
+        let datad = data_uuid ? data_uuid : '';
+        xtajax.post({
+            'url': '/site_admin/categoryCustomers',
+            'data': { 'action': action, 'category_title': pr_title, 'data_uuid': datad, 'site_code': site_code },
+            'success': function (data) {
+                debugger
+                // alert(JSON.stringify(data))
+                if (data.code === 200) {
+                    if (action == 'add_category_data') {
+                        xtalert.alertSuccessToast('添加成功！');
+                    }
+                    if (action == 'edit_category_data') {
+                        xtalert.alertSuccessToast('编辑成功！');
+                    }
+                    let crrpage = parseInt($(".categoryCustomers").find('.pages').attr('data-crrpage'));
+                    fatch_data_list(crrpage);
+                } else {
+                    return xtalert.alertError(data.message)
+                }
+            }
+        })
+    }
+
+
+    // Delete Category
+    function del_category_func(data_uuid) {
+        xtalert.alertConfirm({
+            'msg': '确认操作？',
+            'confirmCallback': function () {
+                Swal({
+                    title: false,
+                    text: '操作中，请稍等...',
+                    showCloseButton: false,
+                    showCancelButton: false,
+                    showconfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                xtajax.post({
+                    'url': '/site_admin/categoryCustomers',
+                    'data': { 'action': 'del_category', 'data_uuid': data_uuid },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            xtalert.alertSuccessToast('数据删除成功！');
+                            let crrpage = parseInt($(".categoryCustomers").find('.pages').attr('data-crrpage'));
+                            fatch_data_list(crrpage);
+                        } else {
+                            return xtalert.alertErrorToast(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+</script>
+
+<!-- 问题 -->
+<div class="categoryCustomers asyncTable">
+    <div class="qrHead">
+        <div>
+            <span class="kfCancelBtn"
+                onclick="post_from_html('add_category_customers_html', '', '添加分类', '', '/site_admin/categoryCustomers')"
+                style="padding: 9px 12px;">添加分类</span>
+        </div>
+        <div>
+            <span class="clearBtn" onclick=""><i class="iconfont icon-tubiao_qingchu mr-1"></i>清除</span>
+        </div>
+    </div>
+    <div class="qrDataList qrDataList-mobile-problem p-3">
+        <div class="qr_loading"
+            style="position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <img src="/public/chat/images/loading-0.gif" alt="" style="width: 230px;display: block;">
+        </div>
+        <div class="table-scroll">
+            <table class="table table-striped" style="display: none; min-width: 600px">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>分类</td>
+                        <td>创建时间</td>
+                        <td width="160">操作</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="qrDataBottom dataTableBottom">
+        <span>总信息条数：0</span>
+        <ul class="pages" data-crrpage="1">
+            <li class="left_page">
+                <span class="iconfont icon-fangxiang-zuo"></span>
+            </li>
+            <li class="right_page">
+                <span class="iconfont icon-fangxiang-you"></span>
+            </li>
+        </ul>
+    </div>
+</div>

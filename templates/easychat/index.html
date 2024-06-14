@@ -1,0 +1,534 @@
+<style>
+        .panelBox{position: relative; width: 100%;background-color: #FFFFFF;box-sizing: border-box;margin-bottom: 15px; padding-bottom: 35px;}
+        /*
+        .panelBox .head{height: 56px;flex-shrink: 0;display: flex;padding: 0 24px;align-items: center;border-bottom: 1px solid #eef0f6;color: rgba(4,15,66,.9);}
+        .panelBox .head .tit{font-size: 16px;color: rgba(4,15,66,.9);font-weight: 500;line-height: 24px;flex: 1 1 100%;}
+        */
+        .panelBox .head{height: 56px;flex-shrink: 0;display: block;padding: 0 24px;border-bottom: 1px solid #eef0f6;color: rgba(4,15,66,.9); line-height: 56px;}
+        .panelBox .head .tit{font-size: 16px;color: rgba(4,15,66,.9);font-weight: 500; line-height: 24px;flex: 1 1 100%; float: left; line-height: 56px;}
+        .panelBox .conta{position: relative;padding: 20px;box-sizing: border-box; height: 100%; min-height: 200px;}
+
+        .table .thead-light th{background-color: #fafafa;border-color: #fafafa;border-bottom: 1px solid #e8e8e8;font-weight: 500;color: rgba(4,15,66,.9);}
+        .table td, .table th {padding: 0.75rem;vertical-align: top;border-top: 1px solid #e8e8e8;}
+        .table tr td{vertical-align: middle !important;}
+        .uonline_statu{width: 10px;height: 10px;border-radius: 50%;display: inline-block;position: relative;margin-right: 3px;vertical-align: -2px;}
+        .uonline_statu.uonline_statu_succcess{background-color: #00FF00;}
+        .uonline_statu.uonline_statu_lx{background-color: #8b9faa;}
+        .uonline_statu.uonline_statu_ml{background-color: #FF0000;}
+
+        .qrDataBottom{background-color: #FFFFFF;padding: 20px;line-height: 60px;height: 60px;overflow: hidden;display: flex;justify-content: space-between;align-items: center;border-top: 1px solid #eee;}
+        .qrDataBottom .pages{position: relative;overflow: hidden;box-sizing: border-box;display: flex;justify-content: center;align-items: center;}
+        .qrDataBottom .pages li{padding: 0;border-radius: 50%;width: 25px;height: 25px;line-height: 25px;text-align: center;margin: 0 6px;overflow: hidden;background: #fff;color: #999;border: 1px solid #e2e2e2;display: inline-block;cursor: pointer;}
+        .qrDataBottom .pages li.active{background-color: #00c9d1; color: #FFFFFF;cursor:not-allowed;pointer-events:none;}
+        .qrDataBottom .table .iconfont{color:#666; font-size: 14px;}
+        .qrDataBottom .pages li.active .iconfont{color: #FFFFFF;}
+        .qrDataBottom .pages li.forbid{cursor:not-allowed;pointer-events:none;}
+        .qrDataBottom .pages .left_page .iconfont{font-size: 12px; top: -2px; position: relative;}
+        .qrDataBottom .pages .right_page .iconfont{font-size: 12px; top: -2px; position: relative;}
+
+        /* swal2弹窗 */
+        .formBox{background: #FFFFFF;padding: 20px;position: relative;width: 100%;}
+        .formBox .list-group-item{border: none;color: #545b62;font-size: 12px;margin-bottom: 5px;}
+        .formBox .list-group-item input{font-size: 12px;}
+        .formBox .list-group-item select{font-size: 12px;}
+        .loglable::before{display: inline-block;margin-right: 4px;color: #ff4236;font-size: 14px;font-family: SimSun,sans-serif;line-height: 1;content: '*';}
+        .swal2-popup .swal2-title {color: rgba(4,15,66,.9);font-size: 1.43em;}
+        #swal2-title{margin-bottom: 25px}
+
+
+</style>
+<script>
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+
+    if (window.location.href.indexOf('#') <= -1 || window.location.href.indexOf('#home') > -1){
+        update_crr_chatfx_data()
+        // get_user_list()
+    }
+})
+
+    function uploadOnlieState(data_uuid, state) {
+        let data_state = $("#td_"+data_uuid).find('.ustateText').attr('data-state');
+        if (data_state === state){return false;}
+        if (state === OnlineStatu.online){
+            $("#td_"+data_uuid).find('.ustateText').text('在线');
+            $("#td_"+data_uuid).find('.uonline_statu').eq(0).removeClass('uonline_statu_ml').addClass('uonline_statu_succcess');
+        }else{
+            $("#td_"+data_uuid).find('.ustateText').text('忙碌');
+            $("#td_"+data_uuid).find('.uonline_statu').eq(0).removeClass('uonline_statu_succcess').addClass('uonline_statu_ml');
+        }
+
+        if (data_uuid === service_id){
+            let stateBoxObj = $('.stateBox');
+            if (state === OnlineStatu.online){
+                stateBoxObj.find('.dain').removeClass('state_bg_busy');
+                if (!stateBoxObj.find('.dain').hasClass('state_bg_success')){
+                    stateBoxObj.find('.dain').addClass('state_bg_success');
+                }
+            }
+            if (state === OnlineStatu.bebusy){
+                stateBoxObj.find('.dain').removeClass('state_bg_success');
+                if (!stateBoxObj.find('.dain').hasClass('state_bg_busy')){
+                    stateBoxObj.find('.dain').addClass('state_bg_busy');
+                }
+            }
+        }
+        $("#td_"+data_uuid).find('.ustateText').attr('data-state', state);
+        websocket_emit(socket_app, 'uploadOnlieState', {'data_uuid': data_uuid, 'state': state});
+        xtalert.alertSuccessToast('状态更新成功！')
+    }
+    
+    function forceOutLogin(target_service_id) {
+        Swal({
+            title: false,
+            text: '请求中，请稍等...',
+            showCloseButton: false,
+            showCancelButton: false,
+            showconfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        websocket_emit(socket_app, 'serverMonitorCommand', {'action': 'forceOutLogin', 'target_service_id': target_service_id})
+    }
+
+function ddd2() {
+    $.picker_YY_HH_DD_HH_MM_SS('.pickerdate');
+}
+
+    // 选择日期时间
+    function ddd() {
+        $.single_time('.single_time');
+    }
+
+    // 选择日期时间
+    function ddd1() {
+        $.single_YY_MM_DD('.selectDateYMD');
+    }
+
+// 更新对话趋势分析
+function update_crr_chatfx_data() {
+    var chartDom = document.getElementById('zheXianTu');
+    var myChart = echarts.init(chartDom);
+    var option;
+    option = {
+        //title: {
+        //    text: '当前时间访问量'
+        //},
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['今日访问量']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '今日访问量',
+                type: 'line',
+                stack: 'Total',
+                data: {{ optionDatas or '' }},
+                smooth: true,
+                areaStyle: {
+                    color: '#00c9d1',
+                    opacity: 0.5,
+                    origin:"start"
+                },
+                lineStyle: {
+                    color: '#00c9d1'
+                }
+            }
+        ]
+    };
+    option && myChart.setOption(option);
+}
+
+    // 请求客服列表数据
+    function get_user_list(refresh, page=1) {
+        let su_account = '';
+        let su_data_date = '';
+        let su_data_date2 = '';
+        let su_online_statu = '';
+        if (refresh){
+            $('input[name="su_account"]').val(su_account);
+            $('input[name="su_data_date"]').val(su_data_date);
+            $('input[name="su_data_date2"]').val(su_data_date2);
+            $('select[name="su_online_statu"]').val(su_online_statu);
+        }else{
+            su_account = $('input[name="su_account"]').val();
+            su_data_date = $('input[name="su_data_date"]').val();
+            su_data_date2 = $('input[name="su_data_date2"]').val();
+            su_online_statu = $('select[name="su_online_statu"]').val();
+        }
+        $("#tablDataLoding").parent().animate({scrollTop: 0}, "slow");
+        $("#tablDataLoding").css('display', 'flex');
+        $("#tablDataLoding").parent().css('overflow-y', 'hidden');
+        xtajax.get({
+            'data': {'action': 'get_template_html', 'html_code': 'get_jk_user_list_html', 'su_account': su_account, 'su_data_date': su_data_date, 'su_data_date2': su_data_date2, 'su_online_statu': su_online_statu, 'page': page},
+            'success': function (data) {
+                if (data.code === 200){
+                    if (!data.data.html){
+                        $("#jk_not_data").css('display', 'flex');
+                    }else{
+                        var parent = $(".kfJkBox .table > tbody");
+                        var allChildren = parent.children();
+                        var unwantedChildren = allChildren.slice(1);
+                        unwantedChildren.remove();
+                        parent.append(data.data.html);
+                        $(".qrDataBottom").empty().append(data.data.dataTableBottom_html);
+                        $("#jk_not_data").css('display', 'none');
+                    }
+                }
+                $("#tablDataLoding").css('display', 'none');
+                $("#tablDataLoding").parent().css('overflow-y', 'scroll');
+            }
+        })
+    }
+
+    // 统计信息
+    function getTotalInfo(data_uuid) {
+        Swal({
+            title: false,
+            text: '请求中...',
+            showCloseButton: false,
+            showCancelButton: false,
+            showconfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            }
+        });
+        xtajax.post({
+            'data': {'action': 'get_serviceTotal_info', 'data_uuid': data_uuid},
+            'success': function (data) {
+                if (data.code === 200){
+                    let html = '<div class="formBox">'
+                    html += '<div style="height: 26rem; position: relative; box-sizing: border-box; overflow-y: auto;">'
+                    html += '<p style="margin-bottom: 20px; font-size: 14px; padding-left: 30px; text-align: left;"><b>正在进行对话数量：</b>'+data.data.onoingCount+'</p>'
+                    html += '<p style="margin-bottom: 20px; font-size: 14px; padding-left: 30px; text-align: left;"><b>总会话数量：</b>'+data.data.totalCounts+'</p>'
+                    html += '<p style="margin-bottom: 20px; font-size: 14px; padding-left: 30px; text-align: left;"><b>有效会话数量：</b>'+data.data.efficientCount+'</p>'
+                    html += '<p style="margin-bottom: 20px; font-size: 14px; padding-left: 30px; text-align: left;"><b>总消息数量：</b>'+data.data.msgCount+'</p>'
+                    html += '</div></div>'
+                    Swal({
+                        title: '会话数据展示',
+                        width: 550,
+                        html: html,
+                        showCloseButton: true,
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+                }else{
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+function onShowCustomerServiceModal() {
+    // get start time  -  end time
+    // let start_time = '';
+    // $("input[name='start_time']").val(start_time);
+    var starttime = $.trim($("input[name='start_time']").val()) ? $.trim($("input[name='start_time']").val()) : ''
+    Swal({
+            title: false,
+            text: '请求中...',
+            showCloseButton: false,
+            showCancelButton: false,
+            showconfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            }
+        });
+    xtajax.post({
+        'data': {
+            'action': 'get_customer_service_statistics_info', 
+            'start_time': starttime,
+            'conversation_id': 'hello_conversation_id'
+        },
+        'success': function (data) {
+            Swal.close()
+            if (data.code === 200){
+                $('#customer-service-statistics-modal').modal('show');
+                $('#customer-service-statistics-modal').css("top", "140px")
+                $("#customer-service-statistics-modal table tbody").html(data.data)
+                // Swal({
+                //     title: '会话数据展示',
+                //     width: 550,
+                //     html: html,
+                //     showCloseButton: true,
+                //     showCancelButton: false,
+                //     showConfirmButton: false,
+                //     allowOutsideClick: false,
+                //     allowEscapeKey: false,
+                // })
+            }else{
+                return xtalert.alertError(data.message);
+            }
+        }
+    })
+}
+
+</script>
+
+<div class="navHead hidden--mobile">
+    <span>您好，{{ nickname or '' }}</span>
+    <div>
+        <span style="margin-right: 30px;">{{ use_expire_time or '' }}</span>
+        <span class="hidden--mobile">微笑服务、诚信待客。</span>
+    </div>
+</div>
+
+<div class="dataBox">
+
+{#    <div class="panelBox kfJkBox" style="margin-bottom: 60px; padding-bottom: 0px;">
+        <div class="head">
+            <div class="tit" style="width: 260px; position: relative;">
+                <span>客服监控</span>
+                <i class="iconfont icon-tishi1" style="margin-left: 5px; vertical-align: -1px;"></i>
+            </div>
+            <div style="cursor: pointer;text-align: right; position: relative; float: right;">
+                <select class="form-control mr-sm-2" name="su_online_statu" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                    <option value="">全部</option>
+                    <option value="online">在线</option>
+                    <option value="bebusy">忙碌</option>
+                    <option value="offline">离线</option>
+                </select>
+                <input type="text" class="form-control mr-sm-2" name="su_account" placeholder="账户" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                <!--
+                <span>&emsp;时间：</span>
+                <input type="text" class="form-control mr-sm-2 single_time" onmouseenter="ddd()" name="su_data_date" placeholder="起始日期" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">-
+                <input type="text" class="form-control mr-sm-2 single_time" onmouseenter="ddd()" name="su_data_date2" placeholder="结束日期" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                -->
+                <span class="iconfont icon-sousuo" style="font-size: 20px;margin-right: 5px;vertical-align: -2px;" onclick="get_user_list()"></span>
+                <span class="iconfont icon-shuaxin" onclick="get_user_list(true)"></span>
+            </div>
+        </div>
+        <div class="conta" style="height: 500px; overflow-y: scroll; display: block; width: 100%; padding-top: 5px;">
+            <table class="table">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>序号</td>
+                        <td>状态</td>
+                        <td>账户</td>
+                        <td>姓名</td>
+                        <td>所在小组</td>
+                        <td>代理商</td>
+                        <td>Ip</td>
+                        <td>在线时长</td>
+                        <!--
+                        <td>正在对话</td>
+                        <td>总会话数</td>
+                        <td>有效会话数</td>
+                        <td>总消息数</td>
+                        -->
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+            </table>
+             <div id="jk_not_data" style="position: relative; overflow: hidden; margin:30px auto; height: 300px; display: none; justify-content: center; align-items: center;">
+                 <i class="iconfont icon-wushuju" style="font-size: 80px; color: #c6f1f3;"></i>
+             </div>
+            <div id="tablDataLoding" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(255,255,255,.8); display: flex; align-items: center; justify-content: center; display: none;">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+        <div class="qrDataBottom">
+            <span>总信息条数：0</span>
+            <ul class="pages" data-crrpage="1">
+                <li class="left_page">
+                    <span class="iconfont icon-fangxiang-zuo"></span>
+                </li>
+                <li class="right_page">
+                    <span class="iconfont icon-fangxiang-you"></span>
+                </li>
+            </ul>
+        </div>
+    </div> #}
+
+
+    {#--------------------------------------------------------------------------------------#}
+    <div class="panelBox-group">
+
+        <div class="panelBox panelBox-graph">
+            <div class="head">
+                <div class="tit">
+                    <span>对话趋势分析</span>
+                    <i class="iconfont icon-tishi1" style="margin-left: 5px; vertical-align: -1px;"></i>
+                </div>
+                <div class="date-search">
+                    <input type="text" class="form-control mr-sm-2" name="cu_account" placeholder="账户" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                    <input type="text" class="form-control mr-sm-2 selectDateYMD" onmouseenter="ddd1()" name="cu_data_date" placeholder="日期" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                    <span class="iconfont icon-sousuo" style="font-size: 20px;margin-right: 5px;vertical-align: -2px;" onclick=""></span>
+                    <span class="iconfont icon-shuaxin" onclick=""></span>
+                </div>
+            </div>
+            <div class="conta">
+                <div id="zheXianTu" style="height: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="panelBox panelBox-info" >
+            <div class="head">
+                <div class="tit">
+                    <span>系统公告</span>
+                    <i class="iconfont icon-tishi1" style="margin-left: 5px; vertical-align: -1px;"></i>
+                </div>
+            </div>
+            <div class="conta" style="height: 300px; overflow-y: scroll; width: 100%;">
+                <div style="position: relative; overflow: hidden; margin:30px auto; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <span class="iconfont icon-wushuju" style="font-size: 80px; color: #c6f1f3;"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="panelBox kfJkBox" style="margin-bottom: 60px; padding-bottom: 0px;">
+        <div class="row p-3">
+            <div class="col-xl-4 col-md-12 mb-1" style="width: 260px; position: relative; font-size: 16px;">
+                <span class="ml-2">客服监控</span>
+                <i class="iconfont icon-tishi1" style="margin-left: 5px; vertical-align: -1px;"></i>
+            </div>
+
+            <div class="col-xl-4 col-md-6 col-sm-12 col-12 d-flex justify-content-between">
+                <input type="text" class="form-control mb-2 mr-sm-2 pickerdate"  onmouseenter="ddd2()" name="start_time" placeholder="日期" aria-label="" style="width: calc(100% - 90px);">
+                <button class="btn btn-primary" data-backdrop="true" data-toggle="modal" onclick="onShowCustomerServiceModal()" style="height: 2.5rem;">成员统计</button>
+                
+                <!-- Customer Service Statistics Modal -->
+                <div class="modal fade statistic-modal" id="customer-service-statistics-modal" tabindex="-1" role="dialog" aria-labelledby="customerServiceStatisticsLabel" data-backdrop="static" aria-hidden='true'>
+                    <div class="modal-dialog modal-xl" role="document" style="max-width: 1400px;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="flex-direction: row-reverse;">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="customerServiceStatisticsLabel">客服 成员统计</h4>
+                            </div>
+                            <div class="modal-body table-scroll">
+                                <table class="table table-hover table-bordered text-center" style="min-width: 800px;">
+                                    <tbody>
+                                        <tr style="background-color: #fafafa;">
+                                            <!-- Customer Service Account -->
+                                            <td>客服账号</td>
+
+                                            <!-- Customer Service Name -->
+                                            <td>客服名称</td>
+
+                                            <!-- Website administrator role code-->
+                                            <td>网站管理员</td>
+                                            
+                                            <!-- first response time -->
+                                            <td>首回时长</td>
+
+                                            <!--  average response time -->
+                                            <td>平均回复时长</td>
+
+                                            <!-- Positive rating -->
+                                            <td>好评率</td>
+                                            <!-- Negative review rate -->
+                                            <td>差评率</td>
+
+                                            <!-- Work time -->
+                                            <td>工作时长</td>
+                                            
+                                            <!-- Online time -->
+                                            <td>在线时长</td>
+
+                                            <!-- Busy time -->
+                                            <td>忙碌时长</td>
+                                            
+                                            <!-- No reply time count -->
+                                            <td>未回复对话量</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 col-sm-12 col-12 d-flex justify-content-between">    
+                <select class="form-control mr-sm-2" name="su_online_statu" aria-label="" style="display: inline-block;margin-bottom: 0px !important;">
+                    <option value="">全部</option>
+                    <option value="online">在线</option>
+                    <option value="bebusy">忙碌</option>
+                    <option value="offline">离线</option>
+                </select>
+                <input type="text" class="form-control mr-sm-2 ml-1" name="su_account" placeholder="账户" aria-label="" style="display: inline-block;margin-bottom: 0px !important;">
+                <!--
+                <span>&emsp;时间：</span>
+                <input type="text" class="form-control mr-sm-2 single_time" onmouseenter="ddd()" name="su_data_date" placeholder="起始日期" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">-
+                <input type="text" class="form-control mr-sm-2 single_time" onmouseenter="ddd()" name="su_data_date2" placeholder="结束日期" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                -->
+                <span class="iconfont icon-sousuo" style="font-size: 20px;margin-right: 5px;vertical-align: -2px; margin-top: 5px; margin-left: 5px;" onclick="get_user_list()"></span>
+                <span class="iconfont icon-shuaxin" onclick="get_user_list(true)" style="margin-top: 4px;"></span>
+            </div>
+        </div>
+        <div class="conta home-table">
+            <table class="table" style="min-width: 600px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>序号</td>
+                        <td>状态</td>
+                        <td>账户</td>
+                        <td>姓名</td>
+                        <td>所在小组</td>
+                        <td>代理商</td>
+                        <td>Ip</td>
+                        <td>在线时长</td>
+                        <!--
+                        <td>正在对话</td>
+                        <td>总会话数</td>
+                        <td>有效会话数</td>
+                        <td>总消息数</td>
+                        -->
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+            </table>
+             <div id="jk_not_data" style="position: relative; overflow: hidden; margin:30px auto; height: 300px; display: none; justify-content: center; align-items: center;">
+                 <i class="iconfont icon-wushuju" style="font-size: 80px; color: #c6f1f3;"></i>
+             </div>
+            <div id="tablDataLoding" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(255,255,255,.8); display: flex; align-items: center; justify-content: center; display: none;">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+        <div class="qrDataBottom">
+            <span>总信息条数：0</span>
+            <ul class="pages" data-crrpage="1">
+                <li class="left_page">
+                    <span class="iconfont icon-fangxiang-zuo"></span>
+                </li>
+                <li class="right_page">
+                    <span class="iconfont icon-fangxiang-you"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div style="position: relative; clear: none; height: 20px; display: block; overflow: hidden;"></div>

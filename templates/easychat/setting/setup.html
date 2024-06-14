@@ -1,0 +1,623 @@
+<style>
+    .navHead {
+        width: 100%;
+        height: 60px;
+        background: #FFFFFF;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 0 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .classify {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+
+    .classify .htit {
+        line-height: 40px;
+        height: 40px;
+        color: #90a7c9;
+        font-size: 13px;
+        margin-bottom: 0;
+    }
+
+    .citems {
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .citems .classItem {
+        margin-bottom: 10px;
+        width: 33.3333333333333333333333333%;
+        position: relative;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        font-size: 12px;
+        color: #235077;
+        cursor: pointer;
+    }
+
+    .citems .classItem a {
+        color: #235077
+    }
+
+    .citems .classItem:hover,
+    .citems .classItem.active {
+        background: #f3f7ff;
+    }
+
+    .citems .classItem:hover span:last-child,
+    .citems .classItem.active span:last-child {
+        color: #00c9d1;
+    }
+
+    .citems .classItem .iconbox {
+        width: 30px;
+        height: 30px;
+        position: relative;
+        display: block;
+        color: #FFFFFF;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 31px;
+        margin: auto;
+    }
+
+    /* 右侧盒子 */
+    /*白色面板*/
+    .white_panel {
+        padding: 20px;
+        background-color: #FFFFFF;
+        overflow: hidden;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .white_panel input,
+    .white_panel textarea {
+        font-size: 12px !important;
+    }
+
+    .groupHead {
+        height: 60px;
+        line-height: 60px;
+        padding: 0 20px;
+        font-size: 16px;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0.3px;
+        color: #235077;
+        position: relative;
+        background-color: #fafafa;
+        padding-top: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .groupHead h2 {
+        margin: 5px 0;
+        display: block;
+        font-size: 16px;
+        color: #235077;
+    }
+
+    .groupHead .back {
+        cursor: pointer;
+    }
+
+    .groupHead .back:hover {
+        color: #00c9d1;
+    }
+
+    .asyncTable {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .asyncTable .qrHead {
+        position: relative;
+        overflow: hidden;
+        padding: 20px;
+        height: 60px;
+        line-height: 60px;
+        background-color: #FFFFFF;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #00c9d1;
+        border-bottom: 1px solid #eee;
+    }
+
+    .asyncTable .qrHead .clearBtn {
+        cursor: pointer;
+    }
+
+    .asyncTable .qrDataBottom {
+        background-color: #FFFFFF;
+        padding: 20px;
+        line-height: 60px;
+        height: 60px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #eee;
+    }
+
+    .asyncTable .qrDataList {
+        height: calc(100% - 120px);
+        background-color: #FFFFFF;
+        position: relative;
+        overflow-y: scroll;
+        box-sizing: border-box;
+    }
+
+    .asyncTable .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #fafafa;
+    }
+
+    .asyncTable .table td {
+        padding: 0.75rem 1.3rem;
+        color: #666;
+        white-space: nowrap;
+        /* 禁止换行 */
+        overflow: hidden;
+        /* 超出隐藏 */
+        text-overflow: ellipsis;
+        /* 超出内容显示省略号 */
+    }
+
+    .asyncTable .table .iconfont {
+        color: #3c6082;
+        cursor: pointer;
+    }
+
+    .asyncTable .table .iconfont:hover {
+        color: #00c9d1;
+    }
+
+    .asyncTable .qrDataBottom .iconfont {
+        font-size: 12px;
+    }
+
+    .qrDataBottom .pages {
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .qrDataBottom .pages li {
+        padding: 0;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        line-height: 25px;
+        text-align: center;
+        margin: 0 6px;
+        overflow: hidden;
+        background: #fff;
+        color: #999;
+        border: 1px solid #e2e2e2;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .qrDataBottom .pages li.active {
+        background-color: #00c9d1;
+        color: #FFFFFF;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .qrDataBottom .table .iconfont {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .qrDataBottom .pages li.active .iconfont {
+        color: #FFFFFF;
+    }
+
+    .qrDataBottom .pages li.forbid {
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    #setupBoxLoading {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        z-index: 999;
+        display: none;
+    }
+
+    .site_form_html .form-control {
+        font-size: 13px;
+    }
+
+    .site_form_html .loglable::before {
+        display: inline-block;
+        margin-right: 4px;
+        color: #ff4236;
+        font-size: 14px;
+        font-family: SimSun, sans-serif;
+        line-height: 1;
+        content: '*';
+    }
+
+    @media only screen and (max-width: 640px) {
+        .asyncTable .qrHead {
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            height: auto;
+            line-height: 60px;
+            background-color: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #00c9d1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .asyncTable .qrDataList {
+            height: calc(100% - 260px);
+            background-color: #FFFFFF;
+            position: relative;
+            overflow-y: scroll;
+            box-sizing: border-box;
+        }
+
+        .asyncTable .qrDataList-mobile-problem {
+            height: calc(100% - 190px);
+            background-color: #FFFFFF;
+            position: relative;
+            overflow-y: scroll;
+            box-sizing: border-box;
+        }
+    }
+</style>
+<script>
+    var isDesktop = true;
+    $(document).ready(function () {
+        var ua = navigator.userAgent.toLowerCase();
+        var isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+        var isTabletDevice = /ipad|android|android 3.0|xoom|sch-i800|playbook|tablet|kindle/i.test(ua);
+
+        isDesktop = !isMobileDevice && !isTabletDevice;
+
+        if (isDesktop) {
+            if ($(".siteAccessNav").length <= 0 && $(".siteJieRu").length > 0) {
+                $(".siteJieRu").click();
+                $(".siteJieRu").addClass('active');
+            } else {
+                $(".siteAccessNav").click();
+                $(".siteAccessNav").addClass('active');
+            }
+        }
+    })
+
+    // 开关
+    function switch_func(obj) {
+        if (obj.hasClass('icon-kaiguanguan')) {
+            obj.prev().val('1');
+            obj.removeClass('icon-kaiguanguan').addClass('icon-kaiguan4');
+        } else {
+            obj.prev().val('0');
+            obj.removeClass('icon-kaiguan4').addClass('icon-kaiguanguan');
+        }
+    }
+
+    // 加载Tab
+    function loadingTabFunc(crrObj, tabName, site_code = '') {
+        // debugger
+        let pageUrl = '';
+        let _Data = {};
+        if (tabName === 'siteAccess') {
+            pageUrl = '/site_admin/siteManage'
+            _Data['action'] = 'siteAccess'
+        } else if (tabName === 'siteAccessCode') {
+            pageUrl = '/site_admin/siteManage'
+            _Data['action'] = 'siteAccessCode'
+            _Data['site_code'] = site_code
+        } else if (tabName === 'siteColor') {
+            pageUrl = '/site_admin/siteManage'
+            _Data['action'] = 'siteColor'
+            _Data['site_code'] = site_code
+        } else if (tabName === 'siteSetting') {
+            pageUrl = '/site_admin/siteManage'
+            _Data['action'] = 'siteSetting'
+            _Data['site_code'] = site_code
+        } else if (tabName === 'problemList') {
+            pageUrl = '/site_admin/problemList'
+            _Data['action'] = 'get_template_html'
+        } else if (tabName == 'categoryCustomers') {
+            pageUrl = '/site_admin/categoryCustomers'
+            _Data['action'] = 'get_template_html'
+        } else if (tabName === 'otherSetup') {
+            pageUrl = '/site_admin/otherSetup'
+            _Data['action'] = 'get_template_html'
+        } else if (tabName === 'quickReply') {
+            pageUrl = '/site_admin/quickReply'
+            _Data['action'] = 'get_template_html'
+        } else if (tabName === 'siteDomainManage') {
+            pageUrl = '/site_admin/siteDomainManage'
+            _Data['action'] = 'get_template_html'
+        } else {
+            return false;
+        }
+        $(".classItem").removeClass('active');
+        crrObj.addClass('active');
+        $("#setupBoxLoading").css('display', 'flex');
+        xtajax.get({
+            'url': pageUrl ? pageUrl : '',
+            'timeout': 5000,
+            'data': _Data,
+            'success': function (data) {
+                if (data.code === 200) {
+                    if (isDesktop) {
+                        var parent = $(".rcontBox");
+                        var allChildren = parent.children();
+                        var unwantedChildren = allChildren.slice(1);
+                        unwantedChildren.remove();
+                        parent.append(data.data.html);
+                    } else {
+                        $("div.sideListBox.hidden--desktop").remove();
+                        var parent = $(".rcontBox");
+                        var allChildren = parent.children();
+                        var unwantedChildren = allChildren.slice(1);
+                        unwantedChildren.remove();
+                        parent.append(data.data.html);
+                    }
+                } else {
+                    return alert('加载失败,请刷新重试！')
+                }
+                $("#setupBoxLoading").css('display', 'none');
+            },
+            'error': function (xhr, textStatus, errorThrown) {
+                if (textStatus === 'timeout') {
+                    loading_html(crrObj, tabName, site_code)
+                }
+            }
+        })
+    }
+
+    // 选择日期时间
+    function ddd() {
+        $.single_YY_MM_DD('.selectDateYMD');
+    }
+
+    //加载列表数据
+    function fatch_data_list(fobj, action, page) {
+        fobj.find(".qrDataList").find('.qr_loading').show(0);
+        fobj.find(".qrDataList").find('.table').hide(0);
+        fobj.find(".pages").attr('data-crrpage', page);
+        xtajax.post({
+            'data': { 'action': action, 'page': page },
+            'success': function (data) {
+                if (data.code === 200) {
+                    fobj.find(".qrDataList").find('tbody').empty().append(data.data.html);
+                    fobj.find(".qrDataBottom").empty().append(data.data.page_html);
+                    fobj.find(".qrDataList").find('.qr_loading').hide(0);
+                    fobj.find(".qrDataList").find('.table').show(0);
+                } else {
+                    xtalert.alertErrorToast('获取数据失败！')
+                }
+            }
+        })
+    }
+
+    // 删除下载文件
+    function delExportFile(data_uuid) {
+        xtalert.alertConfirm({
+            'msg': '确定删除该数据？',
+            'confirmCallback': function () {
+                Swal({
+                    title: false,
+                    text: '操作中，请稍等...',
+                    showCloseButton: false,
+                    showCancelButton: false,
+                    showconfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                xtajax.post({
+                    'data': { 'action': 'delExportFile', 'data_uuid': data_uuid },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            xtalert.alertSuccessToast('数据删除成功！');
+                            fatch_data_list($('.downloadFile'), 'downloadFile_list_html', 1);
+                        } else {
+                            return xtalert.alertErrorToast(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+</script>
+
+<div class="navHead hidden--mobile">
+    <span>系统设置</span>
+</div>
+
+<div class="caseBox">
+
+    <div class="sideListBox hidden--mobile">
+
+        <div class="classify">
+            <h2 class="htit"><i class="iconfont icon-qudaojieru"
+                    style="margin-right: 5px; vertical-align: -2px;"></i>接入渠道</h2>
+            <ul class="citems">{{ site_setting_html | safe }}</ul>
+        </div>
+
+        <div class="classify">
+            <h2 class="htit"><i class="iconfont icon-jurassic_project"
+                    style="margin-right: 5px; vertical-align: -2px;"></i>组织架构</h2>
+            <ul class="citems">
+                <li class="classItem" onclick="loading_html('userManage')">
+                    <span class="iconbox" style="background: #f7a92e;">
+                        <i class="iconfont icon-jiaosequanxian"></i>
+                    </span>
+                    <span>角色管理</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="classify">
+            <h2 class="htit"><i class="iconfont icon-w_duihua" style="margin-right: 5px; vertical-align: -2px;"></i>对话设置
+            </h2>
+            <ul class="citems">
+                <li class="classItem" onclick="loading_html('blacklist')">
+                    <span class="iconbox" style="background: #8e9eac;">
+                        <i class="iconfont icon-heimingdan"></i>
+                    </span>
+                    <span>黑名单</span>
+                </li>
+                <li class="classItem" onclick="loadingTabFunc($(this), 'problemList')">
+                    <span class="iconbox" style="background: #7fa7da;">
+                        <i class="iconfont icon-tubiao-" style="font-size: 22px;"></i>
+                    </span>
+                    <span>问题</span>
+                </li>
+                <li class="classItem" onclick="loading_html('systemlog')">
+                    <span class="iconbox" style="background: #50bc90;">
+                        <i class="iconfont icon-rizhi2" style="font-size: 22px;"></i>
+                    </span>
+                    <span>日志</span>
+                </li>
+                {{ other_nav_html | safe }}
+                <li class="classItem" onclick="loadingTabFunc($(this), 'quickReply')">
+                    <span class="iconbox" style="background: rgb(85, 167, 247);">
+                        <i class="iconfont icon-xiaoxi"></i>
+                    </span>
+                    <span>快捷语句</span>
+                </li>
+                {{ siteDomain_nav_html | safe }}
+                <li class="classItem" onclick="loading_html('downloadFile')">
+                    <span class="iconbox" style="background: #fdebed;">
+                        <i class="iconfont icon-wenjian2" style="color:#ec3a4e;"></i>
+                    </span>
+                    <span>文件下载</span>
+                </li>
+
+                <li class="classItem" onclick="loadingTabFunc($(this), 'categoryCustomers')">
+                    <span class="iconbox" style="background: #7fa7da;">
+                        <i class="iconfont icon-rizhi2" style="font-size: 22px;"></i>
+                    </span>
+                    <span>客户分类</span>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="sideListBox hidden--desktop">
+
+        <div class="classify">
+            <h2 class="htit"><i class="iconfont icon-qudaojieru"
+                    style="margin-right: 5px; vertical-align: -2px;"></i>接入渠道</h2>
+            <ul class="citems">{{ site_setting_html | safe }}</ul>
+        </div>
+
+        <div class="classify">
+            <h2 class="htit"><i class="iconfont icon-jurassic_project"
+                    style="margin-right: 5px; vertical-align: -2px;"></i>组织架构</h2>
+            <ul class="citems">
+                <li class="classItem" onclick="loading_html('userManage')">
+                    <span class="iconbox" style="background: #f7a92e;">
+                        <i class="iconfont icon-jiaosequanxian"></i>
+                    </span>
+                    <span>角色管理</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="classify">
+            <h2 class="htit"><i class="iconfont icon-w_duihua" style="margin-right: 5px; vertical-align: -2px;"></i>对话设置
+            </h2>
+            <ul class="citems">
+                <li class="classItem" onclick="loading_html('blacklist')">
+                    <span class="iconbox" style="background: #8e9eac;">
+                        <i class="iconfont icon-heimingdan"></i>
+                    </span>
+                    <span>黑名单</span>
+                </li>
+                <li class="classItem" onclick="loadingTabFunc($(this), 'problemList')">
+                    <span class="iconbox" style="background: #7fa7da;">
+                        <i class="iconfont icon-tubiao-" style="font-size: 22px;"></i>
+                    </span>
+                    <span>问题</span>
+                </li>
+                <li class="classItem" onclick="loading_html('systemlog')">
+                    <span class="iconbox" style="background: #50bc90;">
+                        <i class="iconfont icon-rizhi2" style="font-size: 22px;"></i>
+                    </span>
+                    <span>日志</span>
+                </li>
+                {{ other_nav_html | safe }}
+                <li class="classItem" onclick="loadingTabFunc($(this), 'quickReply')">
+                    <span class="iconbox" style="background: rgb(85, 167, 247);">
+                        <i class="iconfont icon-xiaoxi"></i>
+                    </span>
+                    <span>快捷语句</span>
+                </li>
+                {{ siteDomain_nav_html | safe }}
+                <li class="classItem" onclick="loading_html('downloadFile')">
+                    <span class="iconbox" style="background: #fdebed;">
+                        <i class="iconfont icon-wenjian2" style="color:#ec3a4e;"></i>
+                    </span>
+                    <span>文件下载</span>
+                </li>
+
+                <li class="classItem" onclick="loadingTabFunc($(this), 'categoryCustomers')">
+                    <span class="iconbox" style="background: #7fa7da;">
+                        <i class="iconfont icon-rizhi2" style="font-size: 22px;"></i>
+                    </span>
+                    <span>客户分类</span>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="rcontBox">
+
+        <div id="setupBoxLoading">
+            <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+        </div>
+
+    </div>
+
+</div>

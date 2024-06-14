@@ -1,0 +1,5 @@
+*.pyc
+.venv
+/static/project_kfShare/assets/upload/
+/static/project_kfShare/public/c_upload/
+nohup.out

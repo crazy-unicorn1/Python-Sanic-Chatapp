@@ -1,0 +1,2412 @@
+<style>
+
+    /* 网站接入列表 */
+    .siteAccess {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #FFFFFF;
+        padding: 20px;
+    }
+
+    .tabTitle {
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    .siteList {
+        position: relative;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: flex-start;
+        flex-flow: wrap;
+    }
+
+    .siteList .siteItem {
+        width: calc((100% - 35 * 3px) / 4);
+        height: 151px;
+        border-radius: 5px;
+        margin: 20px 25px 20px 0;
+        overflow: hidden;
+        box-sizing: border-box;
+        min-width: 260px;
+        -ms-transition: all .5s ease;
+        -moz-transition: all .5s ease;
+        -webkit-transition: all .5s ease;
+        -o-transition: all .5s ease;
+        transition: all .5s ease;
+    }
+
+    .siteItem:hover {
+        box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    .siteItem .info {
+        background-image: linear-gradient(-51deg, #09acc9 0%, #57d9ce 100%), linear-gradient(#bb2424, #bb2424);
+        overflow: hidden;
+        height: 101px;
+        width: 100%;
+        padding: 10px 20px;
+    }
+
+    .siteItem .info .siteName {
+        display: block;
+        line-height: 40px;
+        height: 40px;
+        font-size: 15px;
+        font-weight: bold;
+        color: #FFFFFF;
+    }
+
+    .siteItem .info .siteName .time {
+        font-size: 12px;
+        float: right;
+        font-weight: initial;
+    }
+
+    .siteItem .info .siteLink {
+        color: #FFFFFF;
+        font-size: 15px;
+    }
+
+    .siteItem .operationBtns {
+        color: #92a9ca;
+        border: solid 1px #eeeeee;
+        height: 50px;
+        line-height: 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .siteItem .operationBtns .iconfont {
+        margin-right: 15px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .siteItem .operationBtns .iconfont:hover {
+        color: #00c9d1;
+    }
+
+    .siteItem:last-child {
+        border: solid 1px #eeeeee;
+        background: #fafafa;
+    }
+
+    /* 网站接入代码 */
+    .siteAccessCode {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .SiteJsCode {
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        background: #FFFFFF;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .SiteJsCode h2 {
+        margin: 5px 0;
+        display: block;
+        font-size: 16px;
+        color: #235077;
+    }
+
+    .SiteJsCode .codeText {
+        background: #f3f7ff;
+        color: #00c9d1;
+        min-height: 60px;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .SiteJsCode .codeText code {
+        line-height: 40px;
+        color: #00c9d1;
+    }
+
+    .copyBtn {
+        position: absolute;
+        padding: 3px 10px;
+        background: #e8e8e8;
+        border-radius: 3px;
+        font-size: 12px;
+        color: #333;
+        cursor: pointer;
+        right: 15px;
+        top: 10px;
+        display: none;
+    }
+
+    .codeText:hover .copyBtn {
+        display: block;
+    }
+
+    .SiteJsCode .back {
+        cursor: pointer;
+    }
+
+    .SiteJsCode .back:hover {
+        color: #00c9d1;
+    }
+
+
+    /* 网站设置 */
+    .siteSetting {
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+ 
+    /*
+    ******************************************
+    皮肤设置
+    */
+    /* 网站皮肤颜色 */
+    .siteColorBox {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .siteColorBox .caoZuoBox {
+        width: 350px;
+        height: 100%;
+        overflow: hidden;
+        background-color: #FFFFFF;
+        box-sizing: border-box;
+        float: left;
+    }
+
+    .caoZuoBox .formSettingBox {
+        height: calc(100% - 60px);
+        overflow-y: scroll;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+
+    .formSettingBox .setItme {
+        font-size: 14px;
+        padding: 10px 16px;
+        border: 1px solid #eef0f6;
+        border-radius: 4px;
+        margin-bottom: 16px;
+    }
+
+    .formSettingBox .setItme .title {
+        font-size: 14px;
+        padding-bottom: 0px;
+        color: rgba(4, 15, 66, .9);
+        font-weight: inherit;
+        margin-bottom: 0;
+    }
+
+    .formSettingBox .setItme input.p1 {
+        height: 32px;
+        padding: 4px 11px;
+        color: rgba(4, 15, 66, .9);
+        font-size: 14px;
+        line-height: 1.5;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid rgba(4, 15, 66, .2);
+        border-radius: 4px;
+        transition: all .3s;
+    }
+
+    .caoZuoBox .executeBox {
+        height: 60px;
+        border-top: 1px solid #eeeeee;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 30px;
+    }
+
+    .showResult {
+        width: calc(100% - 365px);
+        position: relative;
+        box-sizing: border-box;
+        height: 100%;
+        background-color: rgb(236, 236, 236);
+        float: right;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: auto;
+    }
+
+    /* 评分 */
+    #diaShade {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 100000;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+    }
+
+    .dialogWrapDanFu {
+        width: 660px;
+        height: auto;
+        display: block;
+        box-shadow: 0px 3px 10px 0px rgb(0 0 0 / 10%);
+        border-radius: 1px;
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        z-index: 100001;
+        margin-top: 10px;
+        margin-left: -270px;
+        background-color: #f7f7f7;
+        color: #323232;
+    }
+
+    .dialogWrapDanFu .head {
+        background: #5fb878;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 20px 25px;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .dialogWrapDanFu .head h2 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .dialogWrapDanFu .danFenCon {
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 20px;
+        background-color: #FFFFFF;
+    }
+
+    .dialogWrapDanFu .danFenCon .pfLevel {
+        margin-bottom: 30px;
+    }
+
+    .dialogWrapDanFu .danFenCon .pfLevel .iconfont {
+        color: #FFB800;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .dialogWrapDanFu .danFenCon .pfLevel .iconfont:not(:last-child) {
+        margin-right: 5px;
+    }
+
+    .pinLunBox {
+        position: relative;
+        box-sizing: border-box;
+        margin: 20px 0;
+    }
+
+    .pinLunBox textarea {
+        height: 120px;
+        border: solid 1px #eeeeee;
+        display: block;
+        width: 100%;
+        background-color: #fff;
+        border-radius: 2px;
+        line-height: 1.3;
+        color: #565656;
+        padding: 7px 12px;
+        font-family: inherit;
+        font-style: inherit;
+        font-weight: inherit;
+        font-size: 12px;
+    }
+
+    .danFenCon .subBox {
+        display: block;
+        text-align: center;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .danFenCon .subBox .subPingLunBtn {
+        padding: 7px 20px;
+        background: rgb(95, 184, 120);
+        color: #FFFFFF;
+        font-size: 14px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    #containter {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* 聊天部分 */
+    .leftBox {
+        height: 100%;
+        width: 23.6rem;
+        border-right: 0.1rem solid #e6e6e6;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    .serviceIn {
+        background-image: url("/public/chat/images/sbg.png");
+        background-size: 100% 100%;
+        height: 290px;
+        padding: 0;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .serviceIn img {
+        width: 150px;
+        height: 150px;
+        box-shadow: 0.1rem 0.2rem 0.5rem 0rem rgba(0, 46, 87, 0.2);
+        border-radius: 1.6rem;
+        background: #fff;
+        margin-top: 40px;
+    }
+
+    .serviceName {
+        color: #354052;
+        margin: 20px 0 0 0;
+        font-size: 1.3rem;
+        text-align: center;
+    }
+
+    .evaluateForm,
+    .evaluateSuccess {
+        color: #333333;
+        display: block;
+        box-sizing: border-box;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: calc(100% - 290px);
+        position: relative;
+        background: #FFFFFF;
+    }
+
+    .evaluateForm .pingFen {
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .pingFen li.levelLi {
+        width: 19.4rem;
+        height: 2.9rem;
+        line-height: 2.9rem;
+        background-color: #ffffff;
+        box-shadow: 0.1rem 0.2rem 0.3rem 0rem #d3dee5;
+        border-radius: 1rem;
+        border: solid 0.1rem #f4f6f7;
+        margin: 0 auto 0.5rem;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .pingFen li.levelLi.active {
+        border: solid 0.1rem #00c9d1;
+    }
+
+    .pingFen li.levelLi .pfName {
+        color: rgb(95, 184, 120);
+        display: -webkit-box;
+        float: left;
+        font-size: 0.9rem;
+        width: 6rem;
+        text-align: left;
+        padding-left: 0.8rem;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 2.9rem;
+        white-space: nowrap;
+    }
+
+    .pingFen li.levelLi .xingJi {
+        color: #c9c9c9;
+        margin-left: 10px;
+    }
+
+    .pingFen li.levelLi .xingJi img {
+        width: 1.8rem;
+        margin-right: 0.5rem;
+        position: relative;
+        top: -0.2rem;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .evaluateForm .tit3 {
+        line-height: 30px !important;
+        height: 30px !important;
+        color: rgb(95, 184, 120);
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .commentBox {
+        position: relative;
+        width: 19.4rem;
+        box-sizing: border-box;
+        text-align: left;
+        padding-bottom: 10px;
+        margin: auto;
+        margin-top: 10px !important;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .commentBox p {
+        font-size: 0.9rem;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0.1rem;
+        color: #666666;
+        margin-top: 30px;
+    }
+
+    #commentText {
+        width: 100%;
+        height: 60px;
+        background-image: linear-gradient(#f4f8fb, #f4f8fb), linear-gradient(#ffffff, #ffffff);
+        background-blend-mode: normal, normal;
+        box-shadow: inset 0rem 0.2rem 0.4rem 0rem #d9dfe4;
+        border-radius: 1rem;
+        border: solid 0.1rem rgba(0, 201, 209, 0.5);
+        margin-top: 1rem;
+        display: block;
+        line-height: 1.3;
+        color: #565656;
+        padding: 7px 12px;
+        padding-left: 10px;
+    }
+
+    .subCommBox {
+        margin-top: 8%;
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .evaluateForm .subComment {
+        background: rgb(95, 184, 120) none repeat scroll 0% 0%;
+        width: 80%;
+        height: 41px;
+        background-blend-mode: normal, normal;
+        box-shadow: 0.1rem 0.2rem 0.7rem 0rem #d9dfe4;
+        border-radius: 25px;
+        font-size: 16px;
+        display: inline-block;
+        line-height: 38px;
+        padding: 0 18px;
+        color: #fff;
+        white-space: nowrap;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        margin-bottom: 50px;
+    }
+
+    #commentText:hover,
+    #commentText:focus {
+        border-color: #D2D2D2 !important;
+        box-shadow: 0px 3px 10px 0px rgba(204, 222, 255, 1);
+    }
+
+    .evaluateSuccess {
+        display: none;
+    }
+
+    /* 右侧信息 */
+    .contentBox {
+        width: calc(100% - 23.6rem);
+        margin: 0;
+        position: relative;
+        height: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* 中间消息部分 */
+    .chatBox {
+        width: calc(100% - 23.8rem);
+        height: 100%;
+        background-image: linear-gradient(#f4f8fb, #f4f8fb), linear-gradient(#e6e6e6, #e6e6e6);
+        background-blend-mode: normal, normal;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .chatBox .chatMeassge {
+        width: 100%;
+        height: calc(100% - 6.3rem);
+        padding: 5px 0 30px;
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .chatMeassge .messageTop {
+        width: 80%;
+        padding: 10px 10px;
+        background: #FFFFFF;
+        border-radius: 50px;
+        position: relative;
+        margin: 20px auto;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    /* 消息编辑 */
+    .chatBox .chatTextBox,
+    .chatBox .chatFinishTextBox {
+        width: 100%;
+        right: 0;
+        padding: 15px 0;
+        box-sizing: border-box;
+        background: #fff;
+        min-height: 6.3rem;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .chatTextBox .optionBtn {
+        background: rgb(95, 184, 120) none repeat scroll 0% 0%;
+        width: 4.1rem;
+        height: 4.1rem;
+        position: relative;
+        box-sizing: border-box;
+        margin-left: 15px;
+        overflow: hidden;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        border-radius: 100%;
+        cursor: pointer;
+    }
+
+    .optionBtn input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0;
+        -ms-filter: 'alpha(opacity=0)';
+        cursor: pointer;
+    }
+
+    .chatTextBox .TextBox {
+        width: calc(100% - 4.1rem * 2 - 15px * 3 - 15%);
+        box-sizing: border-box;
+        height: 4.1rem;
+        background-image: linear-gradient(#f4f8fb, #f4f8fb), linear-gradient(#ffffff, #ffffff);
+        background-blend-mode: normal, normal;
+        box-shadow: inset 0rem 0.2rem 0.4rem 0rem rgba(185, 205, 210, 0.35);
+        border-radius: 2.1rem;
+        border: solid 0.1rem rgba(0, 201, 209, 0.5);
+        padding: 0 3.8rem 0 2rem;
+        position: relative;
+        margin-left: 15px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    .TextBox .iconfont {
+        color: #5fb878;
+        font-size: 28px;
+        position: absolute;
+        bottom: 15px;
+        cursor: pointer;
+    }
+
+    .TextBox .icon-biaoqing {
+        left: 15px;
+    }
+
+    .TextBox .icon-fasong {
+        right: 15px;
+    }
+
+    .TextBox textarea {
+        width: 100%;
+        height: 4rem;
+        border: none;
+        background: none;
+        padding: 15px 0;
+        box-sizing: border-box;
+        position: relative;
+        overflow-y: auto;
+        display: block;
+        resize: none;
+        line-height: 26px;
+    }
+
+    .optionBtn .icon-charutupian {
+        color: #FFFFFF;
+        font-size: 28px;
+        margin: auto;
+    }
+
+    .optionBtn .icon--tuichu {
+        color: #FFFFFF;
+        font-size: 28px;
+        margin: auto;
+    }
+
+    /* 消息列表 */
+    .chat-block {
+        padding: 0.4rem 1.3rem;
+        margin-top: 10px;
+        position: relative;
+        overflow: hidden;
+        zoom: 1;
+        display: block;
+    }
+
+    .chat-block.chatL .inside {
+        max-width: 85%;
+        display: inline-block;
+        float: left;
+        font-size: 12px;
+    }
+
+    .chat-block.chatR .inside {
+        max-width: 85%;
+        display: inline-block;
+        float: right;
+        font-size: 12px;
+    }
+
+    .chat-block .userImage {
+        width: 2.2rem;
+        height: 2.2rem;
+        background-color: #ffffff;
+        box-shadow: 0.1rem 0.1rem 0.3rem 0rem #d9dfe4;
+        margin-top: 6px;
+        border-radius: 50%;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .chat-block.chatL .userImage {
+        float: left;
+    }
+
+    .chat-block.chatR .userImage {
+        float: right;
+        margin-top: 0;
+    }
+
+    .chat-block .chat-name {
+        margin-left: 3rem;
+        display: block;
+        text-align: left;
+        color: #354052;
+        font-size: 12.4px;
+        line-height: 30px;
+        letter-spacing: 0.2px;
+        font-weight: 400;
+    }
+
+    .chat-block .chatting-left {
+        margin-left: 3rem;
+        display: block;
+        position: relative;
+    }
+
+    .chat-block .chat-content {
+        margin-top: 2px;
+        border: 0;
+        color: #333;
+        min-width: 30px;
+        background-color: #EDEDED !important;
+        float: left;
+        word-break: break-word;
+        background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(#1e61c4, #1e61c4);
+        background-blend-mode: normal, normal;
+        box-shadow: 0rem 0.1rem 0.3rem 0rem #d9dfe4;
+        border-radius: 0rem 1.3rem 1.3rem 1.3rem;
+        font-size: 1.1rem;
+        font-weight: normal;
+        font-stretch: normal;
+        line-height: 2.3rem;
+        letter-spacing: 0rem;
+        padding: 0.4rem 1rem;
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .chat-content .leftText {
+        float: left;
+        font-family: MicrosoftJhengHeiRegular;
+        font-size: 1.1rem;
+        font-weight: normal;
+        font-stretch: normal;
+        line-height: 2.3rem;
+        letter-spacing: 0rem;
+        word-break: break-word;
+    }
+
+    .chat-content .time {
+        color: #b9c3c9;
+        font-family: ArialMT;
+        font-size: 0.7rem;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0rem;
+        position: relative;
+        float: right;
+        margin-left: 10px;
+    }
+
+    .chat-block .chatting-right {
+        font-size: 0.7rem;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0rem;
+        color: #fff8fb;
+        margin-left: 0.6rem;
+        margin-right: 3rem;
+        display: block;
+        position: relative;
+    }
+
+    .chat-block.chatR .chat-content {
+        float: right;
+        border-radius: 15px 0px 15px 15px;
+        color: #fff;
+        letter-spacing: 0.2px;
+        font-size: 12px;
+        min-width: 30px;
+        font-weight: 500;
+        border: 0;
+        background-image: linear-gradient(90deg, #00c8d1 0%, #00a1d6 100%) !important;
+        border-radius: 1.3rem 0rem 1.3rem 1.3rem !important;
+    }
+
+    .chat-content .rightText {
+        float: right;
+        font-family: MicrosoftJhengHeiRegular;
+        font-size: 1.1rem;
+        font-weight: normal;
+        font-stretch: normal;
+        line-height: 2.3rem;
+        letter-spacing: 0rem;
+        word-break: break-word;
+    }
+
+    .chat-block.chatR .chat-content .time {
+        color: #b9c3c9;
+        font-family: ArialMT;
+        font-size: 0.7rem;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0rem;
+        position: relative;
+        float: left;
+        margin-right: 10px;
+        color: #fff8fb;
+        margin-left: 0;
+    }
+
+    .chat-block.chatR .chat-content-img,
+    .chat-block.chatL .chat-content-img {
+        background: #FFFFFF !important;
+        padding: 0;
+        height: auto;
+        border: 0;
+        border-radius: 10px 0px 10px 10px !important;
+        color: #fff;
+        letter-spacing: 0.2px;
+        font-size: 12px;
+        min-width: 150px;
+        font-weight: 500;
+        cursor: pointer;
+        max-width: 30%;
+        min-height: 80px;
+    }
+
+    .chat-block.chatR .chat-content-img {
+        border-radius: 15px 0px 15px 15px;
+    }
+
+    .chat-block.chatL .chat-content-img {
+        border-radius: 0px 15px 15px 15px !important;
+    }
+
+    .chat-block .chat-content-img img {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .chat-block .chat-content.chat-content-img .time {
+        position: absolute;
+        background-color: #0b2e13;
+        color: #eeeeee;
+        line-height: 15px;
+        font-size: 9px !important;
+        text-align: center;
+        padding: 0 8px;
+        display: inline-block;
+        ;
+        border-radius: 10px;
+    }
+
+    .chat-block.chatR .chat-content.chat-content-img .time {
+        bottom: 5px;
+        left: 3px;
+    }
+
+    .chat-block.chatL .chat-content.chat-content-img .time {
+        bottom: 5px;
+        right: 3px;
+    }
+
+    .chat-content-img img.loading {
+        display: block;
+        width: 50px;
+        margin: auto;
+        top: 15px;
+        position: relative;
+    }
+
+    .chat-block.chatL .chatFile {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chat-block.chatL .chatFile .downloadBtn {
+        position: absolute;
+        line-height: 20px;
+        height: 20px;
+        width: 40px;
+        right: 2px;
+        bottom: 3px;
+        color: #FFFFFF;
+        text-align: center;
+        cursor: pointer;
+        font-size: 12px;
+        background-color: #c8cbcf;
+        border-radius: 10px;
+        overflow: hidden;
+        display: none;
+    }
+
+    .chat-block.chatL .chatFile:hover .downloadBtn {
+        display: inline-block;
+    }
+
+    /* 问题 */
+    .problemBox {
+        box-sizing: border-box;
+        width: 23.5rem;
+        border-left: 0.1rem solid #e6e6e6;
+        position: relative;
+        height: 100%;
+        padding: 10px;
+        overflow-y: scroll;
+    }
+
+    .advertisement {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+    }
+
+    .advertisement img {
+        max-width: 98%;
+        position: relative;
+        display: block;
+    }
+    .groupHead {
+        height: 60px;
+        line-height: 60px;
+        padding: 0 20px;
+        font-size: 16px;
+        font-weight: normal;
+        font-stretch: normal;
+        letter-spacing: 0.3px;
+        color: #235077;
+        position: relative;
+        background-color: #fafafa;
+        padding-top: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .groupHead h2 {
+        margin: 5px 0;
+        display: block;
+        font-size: 16px;
+        color: #235077;
+    }
+
+    .groupHead .back {
+        cursor: pointer;
+    }
+
+    .groupHead .back:hover {
+        color: #00c9d1;
+    }
+
+/*白色面板*/
+    .white_panel {
+        padding: 20px;
+        background-color: #FFFFFF;
+        overflow: hidden;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .white_panel input,
+    .white_panel textarea {
+        font-size: 12px !important;
+    }
+
+    @media only screen and (max-width: 640px) {
+        .siteColorBox {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .siteColorBox .caoZuoBox {
+            width: 100%;
+            height: calc(100% - 30px);
+            overflow: hidden;
+            background-color: #FFFFFF;
+            box-sizing: border-box;
+            float: left;
+        }
+    }
+
+</style>
+<script>
+
+    $(function () {
+        {% if tabName == 'siteAccessCode' %}
+        let jsCode = "<script defer=\"true\" src=\"" + location.protocol + "//{{ site_data.use_domain }}/chat/{{ site_data.site_code }}.js\">\<\/script>"
+        let textCode = location.protocol + "//{{ site_data.use_domain }}/chat/{{ site_data.site_code }}.html"
+        let h5Code = "<iframe src=\"" + location.protocol + "//{{ site_data.use_domain }}/chat/{{ site_data.site_code }}/winChat.html\" frameborder=\"0\" style=\"position: fixed; right: 20px; bottom: 20px; overflow: hidden; box-sizing: border-box; z-index: 99999999999999999999; width: 400px; height: 720px; border-radius: 5px;\"></iframe>"
+        $(".jrJsCode").text(jsCode);
+        $(".jrLinkCode").text(textCode);
+        $(".jrH5Code").text(h5Code);
+        $(".jrSiteName").text('{{ site_data.site_name }}')
+        {% endif %}
+    })
+
+    {% if tabName == 'siteAccess' %}
+    
+
+    //加载列表数据
+    function fatch_data_list(page, reset = false) {
+        $(".problem").find(".qrDataList").find('.qr_loading').show(0);
+        $(".problem").find(".pages").attr('data-crrpage', page);
+
+        site_name = '';
+        link = '';
+        finish_day = '';
+        if (reset){
+            $("input[name='site_name']").val(site_name);
+            $("input[name='link']").val(link);
+            $("input[name='finish_day']").val(finish_day);
+        }else {
+            site_name = $.trim($("input[name='site_name']").val());
+            link = $.trim($("input[name='link']").val());
+            finish_day = $.trim($("input[name='finish_day']").val());
+        }
+
+
+        xtajax.get({
+            'url': '/site_admin/siteManage',
+            'data': {'action': 'get_siteAccess', 'page': page, 'link': link, 'site_name': site_name, 'finish_day': finish_day},
+            'success': function (data) {
+                if (data.code === 200){
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.html);
+                    $(".problem").find(".qrDataBottom").empty().append(data.data.page_html);
+                    $(".problem").find(".qrDataList").find('.qr_loading').hide(0);
+                    $(".problem").find(".qrDataList").find('.table').show(0);
+                }else{
+                    xtalert.alertErrorToast('获取数据失败！')
+                }
+            }
+        })
+    }
+
+    // 删除网站信息
+    function delSite_func(data_uuid) {
+        xtalert.alertConfirm({
+            'msg': '确定删除网站所有信息？删除后不可恢复！',
+            'confirmCallback': function () {
+                xtajax.post({
+                    'url': '/site_admin/siteManage',
+                    'data': { 'action': 'delSiteInfo', 'data_uuid': data_uuid },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            xtalert.alertSuccessToast('网站删除成功！')
+                            let tt2 = setTimeout(function () {
+                                loading_html('setup')
+                            }, 1000)
+                        } else {
+                            return xtalert.alertError(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    // 提交新增网站信息
+    function post_site_data() {
+        let link = $.trim($("#link").val());
+        let site_name = $.trim($("#site_name").val());
+        let use_domain = $.trim($("#use_domain").val());
+        let site_language = $.trim($("#site_language").val());
+        let finish_time = $.trim($("#finish_time").val());
+        if (!link) { return xtalert.showValidationError('请输入网站链接！') }
+        if (!site_name) { return xtalert.showValidationError('请输入网站名称！') }
+        if (!finish_time) { return xtalert.showValidationError('请选择到期时间！') }
+        xtajax.post({
+            'url': '/site_admin/siteManage',
+            'data': { 'action': 'add_site', 'site_name': site_name, 'link': link, 'site_language': site_language, 'use_domain': use_domain, 'finish_time': finish_time },
+            'success': function (data) {
+                if (data.code === 200) {
+                    xtalert.alertSuccessToast('添加成功！')
+                    let tt2 = setTimeout(function () {
+                        loading_html('setup')
+                    }, 1000)
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+    // 提交编辑网站信息数据
+    function edit_site_data(data_uuid) {
+        let link = $.trim($("#link").val());
+        let site_name = $.trim($("#site_name").val());
+        let use_domain = $.trim($("#use_domain").val());
+        let site_language = $.trim($("#site_language").val());
+        let finish_time = $.trim($("#finish_time").val());
+        let create_cust_service_count = $.trim($("#create_cust_service_count").val());
+        if (!link) { return xtalert.showValidationError('请输入网站链接！') }
+        if (!site_name) { return xtalert.showValidationError('请输入网站名称！') }
+        if (!finish_time) { return xtalert.showValidationError('请选择到期时间！') }
+        if (!create_cust_service_count) { return xtalert.showValidationError('请输入网站客服上限！') }
+        xtajax.post({
+            'url': '/site_admin/siteManage',
+            'data': { 'action': 'edit_site_info', 'site_name': site_name, 'link': link, 'data_uuid': data_uuid, 'site_language': site_language, 'use_domain': use_domain, 'finish_time': finish_time, 'create_cust_service_count': create_cust_service_count },
+            'success': function (data) {
+                if (data.code === 200) {
+                    xtalert.alertSuccessToast('数据修改成功！');
+                    let tt2 = setTimeout(function () {
+                        loading_html('setup')
+                    }, 1000)
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+
+    {% endif %}
+
+    {% if tabName == 'siteColor' %}
+    // 上传网站背景
+    function uploadSiteBack(data) {
+        let uploadSiteBackObj = $(".uploadSiteBack");
+        uploadSiteBackObj.find('.fenGe').show();
+        uploadSiteBackObj.find('.yuLan').show();
+        $(".advertisement img").attr('src', data.message);
+        $(".formSettingBox .yuLan").find('img#site_right_info_img').attr('src', data.message);
+        xtalert.alertSuccessToast('上传成功！');
+    }
+
+    function uploadSiteIcon(data) {
+        let uploadSiteIconObj = $(".uploadSiteIcon");
+        uploadSiteIconObj.find('.fenGe').show();
+        uploadSiteIconObj.find('.yuLan').show();
+        $(".advertisement img").attr('src', data.message);
+        $(".formSettingBox .yuLan").find('img#site_icon').attr('src', data.message);
+        xtalert.alertSuccessToast('上传成功！');
+    }
+
+    // 提交网站个性化配置
+    function postSiteColor() {
+        let site_title = $.trim($("#site_title").val());
+        let site_main_color = $.trim($("#site_main_color").val());
+        let site_right_info_back_color = $.trim($("#site_right_info_back_color").val());
+        let site_right_info_img = $("#site_right_info_img").attr('src');
+        let site_icon = $("#site_icon").attr('src');
+        if (!site_title) { return xtalert.alertError('请输入网站标题！') }
+        xtajax.post({
+            'url': '/site_admin/siteManage',
+            'data': { 'action': 'postSiteColor', 'site_title': site_title, 'site_icon': site_icon, 'site_main_color': site_main_color, site_right_info_back_color: site_right_info_back_color, site_right_info_img: site_right_info_img, 'site_code': '{{ site_code or '' }}'},
+            'success': function (data) {
+                if (data.code === 200) {
+                    return xtalert.alertSuccessToast();
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+    // 重置网站个性化配置
+    function resetSiteColor(site_code) {
+        xtajax.post({
+            'url': settingPageUrl,
+            'data': { 'action': 'getSiteData', 'site_code': site_code },
+            'success': function (data) {
+                if (data.code === 200) {
+                    $("#site_title").val(data.data.site_title);
+                    $("#site_main_color").val(data.data.site_main_color);
+                    $("#site_right_info_back_color").val(data.data.site_right_info_back_color);
+                    site_right_info_back_color()
+                    if (data.data.site_right_info_img) {
+                        let uploadSiteBackObj = $(".uploadSiteBack");
+                        uploadSiteBackObj.find('.fenGe').show();
+                        uploadSiteBackObj.find('.yuLan').show();
+                        $("#site_right_info_img").attr('src', data.data.site_right_info_img);
+                    }
+                    if (data.data.site_icon) {
+                        let uploadSiteIconObj = $(".uploadSiteIcon");
+                        uploadSiteIconObj.find('.yuLan').show();
+                        uploadSiteIconObj.find('.uploadBtn').hide();
+                        $("#site_icon").attr('src', data.data.site_icon);
+                    } else {
+                        let uploadSiteIconObj = $(".uploadSiteIcon");
+                        uploadSiteIconObj.find('.yuLan').hide();
+                        uploadSiteIconObj.find('.uploadBtn').show();
+                        $("#site_icon").attr('src', '');
+                    }
+                    $(".advertisement img").attr('src', data.data.site_right_info_img);
+                    update_site_main_color(data.data.site_main_color)
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+    resetSiteColor('{{ site_code or '' }}')
+
+    // 删除右侧背景颜色
+    function delsite_right_info_back_color(crrObj) {
+        let uploadSiteBackObj = $(".uploadSiteBack");
+        uploadSiteBackObj.find('.fenGe').hide();
+        uploadSiteBackObj.find('.yuLan').hide();
+        uploadSiteBackObj.find('.yuLan').find('img').attr('src', '');
+        $(".advertisement img").attr('src', '');
+    }
+
+    // 上传网站ICon
+    function uploadSiteIcon(data) {
+        let uploadSiteIconObj = $(".uploadSiteIcon");
+        uploadSiteIconObj.find('.yuLan').show();
+        uploadSiteIconObj.find('.uploadBtn').hide();
+        $("#site_icon").attr('src', data.message);
+        xtalert.alertSuccessToast('上传成功！');
+    }
+
+    // 关闭上传网站Icon
+    function colse_uploadSiteIcon() {
+        let uploadSiteIconObj = $(".uploadSiteIcon");
+        uploadSiteIconObj.find('.yuLan').hide();
+        uploadSiteIconObj.find('.uploadBtn').show();
+        $("#site_icon").attr('src', '');
+    }
+
+    // 修改主题颜色
+    function update_site_main_color(color) {
+        $(".evaluateForm .subComment").css('background-color', color);
+        $(".chatTextBox .optionBtn").css('background-color', color);
+        $(".TextBox .iconfont").css('color', color);
+    }
+
+    // 右侧背景
+    function site_right_info_back_color() {
+        let color = $("#site_right_info_back_color").val();
+        if (color) {
+            $(".problemBox").css('background-color', color);
+        } else {
+            $(".problemBox").css('background-color', 'none');
+        }
+    }
+    {% endif %}
+
+    {% if tabName == 'siteSetting' %}
+    // 获取网站配置信息
+    function reset_siteSetting(site_code) {
+        $("#setupBoxLoading").css('display', 'flex');
+        xtajax.post({
+            'url': settingPageUrl,
+            'data': { 'action': 'getSiteData', 'site_code': site_code },
+            'success': function (data) {
+                if (data.code === 200) {
+                    $(".siteAccess").hide(0);
+                    let siteSettingObj = $(".siteSetting");
+                    siteSettingObj.attr('data-sitecode', site_code);
+                    if (data.data.clew_text) {
+                        clew_text_ckdi.setData(data.data.clew_text)
+                    } else {
+                        clew_text_ckdi.setData('');
+                    }
+                    if (data.data.site_announcement) {
+                        site_announcement_ckdi.setData(data.data.site_announcement)
+                    } else {
+                        site_announcement_ckdi.setData('');
+                    }
+
+                    if (data.data.control_file_type_state === true) {
+                        $("#control_file_type_state").val('1');
+                        $("#control_file_type_state").next().removeClass('icon-kaiguanguan').addClass('icon-kaiguan4');
+                    } else {
+                        $("#control_file_type_state").val('0');
+                        $("#control_file_type_state").next().removeClass('icon-kaiguan4').addClass('icon-kaiguanguan');
+                    }
+
+                    if (data.data.site_google_verify_statu === true) {
+                        $("#site_google_verify_statu").val('1');
+                        $("#site_google_verify_statu").next().removeClass('icon-kaiguanguan').addClass('icon-kaiguan4');
+                    } else {
+                        $("#site_google_verify_statu").val('0');
+                        $("#site_google_verify_statu").next().removeClass('icon-kaiguan4').addClass('icon-kaiguanguan');
+                    }
+
+                    if (data.data.fast_state === true) {
+                        $("#fast_state").val('1');
+                        $("#fast_state").next().removeClass('icon-kaiguanguan').addClass('icon-kaiguan4');
+                    } else {
+                        $("#fast_state").val('0');
+                        $("#fast_state").next().removeClass('icon-kaiguan4').addClass('icon-kaiguanguan');
+                    }
+                    if (data.data.beep_switch === true) {
+                        $("#beep_switch").val('1');
+                        $("#beep_switch").next().removeClass('icon-kaiguanguan').addClass('icon-kaiguan4');
+                    } else {
+                        $("#beep_switch").val('0');
+                        $("#beep_switch").next().removeClass('icon-kaiguan4').addClass('icon-kaiguanguan');
+                    }
+                    const image_types = ['.png', '.jpg', '.jpeg']
+                    for (let i = 0; i < image_types.length; i++) {
+                        if (data.data.control_file_types.indexOf(image_types[i]) > -1) {
+                            $(".image_" + image_types[i].replace('.', '')).val('1');
+                            $(".image_" + image_types[i].replace('.', '')).next().removeClass('icon-duoxuankuangweixuan').addClass('icon-duoxuankuang-fuxuan');
+                        } else {
+                            $(".image_" + image_types[i].replace('.', '')).val('0');
+                            $(".image_" + image_types[i].replace('.', '')).next().removeClass('icon-duoxuankuang-fuxuan').addClass('icon-duoxuankuangweixuan');
+                        }
+                    }
+                    const file_types = ['.txt', '.docx', '.doc', '.dot', '.xlsx', '.csv']
+                    for (let il = 0; il < file_types.length; il++) {
+                        if (data.data.control_file_types.indexOf(file_types[il]) > -1) {
+                            $(".file_" + file_types[il].replace('.', '')).val('1');
+                            $(".file_" + file_types[il].replace('.', '')).next().removeClass('icon-duoxuankuangweixuan').addClass('icon-duoxuankuang-fuxuan');
+                        } else {
+                            $(".file_" + file_types[il].replace('.', '')).val('0');
+                            $(".file_" + file_types[il].replace('.', '')).next().removeClass('icon-duoxuankuang-fuxuan').addClass('icon-duoxuankuangweixuan');
+                        }
+                    }
+                    const AUDIO_TYPES = ['.wav', '.flac', '.ape', '.alac', '.mp3', '.aac', '.vorbis', '.opus']
+                    for (let il = 0; il < AUDIO_TYPES.length; il++) {
+                        if (data.data.control_file_types.indexOf(AUDIO_TYPES[il]) > -1) {
+                            $(".audio_" + AUDIO_TYPES[il].replace('.', '')).val('1');
+                            $(".audio_" + AUDIO_TYPES[il].replace('.', '')).next().removeClass('icon-duoxuankuangweixuan').addClass('icon-duoxuankuang-fuxuan');
+                        } else {
+                            $(".audio_" + AUDIO_TYPES[il].replace('.', '')).val('0');
+                            $(".audio_" + AUDIO_TYPES[il].replace('.', '')).next().removeClass('icon-duoxuankuang-fuxuan').addClass('icon-duoxuankuangweixuan');
+                        }
+                    }
+                    const VIDEO_TYPES = ['.wmv', '.saf', '.rm', '.rmvb', '.mp4', '.3gp', '.mov', '.m4v', '.avi', '.dat', '.mkv']
+                    for (let il = 0; il < VIDEO_TYPES.length; il++) {
+                        if (data.data.control_file_types.indexOf(VIDEO_TYPES[il]) > -1) {
+                            $(".video_" + VIDEO_TYPES[il].replace('.', '')).val('1');
+                            $(".video_" + VIDEO_TYPES[il].replace('.', '')).next().removeClass('icon-duoxuankuangweixuan').addClass('icon-duoxuankuang-fuxuan');
+                        } else {
+                            $(".video_" + VIDEO_TYPES[il].replace('.', '')).val('0');
+                            $(".video_" + VIDEO_TYPES[il].replace('.', '')).next().removeClass('icon-duoxuankuang-fuxuan').addClass('icon-duoxuankuangweixuan');
+                        }
+                    }
+                    $("#automati_creply").val(data.data.automati_creply);
+                    $("#automati_creply_time").val(data.data.automati_creply_time);
+                    $("#automati_close_time").val(data.data.automati_close_time);
+                    
+                    $("#default_comment").val(data.data.default_comment);
+                    $("#control_file_size").val(data.data.control_file_size);
+                    $("#ip_whitelist").val(data.data.ip_whitelist);
+                    $("#setupBoxLoading").css('display', 'none');
+
+                    $("#translate_statu").val(data.data.translate_statu);
+                    $("#client_language").val(data.data.client_language);
+                    $("#service_language").val(data.data.service_language);
+                    $("#client_service_language").val(data.data.client_service_language);
+                    $("#service_client_language").val(data.data.service_client_language);
+
+                    if (data.data.automatic_translate === true) {
+                        $("#automatic_translate").val('1');
+                        $("#automatic_translate").next().removeClass('icon-kaiguanguan').addClass('icon-kaiguan4');
+                    } else {
+                        $("#automatic_translate").val('0');
+                        $("#automatic_translate").next().removeClass('icon-kaiguan4').addClass('icon-kaiguanguan');
+                    }
+                    $("#source_language").val(data.data.source_language);
+                    $("#target_language").val(data.data.target_language);
+
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+    reset_siteSetting('{{ site_code or '' }}')
+
+    // 保存网站配置信息
+    function post_save_siteSetting() {
+        let clew_text = $.trim(clew_text_ckdi.getData());
+        let site_announcement = $.trim(site_announcement_ckdi.getData());
+
+        let control_file_type_state = $.trim($("#control_file_type_state").val());
+        let site_google_verify_statu = $.trim($("#site_google_verify_statu").val());
+        let fast_state = $.trim($("#fast_state").val());
+        let beep_switch = $.trim($("#beep_switch").val());
+        let image_png = $.trim($(".image_png").val());
+        let image_jpg = $.trim($(".image_jpg").val());
+        let image_jpeg = $.trim($(".image_jpeg").val());
+        let image_svg = $.trim($(".image_svg").val());
+        let file_txt = $.trim($(".file_txt").val());
+        let file_docx = $.trim($(".file_docx").val());
+        let file_doc = $.trim($(".file_doc").val());
+        let file_dot = $.trim($(".file_dot").val());
+        let file_xlsx = $.trim($(".file_xlsx").val());
+        let file_csv = $.trim($(".file_csv").val());
+
+        let audio_wav = $.trim($(".audio_wav").val());
+        let audio_flac = $.trim($(".audio_flac").val());
+        let audio_ape = $.trim($(".audio_ape").val());
+        let audio_alac = $.trim($(".audio_alac").val());
+        let audio_mp3 = $.trim($(".audio_mp3").val());
+        let audio_aac = $.trim($(".audio_aac").val());
+        let audio_vorbis = $.trim($(".audio_vorbis").val());
+        let audio_opus = $.trim($(".audio_opus").val());
+
+        let video_wmv = $.trim($(".video_wmv").val());
+        let video_saf = $.trim($(".video_saf").val());
+        let video_rm = $.trim($(".video_rm").val());
+        let video_rmvb = $.trim($(".video_rmvb").val());
+        let video_mp4 = $.trim($(".video_mp4").val());
+        let video_3gp = $.trim($(".video_3gp").val());
+        let video_mov = $.trim($(".video_mov").val());
+        let video_m4v = $.trim($(".video_m4v").val());
+        let video_avi = $.trim($(".video_avi").val());
+        let video_dat = $.trim($(".video_dat").val());
+        let video_mkv = $.trim($(".video_mkv").val());
+
+        let automati_creply = $.trim($("#automati_creply").val());
+        let automati_creply_time = $.trim($("#automati_creply_time").val());
+        let automati_close_time = $.trim($("#automati_close_time").val());
+
+        let default_comment = $.trim($("#default_comment").val());
+        let control_file_size = $.trim($("#control_file_size").val());
+
+        let ip_whitelist = $.trim($("#ip_whitelist").val());
+
+        let translate_statu = $.trim($("#translate_statu").val());
+        let client_language = $.trim($("#client_language").val());
+        let service_language = $.trim($("#service_language").val());
+        let client_service_language = $.trim($("#client_service_language").val());
+        let service_client_language = $.trim($("#service_client_language").val());
+
+        let control_file_types = [];
+        if (image_png === '1') { control_file_types.push('.png') }
+        if (image_jpg === '1') { control_file_types.push('.jpg') }
+        if (image_jpeg === '1') { control_file_types.push('.jpeg') }
+        if (image_svg === '1') { control_file_types.push('.svg') }
+        if (file_txt === '1') { control_file_types.push('.txt') }
+        if (file_docx === '1') { control_file_types.push('.docx') }
+        if (file_doc === '1') { control_file_types.push('.doc') }
+        if (file_dot === '1') { control_file_types.push('.dot') }
+        if (file_xlsx === '1') { control_file_types.push('.xlsx') }
+        if (file_csv === '1') { control_file_types.push('.csv') }
+        if (audio_wav === '1') { control_file_types.push('.wav') }
+        if (audio_flac === '1') { control_file_types.push('.flac') }
+        if (audio_ape === '1') { control_file_types.push('.ape') }
+        if (audio_alac === '1') { control_file_types.push('.alac') }
+        if (audio_mp3 === '1') { control_file_types.push('.mp3') }
+        if (audio_aac === '1') { control_file_types.push('.aac') }
+        if (audio_vorbis === '1') { control_file_types.push('.vorbis') }
+        if (audio_opus === '1') { control_file_types.push('.opus') }
+        if (video_wmv === '1') { control_file_types.push('.wmv') }
+        if (video_saf === '1') { control_file_types.push('.saf') }
+        if (video_rm === '1') { control_file_types.push('.rm') }
+        if (video_rmvb === '1') { control_file_types.push('.rmvb') }
+        if (video_mp4 === '1') { control_file_types.push('.mp4') }
+        if (video_3gp === '1') { control_file_types.push('.3gp') }
+        if (video_mov === '1') { control_file_types.push('.mov') }
+        if (video_m4v === '1') { control_file_types.push('.m4v') }
+        if (video_avi === '1') { control_file_types.push('.avi') }
+        if (video_dat === '1') { control_file_types.push('.dat') }
+        if (video_mkv === '1') { control_file_types.push('.mkv') }
+
+        if (client_language && !client_service_language) { return xtalert.alertError('请选择客户端客服信息展示语言！') }
+        if (service_language && !service_client_language) { return xtalert.alertError('请选择客服端客户信息展示语言！') }
+        Swal({
+            title: false,
+            text: '操作中，请稍等...',
+            showCloseButton: false,
+            showCancelButton: false,
+            showconfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        let _data = {
+            'action': 'edit_siteSetting',
+            'site_code': '{{ site_code or '' }}',
+            'clew_text': clew_text,
+            'site_announcement': site_announcement,
+            'control_file_type_state': control_file_type_state,
+            'site_google_verify_statu': site_google_verify_statu,
+            'fast_state': fast_state,
+            'beep_switch': beep_switch,
+            'control_file_types': control_file_types,
+
+            'automati_creply': automati_creply,
+            'automati_creply_time': automati_creply_time,
+            'automati_close_time': automati_close_time,
+
+            'default_comment': default_comment,
+            'control_file_size': control_file_size,
+
+            'ip_whitelist': ip_whitelist,
+            'translate_statu': translate_statu,
+            'client_language': client_language,
+            'service_language': service_language,
+            'client_service_language': client_service_language,
+            'service_client_language': service_client_language,
+        }
+        xtajax.post({
+            'url': '/site_admin/siteManage',
+            'data': _data,
+            'success': function (data) {
+                if (data.code) {
+                    return xtalert.alertSuccessToast('保存成功！')
+                } else {
+                    return xtalert.alertError(data.font_names)
+                }
+            }
+        })
+    }
+
+    // 复选框
+    function CheckBox_func(obj) {
+        if (obj.find('i').hasClass('icon-duoxuankuangweixuan')) {
+            obj.find('i').removeClass('icon-duoxuankuangweixuan').addClass('icon-duoxuankuang-fuxuan');
+            obj.find('input').val('1');
+        } else {
+            obj.find('i').removeClass('icon-duoxuankuang-fuxuan').addClass('icon-duoxuankuangweixuan');
+            obj.find('input').val('0');
+        }
+    }
+    {% endif %}
+
+</script>
+
+{% if tabName == 'siteAccess' %}
+<!--网站接入-->
+
+<div class="problem asyncTable">
+    <div class="qrHead">
+        <div class="form-inline" style="margin-top: 10px;">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="site_name" value="" placeholder="网站名称" style="color: #666666; font-size: 13px; " aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="link" value="" placeholder="网站链接" style="color: #666666; font-size: 13px; " aria-label="">
+            <input type="number" class="form-control mb-2 mr-sm-2 select-history" name="finish_day" value="" placeholder="网站到期时间" style="color: #666666; font-size: 13px; " aria-label="">
+
+            <span class="btn btn-primary mb-2 subBtn ml-2" style="padding: 3px 13px; "
+                onclick="fatch_data_list(1)"><i class="iconfont icon-sousuo"></i></span>
+            <span class="btn btn-default cancelBnt ml-2"
+                style="padding: 5px 13px; margin-bottom: 7px; " onclick="fatch_data_list(1, true)"><i
+                    class="iconfont icon-zhongzhi1" style="font-size: 13px;"></i></span>
+        </div>
+    </div>
+    <div class="qrDataList" style="padding: 0 10px;">
+        <!-- <div class="qr_loading" style="position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <img src="/public/chat/images/loading-0.gif" alt="" style="width: 230px;display: block;">
+        </div> -->
+        <div class="dataList table-scroll" style="height: 100%;">
+            <table class="table table-hover table-bordered text-center" style="min-width: 800px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>网站名称</td>
+                        <td>客服上限</td>
+                        <td>网站链接</td>
+                        <td>聊天界面语言</td>
+                        <td>选择客服访问域名</td>
+                        <td>网站到期时间</td>
+                        <td width="300">创建时间</td>
+                        <td width="160">操作</td>
+                    </tr>
+                    
+                    {% for data in datas %}
+                    <tr>
+                        <td>{{data.site_name}}</td>
+                        <td>{{data.create_cust_service_count}}</td>
+                        <td>{{data.link}}</td>
+                        <td>{{ LANGUAGE.name_dict[data.site_language]}}</td>
+                        <td>{{data.use_domain}}</td>
+                        <td>{{format_time_func(data.finish_time, "%Y-%m-%d")}} </td>
+                        <td width="300">{{format_time_func(data._create_time, "%Y-%m-%d %H:%M:%S")}}</td>
+                        <td width="160">
+                            <div class="d-flex justify-content-between">
+                                <i class="iconfont icon-xitongpeizhi" style="font-size: 20px;"
+                                    onclick="loadingTabFunc($(this), 'siteSetting', '{{data.get('site_code') or ''}}')"></i>
+                                <i class="iconfont icon-pifuguanli" style="font-size: 14px;"
+                                    onclick="loadingTabFunc($(this), 'siteColor', '{{data.get('site_code') or ''}}')"></i>
+                                <i class="iconfont icon-code"
+                                    onclick="loadingTabFunc($(this), 'siteAccessCode', '{{data.get('site_code') or ''}}')"></i>
+                                <i class="iconfont icon-bianji"
+                                    onclick="post_from_html('edit_site_html', '{{data.get('uuid')}}', '编辑网站信息', 700, '/site_admin/siteManage')"></i>
+                                <i class="iconfont icon-shanchu" onclick="delSite_func('{{data.get('uuid')}}')"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="qrDataBottom">
+        {{page_html | safe}}
+    </div>
+</div>
+
+{% endif %}
+
+{% if tabName == 'siteAccessCode' %}
+<!--网站接入信息-->
+<div class="siteAccessCode">
+
+    <div class="SiteJsCode">
+        <h2 class="hidden--mobile"><span class="back" onclick="loadingTabFunc($(this), 'siteAccess')">网站接入</span> <i
+                class="iconfont icon-xiangyou1"></i> <span style="position: relative; top: 0px; font-size: 14px;"
+                class="jrSiteName">接入代码</span></h2>
+
+        <div style="line-height: 40px; height: 40px; font-size: 14px;">代码接入 <span
+                style="font-size: 12px;color: #90a7c9">代码添加到网站< /body>之前</span></div>
+
+        <div class="codeText">
+            <code class="jrJsCode"></code>
+            <span class="copyBtn" onclick="clipboard_copy($('.jrJsCode').text())">复制</span>
+        </div>
+
+    </div>
+
+    <div class="SiteJsCode">
+
+        <div style="line-height: 40px; height: 40px; font-size: 14px;">H5代码接入 <span
+                style="font-size: 12px;color: #90a7c9">代码添加到网站< /body>之内</span></div>
+
+        <div class="codeText">
+            <code class="jrH5Code"></code>
+            <span class="copyBtn" onclick="clipboard_copy($('.jrLinkCode').text())">复制</span>
+        </div>
+
+    </div>
+
+    <div class="SiteJsCode">
+
+        <div style="line-height: 40px; height: 40px; font-size: 14px;">对话链接</div>
+
+        <div class="codeText">
+            <code class="jrLinkCode"></code>
+            <span class="copyBtn" onclick="clipboard_copy($('.jrLinkCode').text())">复制</span>
+        </div>
+
+    </div>
+
+</div>
+{% endif %}
+
+{% if tabName == 'siteSetting' %}
+<!--网站配置-->
+<div class="siteSetting" data-sitecode="">
+
+    <div class="alert alert-primary" role="alert">
+        <i class="iconfont icon-tishi"
+            style="color: rgb(24, 128, 255); font-size: 18px; vertical-align: -2px; margin-right: 3px;"></i>
+        部分设置保存后，需刷新页面后起效！
+    </div>
+
+    <div class="groupHead">
+        <div>
+            <h2 ><span class="back" onclick="loadingTabFunc($(this), 'siteAccess')">网站接入</span> <i
+                    class="iconfont icon-xiangyou1"></i> <span
+                    style="position: relative; top: 0px; font-size: 14px;">网站配置</span></h2>
+        </div>
+        <div>
+            <span class="kfConfirmBtn" onclick="post_save_siteSetting()">提交</span>
+            <span class="kfCancelBtn" onclick="reset_siteSetting('{{ site_code or '' }}')">重置</span>
+        </div>
+    </div>
+
+    <div class="fileTypeBox white_panel" style="border-radius: 0 0 5px 5px;padding: 0 20px;">
+
+        <div class="ukefu-webim-prop">
+            <div class="row" style="max-width: 600px; margin-bottom: 0px;">
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8 col-8" style="color:#3c6082;">上传文件格式限制</div>
+                        <div class="col-lg-4 col-4">
+                            <input type="hidden" alt="" aria-label="" value="0" id="control_file_type_state">
+                            <i class="iconfont icon-kaiguanguan pointer float-right" style="font-size: 40px;"
+                                onclick="switch_func($(this))"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ukefu-webim-prop">
+            <div class="row" style="max-width: 600px;">
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8" style="color:#3c6082;">图片格式类型</div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="image_png" value="0" data-filetype=".png" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.PNG</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="image_jpg" value="0" data-filetype=".jpg" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.JPG</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="image_jpeg" value="0" data-filetype=".jpeg" alt=""
+                                aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.JPEG</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="image_svg" value="0" data-filetype=".svg" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.SVG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ukefu-webim-prop">
+            <div class="row" style="max-width: 600px;">
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8" style="color:#3c6082;">文件格式类型</div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="file_txt" value="0" data-filetype=".txt" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.TXT</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="file_docx" value="0" data-filetype=".docx" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.DOCX</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="file_doc" value="0" data-filetype=".doc" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.DOC</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="file_dot" value="0" data-filetype=".dot" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.DOT</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="file_xlsx" value="0" data-filetype=".xlsx" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.XLSX</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="file_csv" value="0" data-filetype=".csv" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.CSV</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ukefu-webim-prop mb-3">
+            <div class="row" style="max-width: 600px;">
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8" style="color:#3c6082;">音频文件格式</div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_wav" value="0" data-filetype=".wav" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.wav</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_flac" value="0" data-filetype=".flac" alt=""
+                                aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.flac</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_ape" value="0" data-filetype=".ape" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.ape</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_alac" value="0" data-filetype=".alac" alt=""
+                                aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.alac</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_mp3" value="0" data-filetype=".mp3" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.mp3</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_aac" value="0" data-filetype=".aac" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.aac</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_vorbis" value="0" data-filetype=".vorbis" alt=""
+                                aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.vorbis</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="audio_opus" value="0" data-filetype=".opus" alt=""
+                                aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.opus</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ukefu-webim-prop mb-3">
+            <div class="row" style="max-width: 600px;">
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8" style="color:#3c6082;">视频文件格式</div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_wmv" value="0" data-filetype=".wmv" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.wmv</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_saf" value="0" data-filetype=".saf" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.saf</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_rm" value="0" data-filetype=".rm" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.rm</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_rmvb" value="0" data-filetype=".rmvb" alt=""
+                                aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.rmvb</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_mp4" value="0" data-filetype=".mp4" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.mp4</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_3gp" value="0" data-filetype=".3gp" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.3gp</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_mov" value="0" data-filetype=".mov" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.mov</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_m4v" value="0" data-filetype=".m4v" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.m4v</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_avi" value="0" data-filetype=".avi" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.avi</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_dat" value="0" data-filetype=".dat" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.dat</span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-6 mt-3 pointer" onclick="CheckBox_func($(this))">
+                            <input type="hidden" class="video_mkv" value="0" data-filetype=".mkv" alt="" aria-label="">
+                            <i class="iconfont icon-duoxuankuangweixuan"></i>
+                            <span class="ml-2">.mkv</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="ukefu-webim-prop" style="padding-left: 0; padding-right: 0px;">
+            <div class="row" style="max-width: 600px; margin-bottom: 0px;">
+                <div class="col-lg-12 mt-3 mb-4">
+                    <div class="row">
+                        <div class="col-lg-12" style="color:#3c6082;">登录谷歌验证，需要使用Google Authenticator客户端，扫描二维码，进行获取动态验证码
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8" style="color:#3c6082;">登录谷歌验证开关</div>
+                        <div class="col-lg-4">
+                            <input type="hidden" alt="" aria-label="" value="0" id="site_google_verify_statu">
+                            <i class="iconfont icon-kaiguanguan pointer float-right" style="font-size: 40px;"
+                                onclick="switch_func($(this))"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="ukefu-webim-prop" style="padding-left: 0; padding-right: 0px;">
+            <div class="row" style="max-width: 600px; margin-bottom: 0px;">
+                <div class="col-lg-12 mt-3 mb-4">
+                    <div class="row">
+                        <div class="col-lg-12" style="color:#3c6082;">客户访问，提交快捷问题</div>
+                    </div>
+                </div>
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-8" style="color:#3c6082;">快捷问题模式开启状态</div>
+                        <div class="col-lg-4">
+                            <input type="hidden" alt="" aria-label="" value="0" id="fast_state">
+                            <i class="iconfont icon-kaiguanguan pointer float-right" style="font-size: 40px;"
+                                onclick="switch_func($(this))"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="ukefu-webim-prop" style="padding-left: 0; padding-right: 0px;">
+            <div class="row" style="max-width: 600px; margin-bottom: 0px;">
+                <div class="col-lg-12 mt-3 mb-4">
+                    <div class="row">
+                        <div class="col-lg-12" style="color:#3c6082;">系统翻译对话功能</div>
+                    </div>
+                </div>
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-12 mt-3"
+                            style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="width: 25%;color:#3c6082;">翻译开启状态</span>
+                            <select class="form-control" name="" id="translate_statu" aria-label=""
+                                style="width: 70%; font-size: 12px;">
+                                <option value="">翻译开启状态</option>
+                                <option value="tscs">开启客户端翻译，关闭客服端翻译</option>
+                                <option value="wtcss">开启客服端翻译，关闭客户端翻译</option>
+                                <option value="tfbs">开启双向翻译</option>
+                                <option value="closed">关闭翻译</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 mt-3"
+                            style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="width: 25%;color:#3c6082;">客户语言</span>
+                            <select class="form-control" name="" id="client_language" aria-label=""
+                                style="width: 70%; font-size: 12px;">
+                                <option value="">选择语言</option>
+                                {{ lang_html | safe }}
+                            </select>
+                        </div>
+                        <div class="col-lg-12 mt-3"
+                            style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="width: 25%;color:#3c6082;">客户端客服信息展示语言</span>
+                            <select class="form-control" name="" id="client_service_language" aria-label=""
+                                style="width: 70%; font-size: 12px;">
+                                <option value="">选择语言</option>
+                                {{ lang_html | safe }}
+                            </select>
+                        </div>
+                        <div class="col-lg-12 mt-3"
+                            style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="width: 25%;color:#3c6082;">客服语言</span>
+                            <select class="form-control" name="" id="service_language" aria-label=""
+                                style="width: 70%; font-size: 12px;">
+                                <option value="">选择语言</option>
+                                {{ lang_html | safe }}
+                            </select>
+                        </div>
+                        <div class="col-lg-12 mt-3"
+                            style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="width: 25%;color:#3c6082;">客服端客户信息展示语言</span>
+                            <select class="form-control" name="" id="service_client_language" aria-label=""
+                                style="width: 70%; font-size: 12px;">
+                                <option value="">选择语言</option>
+                                {{ lang_html | safe }}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="row" style="max-width: 600px;">
+            <div class="col-lg-12 mt-3">
+                <div class="row">
+                    <div class="col-lg-8" style="color:#3c6082;">客服自动回复</div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 mt-3 pointer">
+                        <textarea class="form-control" id="automati_creply" rows="4" aria-label=""
+                            placeholder="客服自动回复"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="max-width: 600px;">
+            <div class="col-lg-12 mt-3">
+                <div class="row">
+                    <div class="col-lg-8" style="color:#3c6082;">客服回复超时自动回复的时间</div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 mt-3 pointer">
+                        <input type="number" class="form-control" id="automati_creply_time" aria-label=""/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="row" style="max-width: 600px;">
+            <div class="col-lg-12 mt-3">
+                <div class="row">
+                    <div class="col-lg-8" style="color:#3c6082;">客户未发送消息自动结束对话时间</div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 mt-3 pointer">
+                        <input type="number" class="form-control" id="automati_close_time" aria-label=""/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="row" style="max-width: 600px;">
+            <div class="col-lg-12 mt-3">
+                <div class="row">
+                    <div class="col-lg-8" style="color:#3c6082;">默认评论</div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 mt-3 pointer">
+                        <textarea class="form-control" id="default_comment" rows="4" aria-label=""
+                            placeholder="默认评论"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="row" style="max-width: 600px;">
+            <div class="col-lg-12 mt-3">
+                <div class="row">
+                    <div class="col-lg-8" style="color:#3c6082;">网站登录IP白名单</div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 mt-3 pointer">
+                        <textarea class="form-control" id="ip_whitelist" rows="4" aria-label=""
+                            placeholder="网站登录IP白名单，一行一个"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="white_panel" style="padding: 0 40px 20px;">
+        <div class="row" style="max-width: 600px;">
+            <div class="col-lg-12 mt-3">
+                <div class="row">
+                    <div class="col-lg-8" style="color:#3c6082;">上传文件大小/KB <span
+                            style="color: #9db1c5;font-size: 12px;line-height: 30px;margin-left: 5px;display: block;">1KB按照1024计算</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 mt-3 pointer">
+                        <input type="text" class="form-control" aria-label="" placeholder="上传文件大小"
+                            id="control_file_size">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="white_panel">
+        <p style="color: #3c6082; height: 30px; line-height: 30px; font-size: 14px; margin-bottom: 8px;">客服提示语</p>
+        <textarea class="form-control" name="content" placeholder="输入客服提示语" id="clew_text" cols="30" rows="15"
+            aria-label=""></textarea>
+        <script>
+            var clew_text_ckdi = CKEDITOR.replace('clew_text', { height: 380 });
+        </script>
+    </div>
+
+    <div class="white_panel">
+        <p style="color: #3c6082; height: 30px; line-height: 30px; font-size: 14px; margin-bottom: 8px;">网站公告</p>
+        <textarea class="form-control" name="content" placeholder="输入网站公告" id="site_announcement" cols="30" rows="15"
+            aria-label=""></textarea>
+        <script>
+            var site_announcement_ckdi = CKEDITOR.replace('site_announcement', { height: 380 });
+        </script>
+    </div>
+
+</div>
+{% endif %}
+
+{% if tabName == 'siteColor' %}
+<!-- 网站皮肤 -->
+<div class="siteColorBox">
+
+    <div class="caoZuoBox">
+        <div class="formSettingBox">
+
+            <div class="setItme">
+                <h3 class="title" style="margin-bottom: 8px;">网站标题</h3>
+                <input type="text" id="site_title" class="p1 form-control" placeholder="" aria-label="">
+            </div>
+
+            <div class="setItme uploadSiteIcon">
+                <h3 class="title" style="margin-bottom: 15px;">网站Icon</h3>
+                <div class="file-button uploadBtn"
+                    style="border: 1px solid rgba(4,15,66,.2); width: 100px; height: 100px; position: relative; overflow: hidden; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; color: rgba(4,15,66,.2); margin: auto;">
+                    <span class="iconfont icon-shangchuan"
+                        style="display: block; text-align: center; font-size: 35px;"></span>
+                    <span style="display: block; text-align: center; font-size: 12px;">点击上传图片</span>
+                    <input type="file" aria-label="" id="uploadSiteIcon" style="-ms-filter: 'alpha(opacity=0)';"
+                        onchange="upload_file_func($('#uploadSiteIcon'), '', 'uploadSiteIcon', '/site_admin/siteManage', '', '{{ site_code or '' }}', '', uploadSiteIcon)">
+                </div>
+                <div class="yuLan"
+                    style="border: 1px solid rgba(4,15,66,.2); max-width: 90%; position: relative; overflow: hidden; border-radius: 5px; margin: auto; display: none;">
+                    <span class="iconfont icon-guanbi1"
+                        style="position: absolute; top: 5px; right: 5px; color: #d87272; font-size: 16px; cursor: pointer;"
+                        onclick="colse_uploadSiteIcon()"></span>
+                    <img id="site_icon" src="" alt="" style="display: inline-block; width: 100%;">
+                </div>
+                <div
+                    style="position: relative; text-align: center; overflow: hidden; box-sizing: border-box; padding-top: 5px; color: #8e8e8e;">
+                    180 * 180(px)</div>
+            </div>
+
+            <div style="margin-bottom: 5px;">颜色选择</div>
+            <div class="setItme" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="title">主题颜色</h3>
+                <input type="color" id="site_main_color" class="p1" placeholder="" aria-label=""
+                    style="width: 30px; height: 30px; position: relative; border: none; padding: 0;"
+                    onchange="update_site_main_color($(this).val())">
+            </div>
+            <div class="setItme" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="title">右侧信息栏背景颜色</h3>
+                <input type="color" id="site_right_info_back_color" class="p1" value="" placeholder=""
+                    onchange="site_right_info_back_color()" aria-label=""
+                    style="width: 30px; height: 30px; position: relative; border: none; padding: 0;">
+            </div>
+
+            <div class="setItme uploadSiteBack">
+                <h3 class="title" style="margin-bottom: 15px;">右侧信息栏图片</h3>
+                <div class="file-button"
+                    style="border: 1px solid rgba(4,15,66,.2); width: 100px; height: 100px; position: relative; overflow: hidden; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; color: rgba(4,15,66,.2); margin: auto;">
+                    <span class="iconfont icon-shangchuan"
+                        style="display: block; text-align: center; font-size: 35px;"></span>
+                    <span style="display: block; text-align: center; font-size: 12px;">点击上传图片</span>
+                    <input type="file" aria-label="" id="uploadSiteBack" style="-ms-filter: 'alpha(opacity=0)';"
+                        onchange="upload_file_func($('#uploadSiteBack'), '', 'uploadSiteBack', '/site_admin/siteManage', '', '{{ site_code or '' }}', '', uploadSiteBack)">
+                </div>
+                <div class="fenGe"
+                    style="overflow: hidden;line-height: 0;background-color: #e8e8e8;height: 1px; margin: 8px 0; box-sizing: border-box; display: none;">
+                </div>
+                <div class="yuLan"
+                    style="border: 1px solid rgba(4,15,66,.2); max-width: 90%; position: relative; overflow: hidden; border-radius: 5px; margin: auto; display: none;">
+                    <span class="iconfont icon-guanbi1"
+                        style="position: absolute; top: 5px; right: 5px; color: #d87272; font-size: 16px; cursor: pointer;"
+                        onclick="delsite_right_info_back_color($(this))"></span>
+                    <img id="site_right_info_img" src="" alt="" style="display: inline-block; width: 100%;">
+                </div>
+                <div
+                    style="position: relative; text-align: center; overflow: hidden; box-sizing: border-box; padding-top: 5px; color: #8e8e8e;">
+                    330 * 1200(px)</div>
+            </div>
+        </div>
+        <div class="executeBox">
+            <span class="btn btn-default cancelBnt" onclick="resetSiteColor('{{ site_code or '' }}')">重置</span>
+            <span class="btn btn-primary subBtn" data-sitecode="" id="postSiteColor" onclick="postSiteColor()">保存</span>
+        </div>
+    </div>
+
+    <div class="showResult hidden--mobile">
+        <div
+            style="width: 1500px; height: 1000px; position: relative; overflow: auto; box-shadow: rgba(0, 0, 0, 0.16) 0 5px 40px; transform:scale(0.6);">
+
+            <div id="containter">
+
+                <div class="leftBox">
+                    <div class="serviceIn">
+                        <img src="/public/chat/portrait/photo_chat.jpg" class="mt4 servicePortrait" alt="">
+                        <h2 class="serviceName">TK88</h2>
+                    </div>
+
+                    <div class="evaluateForm">
+                        <h3 class="tit3">请帮忙留个评价</h3>
+                        <ul class="pingFen">
+                            <li
+                                style="color: rgb(95, 184, 120); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                                <span style="margin-left: 0.8rem">非常满意</span>
+                            </li>
+                            <li class="levelLi">
+                                <div class="xingJi" data-fenshu="5">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                </div>
+                            </li>
+                            <li
+                                style="color: rgb(95, 184, 120); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                                <span style="margin-left: 0.8rem">满意</span>
+                            </li>
+                            <li class="levelLi" data-fenshu="4">
+                                <div class="xingJi">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                </div>
+                            </li>
+                            <li
+                                style="color: rgb(95, 184, 120); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                                <span style="margin-left: 0.8rem">一般</span>
+                            </li>
+                            <li class="levelLi" data-fenshu="3">
+                                <div class="xingJi">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                </div>
+                            </li>
+                            <li
+                                style="color: rgb(95, 184, 120); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                                <span style="margin-left: 0.8rem">不满意</span>
+                            </li>
+                            <li class="levelLi" data-fenshu="2">
+                                <div class="xingJi">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                </div>
+                            </li>
+                            <li
+                                style="color: rgb(95, 184, 120); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                                <span style="margin-left: 0.8rem">非常不满意</span>
+                            </li>
+                            <li class="levelLi" data-fenshu="1">
+                                <div class="xingJi">
+                                    <img src="/public/chat/images/star.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                    <img src="/public/chat/images/star-.png" alt="">
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="commentBox">
+                            <p>告诉我们更多：</p>
+                            <textarea name="" id="commentText" cols="30" rows="10" placeholder="告诉我们更多："
+                                aria-label=""></textarea>
+                        </div>
+
+                        <div class="subCommBox">
+                            <button class="subComment" id="subCommentBtn">提交</button>
+                        </div>
+                    </div>
+
+                    <div class="evaluateSuccess">
+                        <div class="scoreSubLoading" style="display: block; margin: 30% auto 0; text-align: center;">
+                            <img src="/public/chat/images/loading3.gif" alt=""
+                                style="width: 70px; display: inline-block;">
+                        </div>
+                        <div class="scoreSuccessBox" style="display: none; margin: 60px auto 0; text-align: center;">
+                            <span class="iconfont icon-chenggong3"
+                                style="color: #52c41a; font-size: 25px; margin-right: 5px; vertical-align: -5px;"></span>
+                            <span style="color: #545b62; font-size: 16px;">评论提交成功！</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contentBox">
+
+                    <div class="chatBox">
+                        <div class="chatMeassge">
+
+                            <div class="messageTop" style="display: none;">
+                                <span>Welcome to TK88, may I ask what information I can help you with?</span>
+                            </div>
+
+                        </div>
+
+                        <div class="chatTextBox">
+                            <div class="optionBtn pointer">
+                                <span class="iconfont icon-charutupian pointer"></span>
+                                <input type="file" id="uploadfile" alt="请选择图片">
+                            </div>
+                            <div class="optionBtn pointer" id="finishConversation">
+                                <span class="iconfont icon--tuichu pointer"></span>
+                            </div>
+                            <div class="TextBox">
+                                <span class="iconfont icon-fasong" id="faSongBtn"></span>
+                                <textarea type="text" name="" id="textContent" cols="" rows="" aria-label=""></textarea>
+                            </div>
+                        </div>
+
+                        <div class="chatFinishTextBox" style="display: none;">
+                            <span style="top: -12px; position: relative;">当前会话已结束，<a href="">点击可继续会话</a></span>
+                        </div>
+
+                    </div>
+
+                    <div class="problemBox">
+                        <div class="advertisement">
+                            <img src="" alt="">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+{% endif %}

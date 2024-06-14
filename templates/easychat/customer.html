@@ -1,0 +1,175 @@
+<style>
+    /*
+    .navHead{width: 100%;height: 60px;background: #FFFFFF;position: relative;box-sizing: border-box;overflow: hidden;padding: 0 30px;display: flex;align-items: center;justify-content: space-between;}
+    .dataTableBox{position: relative;box-sizing: border-box;padding: 20px;overflow: hidden;height: 100%;width: 100%;}
+    .dataTableBox .dataList{position: relative;box-shadow: none;background: #FFFFFF;box-sizing: border-box;overflow: hidden; overflow-y: scroll; padding: 10px 20px;font-size: 13px;height: calc(100% - 100px - 20px);width: 100%;}
+    .dataList .table{color: #666; font-size: 12px;}
+    .subBtn{background-color: #00c9d1 !important;color: #ffffff !important;border-color: #00c9d1;font-size: 14px;padding: 7px 15px;margin: 5px 15px 5px 0;}
+    .subBtn:hover{opacity: 0.8;border-color: #00c9d1;}
+    .cancelBnt{background: none;border-color: #00c9d1;color: #00c9d1;font-size: 14px;padding: 7px 15px;}
+    .cancelBnt:hover{border-color: #00c9d1;color: #00c9d1;}
+    */
+</style>
+<script>
+    $(function () {
+        request_data(1, true)
+    })
+
+    // 请求数据
+    function request_data(page, reset) {
+        let ip = '';
+        let name = '';
+        let username = '';
+        let site_name = '';
+        if (reset) {
+            $("input[name='ip']").val(ip);
+            $("input[name='name']").val(name);
+            $("input[name='username']").val(username);
+            $("input[name='site_name']").val(site_name);
+        } else {
+            ip = $.trim($("input[name='ip']").val());
+            name = $.trim($("input[name='name']").val());
+            username = $.trim($("input[name='username']").val());
+            site_name = $.trim($("input[name='site_name']").val());
+        }
+        $("#table_loading").css('display', 'flex');
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': customerPageUrl,
+            'data': { 'action': 'get_customer_datas', 'page': page ? page : 1, 'ip': ip, 'username': username, 'site_name': site_name, 'name': name },
+            'success': function (data) {
+                if (data.code === 200) {
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.table_html);
+                    $(".dataTableBottom").empty().append(data.data.dataTableBottom_html);
+                    $("#table_loading").css('display', 'none');
+                }
+            },
+            'error': function (xhr, textStatus, errorThrown) {
+                if (textStatus === 'timeout') {
+                    request_data(page, reset)
+                }
+            }
+        })
+    }
+
+    // 删除
+    function data_del_func(action, data_uuid, msg) {
+        xtalert.alertConfirm({
+            'msg': msg,
+            'confirmCallback': function () {
+                xtajax.post({
+                    'url': customerPageUrl,
+                    'data': { 'action': action, 'data_uuid': data_uuid },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            xtalert.alertSuccessToast('删除成功！');
+                            let ttd = setTimeout(function () {
+                                let page = parseInt($(".pages").attr('data-crrpage'));
+                                request_data(page);
+                            }, 1000)
+                        } else {
+                            xtalert.alertError(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    // 修改
+    function edit_Customer_data(data_uuid) {
+        let username = $.trim($("#username").val());
+        let telegram = $.trim($("#telegram").val());
+        let telephone = $.trim($("#telephone").val());
+        let email = $.trim($("#email").val());
+        let address = $.trim($("#address").val());
+        let note = $.trim($("#note").val());
+        if (!username) { return xtalert.showValidationError('请输入姓名!') }
+        xtajax.post({
+            'url': customerPageUrl,
+            'data': { 'action': 'editCustomer', 'username': username, 'telegram': telegram, 'telephone': telephone, 'email': email, 'address': address, 'note': note, 'data_uuid': data_uuid },
+            'success': function (data) {
+                if (data.code === 200) {
+                    xtalert.alertSuccessToast('修改成功！');
+                    let ttd = setTimeout(function () {
+                        let page = parseInt($(".pages").attr('data-crrpage'));
+                        request_data(page);
+                    }, 1000)
+                }
+            }
+        })
+    }
+
+    // 拉黑
+    function post_heimingdan_data(data_uuid) {
+        let duration = $.trim($("#duration").val());
+        if (!duration) { return xtalert.showValidationError('请选择时长') }
+        xtajax.post({
+            'url': customerPageUrl,
+            'data': { 'action': 'add_heimingdan_data', 'data_uuid': data_uuid, 'duration': duration, 'is_cistomer': true },
+            'success': function (data) {
+                if (data.code === 200) {
+                    xtalert.alertSuccessToast('操作成功！')
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000)
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+</script>
+<div class="navHead hidden--mobile">
+    <span>访客数据</span>
+</div>
+<div class="dataTableBox">
+    <div class="dataList">
+        <div class="form-inline" style="margin-bottom: 10px;border-bottom: 1px solid #dee2e6;margin-top: 10px;">
+            <lable class="hidden--mobile">搜索：</lable>
+            <input type="text" class="form-control mb-2 mr-sm-2" name="ip" value="{{ ip or '' }}" placeholder="IP"
+                style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="name" value="{{ name or '' }}"
+                placeholder="访客序列号" style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="username" value="{{ username or '' }}"
+                placeholder="访客名称" style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2 select-history" name="site_name" value="{{ site_name or '' }}"
+                placeholder="渠道名称" style="color: #666666; font-size: 13px;" aria-label="">
+            <span class="btn btn-primary mb-2 subBtn ml-2" style="padding: 3px 13px; "
+                onclick="request_data(1)"><i class="iconfont icon-sousuo"></i></span>
+            <span class="btn btn-default cancelBnt ml-2"
+                style="padding: 5px 13px; margin-bottom: 7px; " onclick="request_data(1, true)"><i
+                    class="iconfont icon-zhongzhi1" style="font-size: 13px;"></i></span>
+        </div>
+        <div class="table-scroll">
+            <table class="table table-hover table-bordered text-center" style="min-width: 800px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>渠道</td>
+                        <td>访客序列号</td>
+                        <td>名片</td>
+                        <td>电话</td>
+                        <td>telegram</td>
+                        <td>进入时间</td>
+                        <td>来源页</td>
+                        <td>IP</td>
+                        <td>轨迹</td>
+                        <td>拉黑状态</td>
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="table_loading">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="dataTableBottom">
+
+    </div>
+</div>

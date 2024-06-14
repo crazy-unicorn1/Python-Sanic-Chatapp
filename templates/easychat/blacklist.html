@@ -1,0 +1,88 @@
+<style>
+    a.aSetup{color: #212b36; cursor: pointer;}
+    a.aSetup:hover{color: #00c9d1; cursor: pointer;}
+
+</style>
+<script>
+
+    // 请求数据
+    function request_data(page, reset) {
+        let ip = '';
+        if (reset){
+            $("input[name='ip']").val(ip);
+        }else {
+            ip = $.trim($("input[name='ip']").val());
+        }
+        $("#table_loading").css('display', 'flex');
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': blackListPageUrl,
+            'data': {'action': 'get_blacklist_html', 'page': page ? page : 1, 'ip': ip},
+            'success': function (data) {
+                if (data.code === 200){
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.table_html);
+                    $(".dataTableBottom").empty().append(data.data.dataTableBottom_html);
+                    $("#table_loading").css('display', 'none');
+                }
+            }
+        })
+    }
+
+    function rescind_blacklist_func(action, data_uuid) {
+        xtajax.post({
+            'url': blackListPageUrl,
+            'data': {'action': action, 'data_uuid': data_uuid},
+            'success': function (data) {
+                if (data.code === 200){
+                    xtalert.alertSuccessToast('操作成功！')
+                    setTimeout(function () {
+                        let page = parseInt($(".pages").attr('data-crrpage'));
+                        request_data(page);
+                    },1000)
+                }else{
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+</script>
+
+<div class="navHead hidden--mobile">
+    <span><a class="aSetup" onclick="$('.setupNav').click();">系统设置</a> | 黑名单</span>
+</div>
+
+<div class="dataTableBox">
+    <div class="dataList">
+        <div class="form-inline" style="margin-bottom: 10px;border-bottom: 1px solid #dee2e6;margin-top: 10px;">
+            <lable class="hidden--mobile">搜索：</lable>
+            <input type="text" class="form-control mb-2 mr-sm-2" name="ip" value="" placeholder="黑名单IP" style="color: #666666; font-size: 13px;" aria-label="">
+            <span class="btn btn-primary mb-2 mr-sm-2 subBtn" style="padding: 5px 13px; margin: 0 10px 5px 0;" onclick="request_data(1)">提交</span>
+            <span class="btn btn-default ml-1 cancelBnt" style="padding: 5px 13px; margin-bottom: 7px; margin-right: 10px;" onclick="request_data(1, true)"><i class="iconfont icon-zhongzhi1" style="font-size: 13px;"></i></span>
+            <span class="btn btn-primary subBtn" style="padding: 5px 13px; margin-bottom: 7px; margin-right: 5px;" onclick="post_update_statu('empty_blacklist', '666', '确定清空当前黑名单吗？')">清空黑名单</span>
+        </div>
+        <div class="table-scroll">
+            <table class="table table-hover table-bordered text-center" style="min-width: 600px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>访客ID</td>
+                        <td>IP</td>
+                        <td>操作时间</td>
+                        <td>截止时间</td>
+                        <td>操作人</td>
+                        <td>备注</td>
+                        <td>操作</td>
+                    </tr>
+                    {{ table_html | safe }}
+                </tbody>
+            </table>
+            <div id="table_loading">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="dataTableBottom">{{ dataTableBottom_html | safe }}</div>
+</div>

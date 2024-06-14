@@ -1,0 +1,200 @@
+<style>
+    .addQuickReplyBox{background: #FFFFFF;padding: 20px;position: relative;width: 100%;}
+    .addQuickReplyBox .portrait{width: 100%;margin-bottom: 15px;position: relative;box-sizing: border-box;overflow: hidden;padding: 0 10px;}
+    .quickReply .pages{position: relative;overflow: hidden;box-sizing: border-box;display: flex;justify-content: center;align-items: center;}
+    .quickReply .pages li{padding: 0;border-radius: 50%;width: 25px;height: 25px;line-height: 25px;text-align: center;margin: 0 6px;overflow: hidden;background: #fff;color: #999;border: 1px solid #e2e2e2;display: inline-block;cursor: pointer;}
+    .quickReply .pages li.active{background-color: #00c9d1; color: #FFFFFF;cursor:not-allowed;pointer-events:none;}
+    .quickReply .table .iconfont{color:#666; font-size: 14px;}
+    .quickReply .pages li.active .iconfont{color: #FFFFFF;}
+    .quickReply .pages li.forbid{cursor:not-allowed;pointer-events:none;}
+</style>
+<script>
+
+    $(function () {
+        fatch_quickReply(1);
+    })
+
+    // 加载数据
+    function fatch_quickReply(page) {
+        $(".qrDataList").find('.qr_loading').show(0);
+        $(".qrDataList").find('.table').hide(0);
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': '/site_admin/quickReply',
+            'data': {'action': 'get_quickReply_datas', 'page': page},
+            'success': function (data) {
+                if (data.code === 200){
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.html);
+                    $(".qrDataBottom").empty().append(data.data.page_html);
+                    $(".qrDataList").find('.qr_loading').hide(0);
+                    $(".qrDataList").find('.table').show(0);
+                }else{
+                    xtalert.alertErrorToast('获取数据失败！')
+                }
+            }
+        })
+    }
+
+    // 编辑快捷语句
+    function edit_QuickReply_html(data_uuid) {
+        if(!data_uuid){return xtalert.alertErrorToast('缺少数据id!')}
+        xtajax.post({
+            'data': {'action': 'edit_QuickReply_html', 'data_uuid': data_uuid},
+            'success':function (data){
+                if (data.code === 200){
+                    swal({
+                        title: '编辑常用语',
+                        width: 800,
+                        html: data.message,
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        showCloseButton: true,
+                        allowEscapeKey: false
+                    })
+                }else {
+                    return xtalert.alertError(data.message)
+                }
+            }
+        })
+    }
+
+    // 添加快捷语句函数
+    function post_QuickReply_data(action, data_uuid) {
+        if (!action){return}
+        let qr_title = $.trim($("#qr_title").val());
+        let qr_content = $.trim($("#qr_content").val());
+        if (!qr_title){return xtalert.showValidationError('请输入标题！')}
+        if (!qr_content){return xtalert.showValidationError('请输入内容！')}
+        let datad = data_uuid ? data_uuid : '';
+        xtajax.post({
+            'url': '/site_admin/quickReply',
+            'data': {'action': action, 'qr_title': qr_title, 'qr_content':qr_content, 'data_uuid':datad},
+            'success': function (data) {
+                if (data.code === 200){
+                    if (action === 'add_QuickReply_data'){
+                        xtalert.alertSuccessToast('添加成功！');
+                    }
+                    if (action === 'edit_QuickReply_data'){
+                        xtalert.alertSuccessToast('编辑成功！');
+                    }
+                    let crrpage = parseInt($(".quickReply").find('.pages').attr('data-crrpage'));
+                    fatch_quickReply(crrpage);
+                }else {
+                    return xtalert.alertError(data.message)
+                }
+            }
+        })
+    }
+
+    // 删除快捷语句
+    function del_QuickReply_func(data_uuid) {
+        xtalert.alertConfirm({
+            'msg': '确认操作？',
+            'confirmCallback':function () {
+                Swal({
+                    title: false,
+                    text: '操作中，请稍等...',
+                    showCloseButton: false,
+                    showCancelButton: false,
+                    showconfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                xtajax.post({
+                    'url': '/site_admin/quickReply',
+                    'data': {'action': 'del_QuickReply', 'data_uuid': data_uuid},
+                    'success': function (data) {
+                        if (data.code === 200){
+                            xtalert.alertSuccessToast('数据删除成功！');
+                            let crrpage = parseInt($(".quickReply").find('.pages').attr('data-crrpage'));
+                            fatch_quickReply(crrpage);
+                        }else {
+                            return xtalert.alertErrorToast(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    // 清空快捷语句
+    function empty_QuickReply() {
+        xtalert.alertConfirm({
+            'msg': '确认操作？',
+            'confirmCallback':function () {
+                Swal({
+                    title: false,
+                    text: '操作中，请稍等...',
+                    showCloseButton: false,
+                    showCancelButton: false,
+                    showconfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                xtajax.post({
+                    'url': '/site_admin/quickReply',
+                    'data': {'action': 'empty_QuickReply'},
+                    'success': function (data) {
+                        if (data.code === 200){
+                            xtalert.alertSuccessToast('删除成功！');
+                            return fatch_data_list('quickReply_list_html', 1);
+                        }else {
+                            return xtalert.alertError(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+</script>
+
+
+<!-- 快捷语句 -->
+<div class="quickReply asyncTable ">
+    <div class="qrHead">
+        <div>
+            <span class="kfCancelBtn" onclick="post_from_html('add_QuickReply_html', '', '添加快捷语句', '', '/site_admin/quickReply')" style="padding: 9px 12px;">添加快捷语句</span>
+        </div>
+        <div>
+            <span class="clearBtn" onclick="empty_QuickReply()"><i class="iconfont icon-tubiao_qingchu mr-1"></i>清除</span>
+        </div>
+    </div>
+    <div class="qrDataList qrDataList-mobile-problem" style="padding: 0 10px;">
+        <div class="qr_loading" style="position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <img src="/public/chat/images/loading-0.gif" alt="" style="width: 230px;display: block;">
+        </div>
+        <div class="dataList table-scroll">
+            <table class="table table-hover table-bordered text-center" style="min-width: 800px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>标题</td>
+                        <td>内容</td>
+                        <td width="300">创建时间</td>
+                        <td width="160">操作</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="qrDataBottom">
+        <span>总信息条数：0</span>
+        <ul class="pages" data-crrpage="1">
+            <li class="left_page">
+                <span class="iconfont icon-fangxiang-zuo"></span>
+            </li>
+            <li class="right_page">
+                <span class="iconfont icon-fangxiang-you"></span>
+            </li>
+        </ul>
+    </div>
+</div>

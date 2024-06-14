@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no"
+    />
+    <title></title>
+    <script src="/public/chat/js/jquery.js"></script>
+    <link rel="icon" href="/public/chat/portrait/photo_chat.jpg" />
+    <link
+      rel="stylesheet"
+      href="/public/chat/bootstrap/css/bootstrap.min.css"
+    />
+    <script src="/public/chat/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/public/chat/js/socket.io.min.js"></script>
+    <script src="/public/chat/js/fingerprint2.js"></script>
+    <script src="/static/common/xtajax.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/iconfont.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='common/daterangepicker/daterangepicker.css') }}"
+    />
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='common/daterangepicker/moment.min.js') }}"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='common/daterangepicker/daterangepicker.js') }}"
+    ></script>
+    <script type="text/javascript" src="/public/chat/js/pickerDate.js"></script>
+    <link rel="stylesheet" href="/public/chat/baguetteBox/baguetteBox.css" />
+    <script src="/public/chat/baguetteBox/baguetteBox.js"></script>
+    <link rel="stylesheet" href="/public/chat/css/app.css" />
+    <style>
+      #chatAutoReplyProblems {
+        background: #f2f2f2;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        height: fit-content;
+        max-width: -webkit-fill-available;
+        display: flex;
+        width: 100%;
+        overflow: auto;
+        gap: 6px;
+      }
+      #chatAutoReplyProblems button {
+        padding: 11px 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+        width: fit-content;
+        text-wrap: nowrap;
+      }
+
+      #chatAutoReplyProblems button:hover {
+        opacity: 0.8;
+      }
+    </style>
+    <script>
+      var chatConfig = {};
+      var sessionCode = '{{ site_code }}';
+      var chatSessionKey = '{{ site_code }}_chatSession';
+      var chatUsidKey = '{{ site_code }}_chatUsid';
+      const _charStr = 'abacdefghjklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789';
+      let service_portrait = '';
+      // 当前窗口激活状态
+      var clipboardFile = null;
+      var windowFocusStatu = true;
+      const image_types = {#image_types#};
+      const video_types = {#video_types#};
+      const file_size = {#file_size#};
+      const zzsrz = '正在输入中...';
+      const fastState = {#fastState#};
+      // 连接初始化
+      function download_func(fileUrl) {
+        var link = document.createElement("a");
+        link.setAttribute("download", "");
+        link.href = fileUrl;
+        link.click();
+        link.remove();
+      }
+    </script>
+    <script src="/public/chat/js/app.js"></script>
+  </head>
+  <body>
+    <div class="blockScreen">
+      <img src="/public/chat/images/loading1.gif" alt="" />
+    </div>
+
+    <div id="containter" style="display: none">
+      <div class="leftBox">
+        <div class="serviceIn">
+          <img
+            src="/public/chat/images/photo_chat.jpg"
+            class="mt4 servicePortrait"
+            alt=""
+          />
+          <h2 class="serviceName">easychat24</h2>
+        </div>
+
+        <div class="evaluateForm">
+          <h3 class="tit3">请帮忙留个评价</h3>
+          <ul class="pingFen">
+            <li
+              style="
+                color: rgb(95, 184, 120);
+                margin: 0 auto 0.5rem;
+                font-size: 0.9rem;
+                width: 19.4rem;
+              "
+            >
+              <span style="margin-left: 0.8rem">非常满意</span>
+            </li>
+            <li class="levelLi" data-fenshu="5">
+              <div class="xingJi">
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+              </div>
+            </li>
+            <li
+              style="
+                color: rgb(95, 184, 120);
+                margin: 0 auto 0.5rem;
+                font-size: 0.9rem;
+                width: 19.4rem;
+              "
+            >
+              <span style="margin-left: 0.8rem">满意</span>
+            </li>
+            <li class="levelLi" data-fenshu="4">
+              <div class="xingJi">
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+              </div>
+            </li>
+            <li
+              style="
+                color: rgb(95, 184, 120);
+                margin: 0 auto 0.5rem;
+                font-size: 0.9rem;
+                width: 19.4rem;
+              "
+            >
+              <span style="margin-left: 0.8rem">一般</span>
+            </li>
+            <li class="levelLi" data-fenshu="3">
+              <div class="xingJi">
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+              </div>
+            </li>
+            <li
+              style="
+                color: rgb(95, 184, 120);
+                margin: 0 auto 0.5rem;
+                font-size: 0.9rem;
+                width: 19.4rem;
+              "
+            >
+              <span style="margin-left: 0.8rem">不满意</span>
+            </li>
+            <li class="levelLi" data-fenshu="2">
+              <div class="xingJi">
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+              </div>
+            </li>
+            <li
+              style="
+                color: rgb(95, 184, 120);
+                margin: 0 auto 0.5rem;
+                font-size: 0.9rem;
+                width: 19.4rem;
+              "
+            >
+              <span style="margin-left: 0.8rem">非常不满意</span>
+            </li>
+            <li class="levelLi" data-fenshu="1">
+              <div class="xingJi">
+                <img src="/public/chat/images/star.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+                <img src="/public/chat/images/star-.png" alt="" />
+              </div>
+            </li>
+          </ul>
+
+          <div class="commentBox">
+            <p>告诉我们更多：</p>
+            <textarea
+              name=""
+              id="commentText"
+              cols="30"
+              rows="10"
+              placeholder="告诉我们更多："
+              aria-label=""
+            >
+{{ default_comment or '' }}</textarea
+            >
+          </div>
+
+          <div class="subCommBox">
+            <button class="subComment" id="subCommentBtn">提交</button>
+          </div>
+        </div>
+
+        <div class="evaluateSuccess">
+          <div
+            class="scoreSubLoading"
+            style="display: block; margin: 30% auto 0; text-align: center"
+          >
+            <img
+              src="/public/chat/images/loading3.gif"
+              alt=""
+              style="width: 70px; display: inline-block"
+            />
+          </div>
+          <div
+            class="scoreSuccessBox"
+            style="
+              display: none;
+              margin: 60px auto 0;
+              text-align: center;
+              flex-direction: column;
+            "
+          >
+            <span
+              class="iconfont icon-chenggong3"
+              style="
+                color: #52c41a;
+                font-size: 25px;
+                margin-right: 5px;
+                vertical-align: -5px;
+                margin-bottom: 8px;
+              "
+            ></span>
+            <span style="color: #545b62; font-size: 16px">评论提交成功！</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contentBox">
+        <div class="chatBox" style="display: flex; flex-direction: column">
+          <div class="chatMeassge" style="flex: 1">
+            <div class="messageTop">
+              <span id="site_announcement"></span>
+            </div>
+          </div>
+          <div>
+            <div id="chatAutoReplyProblems"></div>
+            <div class="chatTextBox">
+              <div class="optionBtn pointer">
+                <!-- <span class="iconfont icon-charutupian pointer"></span> -->
+                <span class="iconfont icon-lianjie1 pointer"></span>
+                <input
+                  type="file"
+                  id="uploadfile"
+                  alt="请选择文件"
+                  {%
+                  if
+                  typeStr
+                  %}accept="{{ typeStr }}"
+                  {%
+                  endif
+                  %}
+                />
+              </div>
+              <div class="optionBtn pointer" id="finishConversation">
+                <span class="iconfont icon--tuichu pointer"></span>
+              </div>
+              <div class="TextBox">
+                <!-- <span class="iconfont icon-biaoqing"></span> -->
+                <span class="iconfont icon-fasong" id="faSongBtn"></span>
+                <textarea
+                  type="text"
+                  name=""
+                  id="textContent"
+                  cols=""
+                  rows=""
+                  aria-label=""
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="chatFinishTextBox" style="display: none">
+            <span style="top: -12px; position: relative"
+              >当前会话已结束，<a href="">点击可继续会话</a></span
+            >
+          </div>
+        </div>
+
+        <div class="problemBox">
+          <div class="advertisement">
+            <img src="" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="LeaveMessage" style="display: none">
+      <div class="LeaveMessageBox">
+        <div class="head_tit">
+          <span>AI</span>
+        </div>
+
+        <div class="messageForm">
+          <p class="promptText">客服暂时忙，请留言!</p>
+          <div class="list-group-item">
+            <span
+              style="
+                width: 105px;
+                text-align: right;
+                display: inline-block;
+                position: relative;
+              "
+              ><span class="text-danger">*</span>姓名：</span
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              placeholder="姓名（必填）"
+              aria-label=""
+              style="display: inline-block; width: calc(100% - 120px)"
+            />
+          </div>
+          <div class="list-group-item">
+            <span
+              style="
+                width: 105px;
+                text-align: right;
+                display: inline-block;
+                position: relative;
+              "
+              ><span class="text-danger">*</span>电话：</span
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="telephone"
+              placeholder="电话（必填）"
+              aria-label=""
+              style="display: inline-block; width: calc(100% - 120px)"
+            />
+          </div>
+          <div class="list-group-item">
+            <span
+              style="
+                width: 105px;
+                text-align: right;
+                display: inline-block;
+                position: relative;
+              "
+              >邮箱：</span
+            >
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="邮箱"
+              value=""
+              aria-label=""
+              style="display: inline-block; width: calc(100% - 120px)"
+            />
+          </div>
+          <div class="list-group-item">
+            <span
+              style="
+                width: 105px;
+                text-align: right;
+                display: inline-block;
+                position: relative;
+              "
+              ><span class="text-danger">*</span>备注：</span
+            >
+            <textarea
+              class="form-control"
+              name="note"
+              id="note"
+              cols="15"
+              rows="10"
+              placeholder="备注"
+              aria-label=""
+              style="display: inline-block; width: calc(100% - 120px)"
+            ></textarea>
+          </div>
+        </div>
+        <div class="subMessageBox">
+          <span class="subLeaveBtn" onclick="sub_LeaveMessage_func()"
+            >提交</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div id="diaShade" style="display: none">
+      <div class="dialogWrapDanFu">
+        <div class="head">
+          <h2>满意度评价</h2>
+          <span
+            id="colse_dialogWrapDanFu"
+            class="iconfont icon-guanbi2"
+            style="cursor: pointer"
+            onclick="$('#diaShade').hide();"
+          ></span>
+        </div>
+        <div class="danFenCon">
+          <div class="pfLevel">
+            <span>评分：</span>
+            <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+            <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+            <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+            <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+            <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+          </div>
+          <div class="pinLunBox">
+            <textarea
+              name=""
+              cols="30"
+              rows="10"
+              id="pinLunText"
+              placeholder="请给我们留言!"
+              aria-label=""
+            >
+{{ default_comment or '' }}</textarea
+            >
+          </div>
+
+          <div class="subBox">
+            <span class="subPingLunBtn">提交</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="confirmModal">
+        <div class="promptBox">
+          <span class="xw" style="display: block">您确定离开此对话吗？</span>
+          <img
+            src=""
+            alt=""
+            style="
+              position: relative;
+              max-width: 500px;
+              width: 100%;
+              max-height: 500px;
+              display: none;
+            "
+          />
+        </div>
+        <div class="btnModalBox">
+          <div class="cancelBtn"><span>取消</span></div>
+          <div class="confirmBtn"><span>确定</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="fastBox">
+      <div class="head">
+        <span>进入在线客服，问题分类</span>
+      </div>
+      <div class="list-group-item problemCheckGroup" style="display: flex">
+        <span
+          style="
+            width: 130px;
+            text-align: right;
+            display: inline-block;
+            position: relative;
+            margin-right: 5px;
+          "
+        >
+          <i
+            style="
+              position: relative;
+              background-color: #676666;
+              height: 8px;
+              width: 8px;
+              overflow: hidden;
+              border-radius: 50%;
+              margin-right: 7px;
+              display: inline-block;
+            "
+          ></i>
+          <b>选择问题：</b>
+        </span>
+        <div
+          class="problemCheck"
+          style="display: inline-block; width: calc(100% - 150px)"
+        >
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="problem"
+              id="problem1"
+              value="czwt"
+              checked
+            />
+            <label class="form-check-label" for="problem1">充值问题</label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="problem"
+              id="problem2"
+              value="txwt"
+            />
+            <label class="form-check-label" for="problem2">提现问题</label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="problem"
+              id="problem3"
+              value="cjsq"
+            />
+            <label class="form-check-label" for="problem3">彩金申请</label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="problem"
+              id="problem4"
+              value="qtwt"
+            />
+            <label class="form-check-label" for="problem4">其他问题</label>
+          </div>
+        </div>
+      </div>
+      <div class="list-group-item">
+        <span
+          style="
+            width: 130px;
+            text-align: right;
+            display: inline-block;
+            position: relative;
+            margin-right: 5px;
+          "
+        >
+          <i
+            style="
+              position: relative;
+              background-color: #676666;
+              height: 8px;
+              width: 8px;
+              overflow: hidden;
+              border-radius: 50%;
+              margin-right: 7px;
+              display: inline-block;
+            "
+          ></i>
+          <b>账号：</b>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          id="account"
+          value=""
+          placeholder="账号"
+          aria-label=""
+          style="display: inline-block; width: calc(100% - 150px)"
+        />
+      </div>
+      <div class="list-group-item">
+        <span
+          style="
+            width: 130px;
+            text-align: right;
+            display: inline-block;
+            position: relative;
+            margin-right: 5px;
+          "
+        >
+          <i
+            style="
+              position: relative;
+              background-color: #676666;
+              height: 8px;
+              width: 8px;
+              overflow: hidden;
+              border-radius: 50%;
+              margin-right: 7px;
+              display: inline-block;
+            "
+          ></i>
+          <b>提现时间：</b>
+        </span>
+        <input
+          type="text"
+          class="form-control selectTiime"
+          id="txTme"
+          value=""
+          placeholder="提现时间"
+          aria-label=""
+          style="display: inline-block; width: calc(100% - 150px)"
+        />
+      </div>
+      <div class="list-group-item">
+        <span
+          style="
+            width: 130px;
+            text-align: right;
+            display: inline-block;
+            position: relative;
+            margin-right: 5px;
+          "
+        >
+          <i
+            style="
+              position: relative;
+              background-color: #676666;
+              height: 8px;
+              width: 8px;
+              overflow: hidden;
+              border-radius: 50%;
+              margin-right: 7px;
+              display: inline-block;
+            "
+          ></i>
+          <b>充值时间：</b>
+        </span>
+        <input
+          type="text"
+          class="form-control selectTiime"
+          id="czTime"
+          value=""
+          placeholder="充值时间"
+          aria-label=""
+          style="display: inline-block; width: calc(100% - 150px)"
+        />
+      </div>
+      <div style="display: none">
+        <div class="list-group-item cjhdTextGroup">
+          <span
+            style="
+              width: 130px;
+              text-align: right;
+              display: inline-block;
+              position: relative;
+              margin-right: 5px;
+            "
+          >
+            <i
+              style="
+                position: relative;
+                background-color: #676666;
+                height: 8px;
+                width: 8px;
+                overflow: hidden;
+                border-radius: 50%;
+                margin-right: 7px;
+                display: inline-block;
+              "
+            ></i>
+            <b>参加活动内容：</b>
+          </span>
+          <textarea
+            class="form-control"
+            id="cjhdText"
+            cols="30"
+            rows="10"
+            placeholder="参加活动内容"
+            style="display: inline-block; width: calc(100% - 150px)"
+            aria-label=""
+          ></textarea>
+        </div>
+      </div>
+      <div style="display: none">
+        <div class="list-group-item problemImageGroup" style="display: flex">
+          <span
+            style="
+              width: 130px;
+              text-align: right;
+              display: inline-block;
+              position: relative;
+              margin-right: 5px;
+            "
+          >
+            <i
+              style="
+                position: relative;
+                background-color: #676666;
+                height: 8px;
+                width: 8px;
+                overflow: hidden;
+                border-radius: 50%;
+                margin-right: 7px;
+                display: inline-block;
+              "
+            ></i>
+            <b>图片：</b>
+          </span>
+          <input
+            type="hidden"
+            class="form-control"
+            id="problemImage"
+            value=""
+            placeholder="图片"
+            style="display: inline-block; width: calc(100% - 150px)"
+            aria-label=""
+          />
+          <div
+            class="demoImageBox"
+            style="
+              position: relative;
+              width: calc(100% - 150px);
+              display: inline-block;
+              box-sizing: border-box;
+              overflow: hidden;
+            "
+          >
+            <div
+              class="uploadImageb file-button"
+              style="
+                width: 100px;
+                height: 100px;
+                cursor: pointer;
+                position: relative;
+                background-color: #fafafa;
+                overflow: hidden;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <i class="iconfont icon-shangchuan2"></i>
+              <input
+                type="file"
+                id="filepath"
+                onchange="upload_file()"
+                value=""
+                aria-label=""
+                placeholder=""
+              />
+            </div>
+            <div
+              class="demoIMage"
+              style="
+                max-height: 300px;
+                overflow: hidden;
+                position: relative;
+                display: none;
+                border-radius: 3px;
+                max-width: 80%;
+              "
+            >
+              <img
+                src=""
+                alt=""
+                style="
+                  height: 100%;
+                  min-height: 100px;
+                  display: inline-block;
+                  position: relative;
+                  max-width: 100%;
+                "
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="list-group-item text-center"
+        style="margin-top: 15px !important"
+      >
+        <span
+          class="subBtn"
+          onclick="subFastFunc()"
+          style="
+            position: relative;
+            padding: 8px 13px;
+            background-color: #ec3a4e;
+            color: #ffffff;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+          "
+          >点击提交</span
+        >
+        <span
+          class="enterBtn"
+          onclick="advance_chat_func()"
+          style="
+            position: relative;
+            padding: 8px 13px;
+            background-color: #ec3a4e;
+            color: #ffffff;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            display: none;
+          "
+          >进入客服</span
+        >
+      </div>
+    </div>
+  </body>
+</html>

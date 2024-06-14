@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="icon" href="./public/chat/portrait/photo_chat.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="./public/chat/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="/static/common/xtajax.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/iconfont.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/daterangepicker/daterangepicker.css') }}">
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='common/daterangepicker/moment.min.js') }}"></script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='common/daterangepicker/daterangepicker.js') }}"></script>
+    <script type="text/javascript" src="./public/chat/js/pickerDate.js"></script>
+    <link rel="stylesheet" href="./public/chat/baguetteBox/baguetteBox.css">
+    <script src="./public/chat/baguetteBox/baguetteBox.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="app.css">
+    <script>
+        var chatConfig = {};
+        var sessionCode = '{{ site_code }}';
+        var chatSessionKey = '{{ site_code }}_chatSession';
+        var chatUsidKey = '{{ site_code }}_chatUsid';
+        const _charStr = 'abacdefghjklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789';
+        let service_portrait = '';
+        // 当前窗口激活状态
+        var clipboardFile = null;
+        var windowFocusStatu = true;
+        const image_types = { #image_types# };
+        const video_types = { #video_types# };
+        const file_size = { #file_size# };
+        const zzsrz = '正在输入中...';
+        const fastState = { #fastState# };
+        // 连接初始化
+        var socket_app = io.connect(location.protocol + '//' + document.domain + '/chat', { transports: ['websocket'] });
+    </script>
+    <script src="./public/chat/js/app.js"></script>
+</head>
+
+<body>
+    <div class="loading">
+        <div class="lds-spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div id="containter">
+
+        <div class="leftBox">
+            <div class="serviceIn">
+                <img src="./public/chat/images/photo.jpeg" class="mt4 servicePortrait" alt="">
+                <h2 class="serviceName">easychat24</h2>
+            </div>
+
+            <div class="evaluateForm">
+                <h3 class="tit3">请帮忙留个评价</h3>
+                <ul class="pingFen">
+                    <li style="color: rgb(14, 1, 1); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                        <span style="margin-left: 0.8rem">非常满意</span>
+                    </li>
+                    <li class="levelLi" data-fenshu="5">
+                        <div class="xingJi">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                        </div>
+                    </li>
+                    <li style="color: rgb(14, 1, 1); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                        <span style="margin-left: 0.8rem">满意</span>
+                    </li>
+                    <li class="levelLi" data-fenshu="4">
+                        <div class="xingJi">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                        </div>
+                    </li>
+                    <li style="color: rgb(14, 1, 1); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                        <span style="margin-left: 0.8rem">一般</span>
+                    </li>
+                    <li class="levelLi" data-fenshu="3">
+                        <div class="xingJi">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                        </div>
+                    </li>
+                    <li style="color: rgb(14, 1, 1); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                        <span style="margin-left: 0.8rem">不满意</span>
+                    </li>
+                    <li class="levelLi" data-fenshu="2">
+                        <div class="xingJi">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                        </div>
+                    </li>
+                    <li style="color: rgb(14, 1, 1); margin: 0 auto 0.5rem; font-size: 0.9rem; width: 19.4rem;">
+                        <span style="margin-left: 0.8rem">非常不满意</span>
+                    </li>
+                    <li class="levelLi" data-fenshu="1">
+                        <div class="xingJi">
+                            <img src="./public/chat/images/star.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                            <img src="./public/chat/images/star-.png" alt="">
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="commentBox">
+                    <p>告诉我们更多：</p>
+                    <textarea name="" id="commentText" cols="30" rows="10" placeholder="您的评价和建议对我们很重要！期待留下您的评语~~"
+                        aria-label=""></textarea>
+                </div>
+
+                <div class="subCommBox">
+                    <button class="subComment" id="subCommentBtn">提交</button>
+                </div>
+            </div>
+
+            <div class="evaluateSuccess">
+                <div class="scoreSubLoading" style="display: block; margin: 30% auto 0; text-align: center;">
+                    <img src="./public/chat/images/loading3.gif" alt="" style="width: 70px; display: inline-block;">
+                </div>
+                <div class="scoreSuccessBox"
+                    style="display: none; margin: 60px auto 0; text-align: center; flex-direction: column;">
+                    <span class="iconfont icon-chenggong3"
+                        style="color: #52c41a; font-size: 25px; margin-right: 5px; vertical-align: -5px; margin-bottom: 8px;"></span>
+                    <span style="color: #545b62; font-size: 16px;">评论提交成功！</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="contentBox">
+
+            <div class="chatBox">
+                <div class="chatMeassge">
+                    <div class="messageTop">
+                        <p style="text-indent:0pt;text-align:center;font-size:medium;">
+                            <b><b><b><b><img src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/92.gif"
+                                                alt="">欢迎莅临【<span style="color:#E53333;">云顶娱乐场2023.com</span><span
+                                                style="color:#E53333;"></span>】7×24小时在线客服中心!<img
+                                                src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/92.gif"
+                                                alt=""></b></b></b></b>
+                        </p>
+                        <b><b>
+                                <p style="text-align:center;margin-left:0pt;text-indent:0pt;">
+                                    <b><span>官方网址</span><span>:</span></b><b><span
+                                            style="color:#E53333;">2023.com</span></b><b>&nbsp;&nbsp;易记网址:</b><b><span
+                                            style="color:#E53333;">12023.com</span></b>
+                                </p>
+                                <p style="margin-left:0.0000pt;text-indent:0.0000pt;text-align:center;">
+                                    <b><img src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/98.gif"
+                                            alt=""><span style="color:#99BB00;font-size:14px;">『热门优惠』</span><img
+                                            src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/98.gif"
+                                            alt=""><br>
+                                    </b><span style="font-size:12px;">强烈推荐</span><span
+                                        style="color:#337FE5;font-size:14px;">NO钱包</span><span
+                                        style="font-size:12px;">邀请您</span><span
+                                        style="color:#E53333;font-size:12px;">【六大活动】</span><span
+                                        style="font-size:12px;">①存款畅玩 日进斗金 ②取款加赠 取之不尽 ③NO钱包 刮刮乐④天峰惊喜领88888元 ⑤NO钱包金融
+                                        ⑥NO金融USDT</span><br>
+                                    <b><img src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/94.gif"
+                                            alt=""><span style="color:#99BB00;">『</span><span
+                                            style="color:#99BB00;">强烈建议您使用』</span><img
+                                            src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/94.gif"
+                                            alt=""></b>
+                                </p>
+                                <p style="margin-left:0.0000pt;">
+                                    <span style="font-size:12px;">【</span><span
+                                        style="font-size:12px;">NO钱包】、【钱能钱包】入款，安全无忧-24小时稳定使用，100%上分成功！入款即送1%返利！</span>
+                                </p>
+                            </b></b> <b><b>
+                                <p style="font-size:medium;text-indent:0pt;">
+                                    <b><span style="font-size:12pt;"></span></b><b><span
+                                            style="font-size:12pt;"></span></b><b><span
+                                            style="font-family:微软雅黑;color:#FF0000;font-size:10.5pt;"></span></b><b><span
+                                            style="font-family:微软雅黑;font-size:10.5pt;"></span></b><b><span
+                                            style="font-family:微软雅黑;color:#FF0000;font-size:10.5pt;"></span></b><span
+                                        style="font-size:13.5pt;"></span>
+                                </p>
+                                <div style="text-align:center;">
+                                    <b><span style="font-family:微软雅黑;color:#337FE5;font-size:10.5pt;"><img
+                                                src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/94.gif"
+                                                alt=""><img
+                                                src="https://yh2023.nqun92.com/static/js/kindeditor/plugins/emoticons/images/94.gif"
+                                                alt=""></span></b>
+                                </div>
+                                <p style="font-size:medium;">
+                                    <b><span style="color:#44546A;font-size:10.5pt;"></span></b><b><span
+                                            style="color:#44546A;font-size:10.5pt;"><span></span></span></b><b><span
+                                            style="font-family:微软雅黑;color:#44546A;font-size:10.5pt;"></span></b><b><span
+                                            style="color:#44546A;font-size:10.5pt;"><span></span></span></b>
+                                </p>
+                                <p style="font-size:medium;">
+                                    <b><span style="color:#44546A;font-size:10.5pt;"></span></b>
+                                </p>
+                            </b></b>
+                        <p
+                            style="font-size:medium;text-indent:0pt;color:#333333;text-align:center;background-color:#FFFFFF;">
+                            <b><b><span style="font-family:微软雅黑;color:#44546A;font-size:10.5pt;"><span
+                                            style="font-size:14px;"></span><span
+                                            style="font-size:14px;"></span></span></b><b><span
+                                        style="font-family:微软雅黑;color:#44546A;font-size:14px;"></span></b><b><span
+                                        style="font-family:微软雅黑;color:#44546A;font-size:10.5pt;"><span
+                                            style="font-size:14px;"></span><span
+                                            style="font-size:14px;"></span></span></b><b><span
+                                        style="font-family:微软雅黑;color:#44546A;font-size:10.5pt;"><span
+                                            style="font-size:14px;"></span><span
+                                            style="font-size:14px;"></span></span></b></b>
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="">
+                    <div class="quick-message d-flex d-md-none d-lg-none">
+                        <ul>
+                            <li><a>◆ 如何注册账号</a></li>
+                            <li><a>◆ NO钱包教程</a></li>
+                            <li><a>◆ 如何存款问题</a></li>
+                            <li><a>◆ 手机APP下载</a></li>
+                            <li><a>◆ 绑定银行卡</a></li>
+                            <li><a>◆ 更换提款银行</a></li>
+                            <li><a>◆ 如何注册账号</a></li>
+                            <li><a>◆ 如何注册账号</a></li>
+                        </ul>
+                    </div>
+                    <div class="chat-tool-box d-lg-flex d-md-flex d-none">
+                        <div class="optionBtn pointer d-lg-flex d-md-flex d-none">
+                            <label for="uploadImage">
+                                <span class="iconfont fa fa-file-image-o pointer"></span>
+                            </label>
+                            <input type="file" class="d-none" id="uploadImage" alt="请选择文件" accept="image/*">
+                        </div>
+                        <div class="optionBtn pointer d-lg-flex d-md-flex d-none">
+                            <label for="uploadVideo">
+                                <span class="iconfont fa fa-file-video-o pointer"></span>
+                            </label>
+                            <input type="file" class="d-none" id="uploadVideo" alt="请选择文件" accept="video/mp4,video/x-m4v,video/*">
+                        </div>
+                        <div class="optionBtn pointer d-lg-flex d-md-flex d-none">
+                            <label for="uploadFile">
+                                <span class="iconfont fa fa fa-file-pdf-o pointer"></span>
+                            </label>
+                            <input type="file" class="d-none" id="uploadFile" alt="请选择文件" accept=
+                            "application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+                            text/plain, application/pdf">
+                        </div>
+                        <div class="optionBtn pointer d-lg-flex d-md-flex d-none" id="finishConversation"
+                            data-bs-toggle="modal" data-bs-target="#finishModal">
+                            <span class="iconfont fa fa-sign-out pointer"></span>
+                        </div>
+                    </div>
+                    <div class="chatTextBox">
+                        <div id="toggleMobileTool" class="optionBtn pointer d-lg-none d-md-none d-flex">
+                            <!-- <span class="iconfont icon-charutupian pointer"></span> -->
+                            <span class="iconfont fa fa-plus pointer"></span>
+                        </div>
+                        <div class="TextBox">
+                            <!-- <span class="iconfont icon-biaoqing"></span> -->
+                            <span class="iconfont icon-fasong" id="faSongBtn"></span>
+                            <textarea type="text" name="" id="textContent" cols="" rows="" aria-label=""></textarea>
+                        </div>
+                        <span class="icon-send-message fa fa-send"></span>
+                    </div>
+
+                    <div class="list-optionBtn-mobile" style="display: none;">
+                        <div class="optionBtn pointer ">
+                            <label for="uploadImage">
+                                <span class="iconfont fa fa-file-image-o pointer"></span>
+                            </label>
+                        </div>
+                        <div class="optionBtn pointer ">
+                            <label for="uploadImage">
+                                <span class="iconfont fa fa-file-video-o pointer"></span>
+                            </label>
+                        </div>
+                        <div class="optionBtn pointer ">
+                            <label for="uploadImage">
+                                <span class="iconfont fa fa fa-file-pdf-o pointer"></span>
+                            </label>
+                        </div>
+                        <div class="optionBtn pointer" id="finishConversation" data-bs-toggle="modal"
+                            data-bs-target="#finishModal">
+                            <span class="iconfont fa fa-sign-out pointer"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chatFinishTextBox" style="display: none;">
+                    <span style="top: -12px; position: relative;">当前会话已结束，<a href="">点击可继续会话</a></span>
+                </div>
+
+
+            </div>
+
+            <div class="problemBox">
+                <div class="advertisement">
+                    <img src="./public/chat/images/gif/image_1.png" alt="">
+                </div>
+                <div class="helps-box">
+                    <p><strong><i class="fa fa-info-circle text-primary"></i> 常见问题</strong></p>
+                    <ul>
+                        <li><a>◆ 如何注册账号</a></li>
+                        <li><a>◆ NO钱包教程</a></li>
+                        <li><a>◆ 如何存款问题</a></li>
+                        <li><a>◆ 手机APP下载</a></li>
+                        <li><a>◆ 绑定银行卡</a></li>
+                        <li><a>◆ 更换提款银行</a></li>
+                        <li><a>◆ 如何注册账号</a></li>
+                        <li><a>◆ 如何注册账号</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal fade" id="finishModal" tabindex="-1" aria-labelledby="finishModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body py-5 text-center">
+                    您确定离开此对话吗？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="diaShade" style="display: none;">
+
+        <div class="dialogWrapDanFu">
+            <div class="head">
+                <h2>满意度评价</h2>
+                <span id="colse_dialogWrapDanFu" class="iconfont icon-guanbi2" style="cursor: pointer;"
+                    onclick="$('#diaShade').hide();"></span>
+            </div>
+            <div class="danFenCon">
+                <div class="pfLevel">
+                    <span>评分：</span>
+                    <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+                    <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+                    <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+                    <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+                    <i class="iconfont icon-pingfen" onclick="pf_func($(this))"></i>
+                </div>
+                <div class="pinLunBox">
+                    <textarea name="" cols="30" rows="10" id="pinLunText" placeholder="您的评价和建议对我们很重要！期待留下您的评语~~"
+                        aria-label=""></textarea>
+                </div>
+
+                <div class="subBox">
+                    <span class="subPingLunBtn">提交</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="confirmModal">
+            <div class="promptBox">
+                <span class="xw" style="display: block;">您确定离开此对话吗？</span>
+                <img src="" alt=""
+                    style="position: relative;max-width: 500px;width: 100%;max-height: 500px;display: none;">
+            </div>
+            <div class="btnModalBox">
+                <div class="cancelBtn"><span>取消</span></div>
+                <div class="confirmBtn"><span>确定</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="fastBox">
+
+        <div class="head">
+            <span>进入在线客服，问题分类</span>
+        </div>
+        <div class="list-group-item problemCheckGroup" style="display: flex;">
+            <span
+                style="width: 130px; text-align: right; display: inline-block; position: relative; margin-right: 5px;">
+                <i
+                    style="position: relative; background-color: #676666; height: 8px; width: 8px; overflow: hidden; border-radius: 50%; margin-right: 7px;display: inline-block;"></i>
+                <b>选择问题：</b>
+            </span>
+            <div class="problemCheck" style="display: inline-block; width: calc(100% - 150px)">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="problem" id="problem1" value="czwt" checked>
+                    <label class="form-check-label" for="problem1">充值问题</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="problem" id="problem2" value="txwt">
+                    <label class="form-check-label" for="problem2">提现问题</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="problem" id="problem3" value="cjsq">
+                    <label class="form-check-label" for="problem3">彩金申请</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="problem" id="problem4" value="qtwt">
+                    <label class="form-check-label" for="problem4">其他问题</label>
+                </div>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <span
+                style="width: 130px; text-align: right; display: inline-block; position: relative; margin-right: 5px;">
+                <i
+                    style="position: relative; background-color: #676666; height: 8px; width: 8px; overflow: hidden; border-radius: 50%; margin-right: 7px;display: inline-block;"></i>
+                <b>账号：</b>
+            </span>
+            <input type="text" class="form-control" id="account" value="" placeholder="账号" aria-label=""
+                style="display: inline-block; width: calc(100% - 150px)">
+        </div>
+        <div class="list-group-item">
+            <span
+                style="width: 130px; text-align: right; display: inline-block; position: relative; margin-right: 5px;">
+                <i
+                    style="position: relative; background-color: #676666; height: 8px; width: 8px; overflow: hidden; border-radius: 50%; margin-right: 7px;display: inline-block;"></i>
+                <b>提现时间：</b>
+            </span>
+            <input type="text" class="form-control selectTiime" id="txTme" value="" placeholder="提现时间" aria-label=""
+                style="display: inline-block; width: calc(100% - 150px)">
+        </div>
+        <div class="list-group-item">
+            <span
+                style="width: 130px; text-align: right; display: inline-block; position: relative; margin-right: 5px;">
+                <i
+                    style="position: relative; background-color: #676666; height: 8px; width: 8px; overflow: hidden; border-radius: 50%; margin-right: 7px;display: inline-block;"></i>
+                <b>充值时间：</b>
+            </span>
+            <input type="text" class="form-control selectTiime" id="czTime" value="" placeholder="充值时间" aria-label=""
+                style="display: inline-block; width: calc(100% - 150px)">
+        </div>
+        <div style="display:none;">
+            <div class="list-group-item cjhdTextGroup">
+                <span
+                    style="width: 130px; text-align: right; display: inline-block; position: relative; margin-right: 5px;">
+                    <i
+                        style="position: relative; background-color: #676666; height: 8px; width: 8px; overflow: hidden; border-radius: 50%; margin-right: 7px;display: inline-block;"></i>
+                    <b>参加活动内容：</b>
+                </span>
+                <textarea class="form-control" id="cjhdText" cols="30" rows="10" placeholder="参加活动内容"
+                    style="display: inline-block; width: calc(100% - 150px)" aria-label=""></textarea>
+            </div>
+        </div>
+        <div style="display:none;">
+            <div class="list-group-item problemImageGroup" style="display: flex;">
+                <span
+                    style="width: 130px; text-align: right; display: inline-block; position: relative; margin-right: 5px;">
+                    <i
+                        style="position: relative; background-color: #676666; height: 8px; width: 8px; overflow: hidden; border-radius: 50%; margin-right: 7px;display: inline-block;"></i>
+                    <b>图片：</b>
+                </span>
+                <input type="hidden" class="form-control" id="problemImage" value="" placeholder="图片"
+                    style="display: inline-block; width: calc(100% - 150px)" aria-label="">
+                <div class="demoImageBox"
+                    style="position: relative; width: calc(100% - 150px); display: inline-block; box-sizing: border-box; overflow: hidden;">
+                    <div class="uploadImageb file-button"
+                        style="width: 100px; height: 100px; cursor: pointer; position: relative; background-color: #fafafa; overflow: hidden; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                        <i class="iconfont icon-shangchuan2"></i>
+                        <input type="file" id="filepath" onchange="upload_file()" value="" aria-label="" placeholder="">
+                    </div>
+                    <div class="demoIMage"
+                        style="max-height: 300px; overflow: hidden; position: relative; display: none; border-radius: 3px; max-width: 80%;">
+                        <img src="" alt=""
+                            style="height: 100%; min-height: 100px; display: inline-block; position: relative; max-width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="list-group-item text-center" style="margin-top: 15px !important;">
+            <span class="subBtn" onclick="subFastFunc()"
+                style="position: relative; padding: 8px 13px; background-color: #ec3a4e; color: #FFFFFF; border-radius: 4px; overflow: hidden; cursor: pointer;">点击提交</span>
+            <span class="enterBtn" onclick="advance_chat_func()"
+                style="position: relative; padding: 8px 13px; background-color: #ec3a4e; color: #FFFFFF; border-radius: 4px; overflow: hidden; cursor: pointer; display: none;">进入客服</span>
+        </div>
+    </div>
+
+</body>
+
+</html>

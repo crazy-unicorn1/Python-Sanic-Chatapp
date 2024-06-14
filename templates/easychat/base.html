@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title or '在线客服系统' }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/assets/chat/images/photo_chat.jpg">
+    <script src="/static/common/jquery.js"></script>
+    <link rel="stylesheet" href="/static/common/bootstrap/css/bootstrap.min.css">
+    <script src="/static/common/bootstrap/js/popper.js"></script>
+    <script src="/static/common/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/common/sweetalert2/sweetalert2.min.css">
+    <script src="/static/common/sweetalert2/promise.min.js"></script>
+    <script src="/static/common/sweetalert2/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/daterangepicker/daterangepicker.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='common/daterangepicker/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='common/daterangepicker/daterangepicker.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='common/daterangepicker/pickerDate.js') }}"></script>
+    <script src="/static/common/socketio/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/assets/chat/baguetteBox/baguetteBox.css">
+    <script src="/assets/chat/baguetteBox/baguetteBox.js"></script>
+    <script src="/assets/chat/js/xtalert.js"></script>
+    <script src="/static/common/js/common.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/iconfont.css">
+    <script src="/static/common/xtajax.js"></script>
+    <script src="/static/common/ckeditor/ckeditor.js"></script>
+    <script src="/static/common/echarts/echarts.min.js"></script>
+    <link rel="stylesheet" href="/static/common/layui/css/layui.css">
+    <script src="/static/common/layui/layui.js"></script>
+    <script>
+        var site_code = '{{ current_admin_dict.responsible_site or '' }}';
+        var service_id = '{{ current_admin_dict.uuid }}';
+        var service_name = '{{ current_admin_dict.nickname }}';
+        var service_portrait = '{{ current_admin_dict.portrait or '/assets/chat/images/kefu.png' }}'
+        var outUrl = '/site_admin/login_out';
+        var login_out_url = '/site_admin/login_out';
+        var customerPageUrl = '/site_admin/customer';
+        var chatPageUrl = '/site_admin/chatService';
+        var historyPageUrl = '/site_admin/chat/history';
+        var leavingMesgPageUrl = '/site_admin/leavingMsg';
+        var settingPageUrl = '/site_admin/setting';
+        var userManagePageUrl = '/site_admin/userManage';
+        var blackListPageUrl = '/site_admin/blacklist';
+        var systemlogListPageUrl = '/site_admin/systemLog';
+        var downloadFilePageUrl = '/site_admin/downloadFileList';
+        var beep_switch = {{ 'true' if current_admin_dict.beep_switch else 'false' }};
+
+        $(function () {
+            // 状态初始化
+            var dain = $(".dain");
+            let crr_state = '{{ current_admin_dict.online_statu }}';
+            if (crr_state === '{{ OnlineStatu.online }}'){
+                dain.addClass('state_bg_success');
+            }else if (crr_state === '{{ OnlineStatu.offline }}'){
+                dain.addClass('state_bg')
+            }else if (crr_state === '{{ OnlineStatu.bebusy }}'){
+                dain.addClass('state_bg_busy')
+            }
+
+            // 切换状态
+            $(".stateSelect > li").on('click', function () {
+                if ($(this).find('span').hasClass('state_bg_success') && !dain.hasClass('state_bg_success')){
+                    dain.removeClass('state_bg').removeClass('state_bg_busy').addClass('state_bg_success');
+                    websocket_emit(socket_app, 'editOnlineStatu', {'data_id': '{{ current_admin_dict.uuid }}', 'state': '{{ OnlineStatu.online }}'})
+                }else if ($(this).find('span').hasClass('state_bg') && !dain.hasClass('state_bg')){
+                    dain.removeClass('state_bg_success').removeClass('state_bg_busy').addClass('state_bg');
+                    websocket_emit(socket_app, 'editOnlineStatu', {'data_id': '{{ current_admin_dict.uuid }}', 'state': '{{ OnlineStatu.offline }}'})
+                }else if ($(this).find('span').hasClass('state_bg_busy') && !dain.hasClass('state_bg_busy')){
+                    dain.removeClass('state_bg_success').removeClass('state_bg').addClass('state_bg_busy');
+                    websocket_emit(socket_app, 'editOnlineStatu', {'data_id': '{{ current_admin_dict.uuid }}', 'state': '{{ OnlineStatu.bebusy }}'})
+                }
+            })
+        })
+
+        // 选择日期时间
+        function ddd() {
+            $.single_YY_MM_DD('.selectDateYMD');
+        }
+    </script>
+    <link rel="stylesheet" href="/assets/chat/css/style.css">
+    <script src="/assets/chat/js/app.js"></script>
+
+    <script>
+        // 获取谷歌验证码
+        function getGoogleQrcode(data_uuid) {
+            xtajax.post({
+                'data': {'action': 'getGoogleQrcode', 'data_uuid': data_uuid},
+                'success': function (data) {
+                    if (data.code === 200){
+                        return xtalert.alertImg('Google验证码', data.data.generate_qrcode);
+                    }else{
+                        return xtalert.alertError(data.message);
+                    }
+                }
+            })
+        }
+
+        function ondropdownList() {
+            $('#selectLangen1').css('display', "block");
+        }
+    </script>
+</head>
+<body>
+
+    <div class="aside no-touch hidden--mobile">
+        <ul class="navList">
+            <li class="portrait term">
+                <div class="pr">
+                    <img src="{{ current_admin_dict.portrait or '/assets/chat/images/kefu.png' }}" alt="">
+                </div>
+
+                <div class="infoSelect">
+                    <div class="infoItme userAccountInfo">
+                        <div>
+                            <img class="picture" src="{{ current_admin_dict.portrait or '/assets/chat/images/kefu.png' }}" alt="">
+                        </div>
+                        <div style="display: flex; justify-content: left; flex-direction: column; width: calc(100% - 58px); color: rgba(4,15,66,.9);font-weight: 400;font-size: 14px;line-height: 1.6;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;cursor: text;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>{{ current_admin_dict.nickname or '客服' }}</span>
+                            </div>
+                            <span style="display: block; text-align: left; color: #6f7592; font-size: 12px;">部门：{{ role_name | safe }}</span>
+                        </div>
+                    </div>
+                    <div style="overflow: hidden;line-height: 0;background-color: #e8e8e8;height: 1px; margin: 8px 0; box-sizing: border-box;"></div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="post_from_html('info_user_html', '', '账户信息', '', '/site_admin/userManage')">
+                        <span class="iconfont icon-yonghu-yuan" style="margin-right: 8px;"></span>
+                        <span>账户信息</span>
+                    </div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="post_from_html('get_edit_pwd_html', '', '修改密码', '', '/site_admin/userManage')">
+                        <span class="iconfont icon-mima" style="margin-right: 8px;"></span>
+                        <span>修改密码</span>
+                    </div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="getGoogleQrcode('{{ current_admin_dict.uuid }}')">
+                        <span class="iconfont icon-mima" style="margin-right: 8px;"></span>
+                        <span>Google验证码</span>
+                    </div>
+                    <div class="infoItme" style="display: flex; align-items: center; justify-content: space-between;" data-toggle="dropdown" aria-expanded="false">
+                        <div style="display: flex; align-items: center;">
+                            <i class="iconfont icon-lvzhou_yuyanqiehuan" style="margin-right: 8px;"></i>
+                            <span>语言</span>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span>{{ LANGUAGE.name_dict.get(current_admin_dict.language or 'zh_CN') }}</span>
+                            <i class="iconfont icon-fangxiang" style="font-size: 12px; line-height: 12px; margin-left: 5px; position: relative;top: -1px;"></i>
+                        </div>
+                        <div class="dropdown-menu" id="selectLangen">
+                            {% for ldd in LANGUAGE_HINT_ALL %}
+                            <span class="dropdown-item" data-language="{{ ldd.code }}" onclick="updateLanguage('{{ ldd.code }}', '{{ ldd.title }}', '{{ ldd.text }}')">{{ LANGUAGE.name_dict.get(ldd.code) }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div style="overflow: hidden;line-height: 0;background-color: #e8e8e8;height: 1px; margin: 8px 0; box-sizing: border-box;"></div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="login_out()">
+                        <span class="iconfont icon-h" style="margin-right: 8px;"></span>
+                        <span>退出登录</span>
+                    </div>
+                </div>
+            </li>
+            <li class="state term">
+                <div>
+                    <div class="stateBox">
+                        <span class="dain"></span>
+                        <span style="font-weight: bold; font-size: 11px;">状态</span>
+                    </div>
+                    <ul class="stateSelect">
+                        <li>
+                            <span class="select_statu state_bg_success"></span> 在线
+                        </li>
+                        <li>
+                            <span class="select_statu state_bg_busy"></span> 忙碌
+                        </li>
+                        {% if current_admin_dict.role_code == PermissionCls.SUPERADMIN %}
+                        <li>
+                            <span class="select_statu state_bg"></span> 离线
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </li>
+
+            <li class="term home navItem">
+                <a href="#home">
+                    <div style="position: relative; box-sizing: border-box; text-align: center;">
+                        <span class="iconfont icon-caidanguanli" style="font-size: 26px"></span>
+                    </div>
+                    <div class="text-center"><span>首页</span></div>
+                </a>
+            </li>
+            <li class="term chat navItem">
+                <a href="#chat">
+                    <div style="position: relative; box-sizing: border-box; text-align: center;">
+                        <span class="iconfont icon-duihua" style="font-size: 23px"></span>
+                        <span class="badge badge-pill badge-danger" id="totalWdNumber" style="position: absolute; top: -6px; right: 10px; display: none;">0</span>
+                    </div>
+                    <div><span>对话</span></div>
+                </a>
+            </li>
+            <li class="term customer navItem">
+                <a href="#customer">
+                    <div style="text-align: center;"><span class="iconfont icon-jiaoyinzujifangke" style="font-size: 23px"></span></div>
+                    <div><span>访客</span></div>
+                </a>
+            </li>
+            <li class="term navItem">
+                <a href="#history">
+                    <div style="text-align: center;"><span class="iconfont icon-bg-history" style="font-size: 21px"></span></div>
+                    <div><span>历史</span></div>
+                </a>
+            </li>
+            <li class="term navItem">
+                <a href="#leavingMessage">
+                    <div style="position: relative; box-sizing: border-box; text-align: center;">
+                        <span class="iconfont icon-liuyan" style="font-size: 21px"></span>
+                        <span class="badge badge-pill badge-danger" id="leavingCount" style="position: absolute; top: -6px; right: -12px; display: none;">0</span>
+                    </div>
+                    <div><span>留言</span></div>
+                </a>
+            </li>
+
+
+            <li class="term" style="bottom: 132px; position: absolute; width: 100%; cursor: pointer; color: #FFFFFF">
+                <div style="text-align: center;"><span class="iconfont icon-wangluo" style="font-size: 29px"></span></div>
+                <div><span>网络</span></div>
+            </li>
+            <li class="term navItem setupNav" style="bottom: 66px; position: absolute; width: 100%; cursor: pointer;">
+                <a href="#setup">
+                    <div style="text-align: center;"><span class="iconfont icon-shezhitianchong" style="font-size: 23px"></span></div>
+                    <div><span>设置</span></div>
+                </a>
+            </li>
+            <li class="term" style="bottom: 0px; position: absolute; width: 100%; cursor: pointer;" onclick="login_out()">
+                <div style="text-align: center;"><span class="iconfont icon-tuichu" style="font-size: 22px"></span></div>
+                <div><a href="">退出</a></div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar--mobile">
+        <ul class="navList--mobile">
+            <li class="portrait term navItem">
+                <div class="pr">
+                    <img src="{{ current_admin_dict.portrait or '/assets/chat/images/kefu.png' }}" alt="">
+                </div>
+
+                <div class="infoSelect">
+                    <div class="infoItme userAccountInfo">
+                        <div>
+                            <img class="picture" src="{{ current_admin_dict.portrait or '/assets/chat/images/kefu.png' }}" alt="">
+                        </div>
+                        <div style="display: flex; justify-content: left; flex-direction: column; width: calc(100% - 58px); color: rgba(4,15,66,.9);font-weight: 400;font-size: 14px;line-height: 1.6;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;cursor: text;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>{{ current_admin_dict.nickname or '客服' }}</span>
+                            </div>
+                            <span style="display: block; text-align: left; color: #6f7592; font-size: 12px;">部门：{{ role_name | safe }}</span>
+                        </div>
+                    </div>
+                    <div style="overflow: hidden;line-height: 0;background-color: #e8e8e8;height: 1px; margin: 8px 0; box-sizing: border-box;"></div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="post_from_html('info_user_html', '', '账户信息', '', '/site_admin/userManage')">
+                        <span class="iconfont icon-yonghu-yuan" style="margin-right: 8px;"></span>
+                        <span>账户信息</span>
+                    </div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="post_from_html('get_edit_pwd_html', '', '修改密码', '', '/site_admin/userManage')">
+                        <span class="iconfont icon-mima" style="margin-right: 8px;"></span>
+                        <span>修改密码</span>
+                    </div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="getGoogleQrcode('{{ current_admin_dict.uuid }}')">
+                        <span class="iconfont icon-mima" style="margin-right: 8px;"></span>
+                        <span>Google验证码</span>
+                    </div>
+                    <div class="infoItme" style="display: flex; align-items: center; justify-content: space-between;" >
+                        <div class="stateBox">
+                            <span class="dain"></span>
+                            <span style="font-weight: bold; font-size: 11px;">状态</span>
+                        </div>
+                        <ul class="stateSelect">
+                            <li>
+                                <span class="select_statu state_bg_success"></span> 在线
+                            </li>
+                            <li>
+                                <span class="select_statu state_bg_busy"></span> 忙碌
+                            </li>
+                            {% if current_admin_dict.role_code == PermissionCls.SUPERADMIN %}
+                            <li>
+                                <span class="select_statu state_bg"></span> 离线
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="infoItme" style="display: flex; align-items: center; justify-content: space-between;" data-toggle="dropdown" aria-expanded="false">
+                        <div style="display: flex; align-items: center;">
+                            <i class="iconfont icon-lvzhou_yuyanqiehuan" style="margin-right: 8px;"></i>
+                            <span>语言</span>
+                        </div>
+                        <div style="display: flex; align-items: center;" onclick="ondropdownList()">
+                            <span>{{ LANGUAGE.name_dict.get(current_admin_dict.language or 'zh_CN') }}</span>
+                            <i class="iconfont icon-fangxiang" style="font-size: 12px; line-height: 12px; margin-left: 5px; position: relative;top: -1px;"></i>
+                        </div>
+                        <div class="dropdown-menu" id="selectLangen1">
+                            {% for ldd in LANGUAGE_HINT_ALL %}
+                            <span class="dropdown-item" data-language="{{ ldd.code }}" onclick="updateLanguage('{{ ldd.code }}', '{{ ldd.title }}', '{{ ldd.text }}')">{{ LANGUAGE.name_dict.get(ldd.code) }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div style="overflow: hidden;line-height: 0;background-color: #e8e8e8;height: 1px; margin: 8px 0; box-sizing: border-box;"></div>
+                    <div class="infoItme" style="display: flex; justify-content: left; align-items: center;" onclick="login_out()">
+                        <span class="iconfont icon-h" style="margin-right: 8px;"></span>
+                        <span>退出登录</span>
+                    </div>
+                </div>
+            </li>
+         
+            <li class="term home navItem">
+                <a href="#home">
+                    <div style="position: relative; box-sizing: border-box; text-align: center;">
+                        <span class="iconfont icon-caidanguanli" style="font-size: 26px"></span>
+                    </div>
+                    <div class="text-center"><span>首页</span></div>
+                </a>
+            </li>
+            <li class="term chat navItem">
+                <a href="#chat">
+                    <div style="position: relative; box-sizing: border-box; text-align: center;">
+                        <span class="iconfont icon-duihua" style="font-size: 23px"></span>
+                        <span class="badge badge-pill badge-danger" id="totalWdNumber" style="position: absolute; top: -6px; right: 10px; display: none;">0</span>
+                    </div>
+                    <div><span>对话</span></div>
+                </a>
+            </li>
+            <li class="term customer navItem">
+                <a href="#customer">
+                    <div style="text-align: center;"><span class="iconfont icon-jiaoyinzujifangke" style="font-size: 23px"></span></div>
+                    <div><span>访客</span></div>
+                </a>
+            </li>
+            <li class="term navItem">
+                <a href="#history">
+                    <div style="text-align: center;"><span class="iconfont icon-bg-history" style="font-size: 21px"></span></div>
+                    <div><span>历史</span></div>
+                </a>
+            </li>
+            <li class="term navItem">
+                <a href="#leavingMessage">
+                    <div style="position: relative; box-sizing: border-box; text-align: center;">
+                        <span class="iconfont icon-liuyan" style="font-size: 21px"></span>
+                        <span class="badge badge-pill badge-danger" id="leavingCount" style="position: absolute; top: -6px; right: -12px; display: none;">0</span>
+                    </div>
+                    <div><span>留言</span></div>
+                </a>
+            </li>
+
+
+            <li class="term navItem setupNav" >
+                <a href="#setup">
+                    <div style="text-align: center;"><span class="iconfont icon-shezhitianchong" style="font-size: 23px"></span></div>
+                    <div><span>设置</span></div>
+                </a>
+            </li>
+            <li class="term" onclick="login_out()">
+                <div style="text-align: center;"><span class="iconfont icon-tuichu" style="font-size: 22px"></span></div>
+                <div><a>退出</a></div>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="appBox">
+        {{ index_html | safe }}
+    </div>
+
+    <div id="maskLayer">
+        <img src="/public/chat/images/loading1.gif" alt="" style="display: block; width: 150px; ">
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<style>
+    a.aSetup {
+        color: #212b36;
+        cursor: pointer;
+    }
+
+    a.aSetup:hover {
+        color: #00c9d1;
+        cursor: pointer;
+    }
+</style>
+<script>
+
+    $(function () {
+        request_data(1, true)
+    })
+
+    function ddd() {
+        $.picker_YY_HH_DD_HH_MM_SS('.pickerdate');
+    }
+
+    // 请求数据
+    function request_data(page, reset) {
+        let create_time = '';
+        if (reset) {
+            $("input[name='create_time']").val(create_time);
+        } else {
+            create_time = $.trim($("input[name='create_time']").val());
+        }
+        $("#table_loading").css('display', 'flex');
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': downloadFilePageUrl,
+            'data': { 'action': 'get_exportList_datas', 'page': page ? page : 1, 'create_time': create_time },
+            'success': function (data) {
+                if (data.code === 200) {
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.table_html);
+                    $(".dataTableBottom").empty().append(data.data.dataTableBottom_html);
+                    $("#table_loading").css('display', 'none');
+                }
+            }
+        })
+    }
+
+</script>
+
+<div class="navHead hidden--mobile">
+    <span><a class="aSetup" onclick="$('.setupNav').click();">系统设置</a> | 文件下载</span>
+</div>
+
+<div class="dataTableBox">
+    <div class="dataList">
+        <div class="form-inline" style="margin-bottom: 10px;border-bottom: 1px solid #dee2e6;margin-top: 10px;">
+            <lable class="hidden--mobile">搜索：</lable>
+            <input type="text" class="form-control mb-2 mr-sm-2 pickerdate select-history" onmouseenter="ddd()" name="create_time"
+                placeholder="日期" aria-label="">
+
+            <span class="btn btn-primary mb-2 subBtn ml-2" style="padding: 3px 13px; " onclick="request_data(1)"><i
+                    class="iconfont icon-sousuo"></i></span>
+            <span class="btn btn-default cancelBnt ml-2" style="padding: 5px 13px; margin-bottom: 7px; "
+                onclick="request_data(1, true)"><i class="iconfont icon-zhongzhi1" style="font-size: 13px;"></i></span>
+
+        </div>
+        <div class="table-scroll">
+            <table class="table table-bordered table-hover text-center" style="min-width: 1000px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>文件名</td>
+                        <td>文件路径</td>
+                        <td>文件大小(KB)</td>
+                        <td>数据量</td>
+                        <td>已导出</td>
+                        <td>导出状态</td>
+                        <td>导出时间</td>
+                        <td>备注</td>
+                        <td width="260">操作</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="table_loading">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="dataTableBottom"></div>
+</div>

@@ -1,0 +1,463 @@
+<style>
+    .historyBox {
+        position: absolute;
+        width: 50%;
+        min-width: 600px;
+        height: 100%;
+        z-index: 999;
+        right: 0;
+        top: 0;
+        box-shadow: 0px 3px 10px 0px rgb(0 0 0 / 10%);
+        background-color: #FFFFFF;
+        box-sizing: border-box;
+        display: none;
+    }
+
+    .historyBox .kaiGuan {
+        width: 30px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 999;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #bcb9b4;
+    }
+
+    .historyBox .kaiGuan:hover {
+        color: #00c9d1;
+        cursor: pointer;
+    }
+
+    .historyBox .hrBox {
+        height: 100%;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        margin-left: 30px;
+    }
+
+    .historyBox .hb_head {
+        height: 49px;
+        padding: 0 20px;
+        line-height: 49px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .historyBox .hb_listBox {
+        height: calc(100% - 49px);
+        position: relative;
+        overflow-y: scroll;
+        box-sizing: border-box;
+        padding-top: 20px;
+    }
+
+    .hb_listBox ul {
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .hb_listBox .hbItem {
+        line-height: 26px;
+        overflow: hidden;
+        font-style: normal;
+        margin-bottom: 5px;
+        position: relative;
+        box-sizing: border-box;
+        list-style: none;
+    }
+
+    .hb_listBox .hbItem .miaoShu {
+        height: 40px;
+        line-height: 40px;
+        padding: 0 20px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .hb_listBox .hbItem .miaoShu:hover,
+    .hb_listBox .hbItem .miaoShu.active {
+        background-color: rgb(243, 247, 255);
+    }
+
+    .hb_listBox .hbItem .bh_content {
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 0 20px 20px;
+        border-bottom: 1px solid rgb(238, 238, 238);
+        height: 100%;
+        overflow-y: scroll;
+    }
+
+    .hbItem .bh_content .contentItem {
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        font-size: 14px;
+        margin: 15px 0 0;
+    }
+
+    .hbItem .bh_content .chatText {
+        position: relative;
+        overflow: hidden;
+        font-size: 12px;
+        box-sizing: border-box;
+        margin: 5px 0;
+        width: 85%;
+    }
+
+    .hbItem .bh_content .chatText p {
+        margin-bottom: 0 !important;
+    }
+
+    .contentItem .chat_S {
+        color: #06c47a;
+    }
+
+    .contentItem .chat_K {
+        color: #00c9d1;
+    }
+
+    .hbItem .bh_content .chatText .chatImage {
+        background: none !important;
+        padding: 0;
+        color: #333;
+        line-height: 2;
+        border-radius: 0px 15px 15px;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        min-width: 30px;
+    }
+
+    .hbItem .bh_content .chatText .chatImage img {
+        max-width: 460px;
+        max-height: 150px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    .hbItem .bh_content .chatText .chatImage a {
+        padding: 3px 12px;
+        background-color: #0babfe;
+        color: #FFFFFF;
+        font-size: 12px !important;
+        overflow: hidden;
+        border-radius: 10px;
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        line-height: 15px;
+        vertical-align: -1px;
+        display: none;
+    }
+
+    .hbItem .bh_content .chatText .chatImage:hover a {
+        display: block;
+    }
+
+    .hbItem .bh_content .bh_loading {
+        position: relative;
+        height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        display: none;
+    }
+
+    .hbItem .bh_content .bh_loading img {
+        width: 230px;
+        display: inline-block;
+    }
+
+    .hbItem .bh_content .chatText .chatFile {
+        background: #e7e7e7 !important;
+        color: #333;
+        line-height: 1.5;
+        border-radius: 0px 15px 15px;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        min-width: 30px;
+        display: inline-block;
+        padding: 3px 20px;
+    }
+
+    .hbItem .bh_content .chatText .chatFile a {
+        padding: 3px 12px;
+        background-color: #0babfe;
+        color: #FFFFFF;
+        font-size: 12px !important;
+        overflow: hidden;
+        border-radius: 10px;
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        line-height: 15px;
+        vertical-align: -1px;
+        display: none;
+        cursor: pointer;
+    }
+
+    .hbItem .bh_content .chatText .chatFile:hover a {
+        display: block;
+    }
+
+    @media only screen and (max-width: 640px) {
+        .historyBox {
+            position: absolute;
+            width: 50%;
+            min-width: 100%;
+            height: 100%;
+            z-index: 999;
+            right: 0;
+            top: 0;
+            box-shadow: 0px 3px 10px 0px rgb(0 0 0 / 10%);
+            background-color: #FFFFFF;
+            box-sizing: border-box;
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    $(function () {
+        request_data(1, true);
+    })
+    function ddd() {
+        $.picker_YY_HH_DD_HH_MM_SS('.pickerdate');
+    }
+
+    // 请求数据
+    function request_data(page, reset) {
+        let site_name = '';
+        let start_time = '';
+        let customer_name = '';
+        let service_account = '';
+        let chat_text = '';
+        let category = '';
+        if (reset) {
+            $("input[name='site_name']").val(site_name);
+            $("input[name='start_time']").val(start_time);
+            $("input[name='customer_name']").val(customer_name);
+            $("input[name='service_account']").val(service_account);
+            $("input[name='chat_text']").val(chat_text);
+            $("select[name='category']").val(category);
+        } else {
+            site_name = $.trim($("input[name='site_name']").val());
+            start_time = $.trim($("input[name='start_time']").val());
+            customer_name = $.trim($("input[name='customer_name']").val());
+            service_account = $.trim($("input[name='service_account']").val());
+            chat_text = $.trim($("input[name='chat_text']").val());
+            category = $.trim($("select[name='category']").val());
+        }
+        $("#table_loading").css('display', 'flex');
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': historyPageUrl,
+            'data': { 'action': 'get_historyTable_html', 'page': page ? page : 1, 'site_name': site_name, 'customer_name': customer_name, 'start_time': start_time, 'chat_text': chat_text, 'category': category, 'service_account': service_account },
+            'success': function (data) {
+                if (data.code === 200) {
+                    $(".table tbody").empty().append(data.data.table_html);
+                    $("#category").empty().append(data.data.option_html);
+                    $(".dataTableBottom").empty().append(data.data.dataTableBottom_html);
+                    $("#table_loading").css('display', 'none');
+                }
+            }
+        })
+    }
+
+    // 删除数据
+    function data_del_func(action, data_uuid, msg) {
+        xtalert.alertConfirm({
+            'msg': msg,
+            'confirmCallback': function () {
+                xtajax.post({
+                    'url': historyPageUrl,
+                    'data': { 'action': action, 'data_uuid': data_uuid },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            xtalert.alertSuccessToast('删除成功！');
+                            let ttd = setTimeout(function () {
+                                let page = parseInt($(".pages").attr('data-crrpage'));
+                                request_data(page);
+                            }, 1000)
+                        } else {
+                            xtalert.alertError(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    // 请求历史信息
+    function request_history(conversation_id) {
+        $(".historyBox").show();
+        $(".hb_listBox .one .bh_content").find('.contentItem').remove();
+        $(".hb_listBox .one .bh_loading").css('display', 'flex');
+        xtajax.post({
+            'url': historyPageUrl,
+            'data': { 'action': 'get_history_list', 'conversation_id': conversation_id },
+            'success': function (data) {
+                if (data.code === 200) {
+                    $(".hb_listBox .one .bh_loading").css('display', 'none');
+                    let result_datas = data.data.datas;
+                    $.each(result_datas, function (index, item) {
+                        let html = '';
+                        if (item.content_type === ContentTypes.PICTURE) {
+                            html += '<div class="contentItem">'
+                            if (item.service_id && item.service_id !== '') {
+                                html += '<div class="chat_S">'
+                                html += '<span>' + item.service_name + '</span>'
+                            } else {
+                                html += '<div class="chat_K">'
+                                html += '<span>' + item.customer_name + '</span>'
+                            }
+                            html += '<span style="margin-left: 5px;">' + item.create_time + '</span>' +
+                                '</div>' +
+                                '<div class="chatText">' +
+                                '<div class="chatImage">' +
+                                '<img src="' + item.file_path + '" alt="">' +
+                                '<a href="' + item.file_path + '" target="_blank">下载</a>' +
+                                '</div></div></div>'
+                        } else if (item.content_type === ContentTypes.FILE) {
+                            html += '<div class="contentItem">' +
+                                '<div class="chat_K">' +
+                                '<span>' + item.service_name + '</span>' +
+                                '<span style="margin-left: 5px;">' + item.create_time + '</span>' +
+                                '</div>' +
+                                '<div class="chatText">' +
+                                '<div class="chatFile">' +
+                                '<div style="position: relative; float: left;">' +
+                                '<i class="iconfont icon-file-word-fill" style="font-size: 49px"></i>' +
+                                '</div>' +
+
+                                '<div style="position: relative;overflow: hidden;box-sizing: border-box;margin-left: 60px;display: flex;flex-direction: column;justify-content: flex-end;top: 18px;line-height: 22px;min-width: 100px;text-align: right;color: #8c8c8c;">' +
+                                '<span style="text-align: left;position: relative; max-width: 150px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">' + item.filename + '</span>' +
+                                '<span style="display: block; text-align: left">' + item.file_size + 'KB</span>' +
+                                '</div>' +
+                                '<a target="_blank" onclick="download_func(\'' + item.file_path + '\')">下载</a>' +
+                                '</div></div></div>'
+                        } else {
+                            html += '<div class="contentItem">'
+                            if (item.service_id && item.service_id !== '') {
+                                html += '<div class="chat_S">'
+                                html += '<span>' + item.service_name + '</span>'
+                            } else {
+                                html += '<div class="chat_K">'
+                                html += '<span>' + item.customer_name + '</span>'
+                            }
+                            html += '<span style="margin-left: 5px;">' + item.create_time + '</span>' +
+                                '</div>' +
+                                '<div class="chatText">' +
+                                '<p>' + item.text + '</p>' +
+                                '</div></div>'
+                        }
+                        $(".one .bh_content").append(html);
+                    })
+                    $(".historyCname").text(data.data.sname);
+                    $(".historyTime").text(data.data.start_time);
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+</script>
+
+<div class="navHead hidden--mobile">
+    <span>历史记录</span>
+</div>
+
+<div class="dataTableBox">
+    <div class="dataList">
+        <div class="form-inline" style="margin-bottom: 10px;border-bottom: 1px solid #dee2e6;margin-top: 10px;">
+            <lable class="hidden--mobile">搜索：</lable>
+            <input type="text" class="form-control mb-2 mr-sm-2" name="site_name" value="" placeholder="网站名称"
+                style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="customer_name" value="" placeholder="联系人"
+                style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="service_account" value="" placeholder="接待客服"
+                style="color: #666666; font-size: 13px;" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2 pickerdate" onmouseenter="ddd()" name="start_time"
+                placeholder="日期" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="chat_text" placeholder="聊天内容" aria-label="">
+            <select class="form-control mb-2 mr-sm-2 select-history" name="category" id="category" placeholder="类别">
+            </select>
+            <span class="btn btn-primary mb-2 subBtn ml-2" style="padding: 4px 13px; margin: 0 0px 5px 0;"
+                onclick="request_data(1)"><i class="iconfont icon-sousuo"></i></span>
+            <span class="btn btn-default ml-2 cancelBnt"
+                style="padding: 5px 13px; margin-bottom: 7px;" onclick="request_data(1, true)"><i
+                    class="iconfont icon-zhongzhi1" style="font-size: 13px;"></i></span>
+        </div>
+        <div class="table-scroll">
+            <table class="table table-hover text-center table-bordered">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>对话渠道</td>
+                        <td>联系人</td>
+                        <td>类别</td>
+                        <td>设备</td>
+                        <td>ip</td>
+                        <td>对话时间</td>
+                        <td>接待客服</td>
+                        <td>满意评价</td>
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="table_loading">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="dataTableBottom"></div>
+</div>
+
+<div class="historyBox">
+    <div class="kaiGuan" onclick="$('.historyBox').toggle();">
+        <i class="iconfont icon-shouqi2-01"></i>
+    </div>
+    <div class="hrBox">
+        <div class="hb_head">
+            <span>历史记录</span>
+        </div>
+        <div class="hb_listBox">
+            <ul class="">
+                <li class="hbItem one">
+                    <div class="miaoShu active">
+                        <div style="display: flex;position: relative; align-items: center;">
+                            <i class="iconfont icon-jilu" style="color: #a4b5cf; font-size: 18px;"></i>
+                            <time class="historyTime" style="margin-left: 8px; font-size: 12px;">2023-03-13
+                                12:50:50</time>
+                            <img src="/assets/chat/images/kefu.png" alt=""
+                                style="width: 20px; display: inline-block; margin-left: 15px; border-radius: 50%; overflow: hidden;">
+                            <span class="historyCname"
+                                style="margin-left: 8px; color: #666; font-size: 13px; ">HXX</span>
+                        </div>
+                        <div>
+                            <i class="iconfont icon-jiantou34"></i>
+                        </div>
+                    </div>
+                    <div class="bh_content">
+                        <div class="bh_loading">
+                            <img src="/assets/chat/images/loading-0.gif" alt="">
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

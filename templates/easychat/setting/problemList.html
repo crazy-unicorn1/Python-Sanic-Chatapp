@@ -1,0 +1,131 @@
+<script>
+    $(function () {
+        fatch_data_list(1);
+    })
+
+    //加载列表数据
+    function fatch_data_list(page) {
+        $(".problem").find(".qrDataList").find('.qr_loading').show(0);
+        $(".problem").find(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': '/site_admin/problemList',
+            'data': {'action': 'problem_list_html', 'page': page},
+            'success': function (data) {
+                if (data.code === 200){
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.html);
+                    $(".problem").find(".qrDataBottom").empty().append(data.data.page_html);
+                    $(".problem").find(".qrDataList").find('.qr_loading').hide(0);
+                    $(".problem").find(".qrDataList").find('.table').show(0);
+                }else{
+                    xtalert.alertErrorToast('获取数据失败！')
+                }
+            }
+        })
+    }
+
+    // 问题数据处理
+    function post_problem_data(action, data_uuid) {
+        if (!action){return}
+        let pr_title = $.trim($("#pr_title").val())
+        let pr_content = $.trim($("#pr_content").val())
+        let site_code = $.trim($("#site_code").val())
+        if (!pr_title){return xtalert.showValidationError('请输入标题！')}
+        if (!pr_content){return xtalert.showValidationError('请输入答案！')}
+        let datad = data_uuid ? data_uuid : '';
+        xtajax.post({
+            'url': '/site_admin/problemList',
+            'data': {'action': action, 'pr_title': pr_title, 'pr_content':pr_content, 'data_uuid': datad, 'site_code': site_code},
+            'success': function (data) {
+                if (data.code === 200){
+                    if (action === 'add_problem_data'){
+                        xtalert.alertSuccessToast('添加成功！');
+                    }
+                    if (action === 'edit_problem_data'){
+                        xtalert.alertSuccessToast('编辑成功！');
+                    }
+                    let crrpage = parseInt($(".problem").find('.pages').attr('data-crrpage'));
+                    fatch_data_list(crrpage);
+                }else {
+                    return xtalert.alertError(data.message)
+                }
+            }
+        })
+    }
+
+    // 删除问题
+    function del_problem_func(data_uuid) {
+        xtalert.alertConfirm({
+            'msg': '确认操作？',
+            'confirmCallback':function () {
+                Swal({
+                    title: false,
+                    text: '操作中，请稍等...',
+                    showCloseButton: false,
+                    showCancelButton: false,
+                    showconfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                xtajax.post({
+                    'url': '/site_admin/problemList',
+                    'data': {'action': 'del_problem', 'data_uuid': data_uuid},
+                    'success': function (data) {
+                        if (data.code === 200){
+                            xtalert.alertSuccessToast('数据删除成功！');
+                            let crrpage = parseInt($(".problem").find('.pages').attr('data-crrpage'));
+                            fatch_data_list(crrpage);
+                        }else {
+                            return xtalert.alertErrorToast(data.message);
+                        }
+                    }
+                })
+            }
+        })
+    }
+</script>
+
+<!-- 问题 -->
+<div class="problem asyncTable">
+    <div class="qrHead">
+        <div>
+            <span class="kfCancelBtn" onclick="post_from_html('add_problem_html', '', '添加问题', '', '/site_admin/problemList')" style="padding: 9px 12px;">添加问题</span>
+        </div>
+        <div>
+            <span class="clearBtn"><i class="iconfont icon-tubiao_qingchu mr-1"></i>清除</span>
+        </div>
+    </div>
+    <div class="qrDataList qrDataList-mobile-problem" style="padding: 0 10px;">
+        <div class="qr_loading" style="position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <img src="/public/chat/images/loading-0.gif" alt="" style="width: 230px;display: block;">
+        </div>
+        <div class="dataList table-scroll">
+            <table class="table table-hover table-bordered text-center" style="min-width: 600px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>标题</td>
+                        <td>答案</td>
+                        <td width="300">创建时间</td>
+                        <td width="160">操作</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="qrDataBottom">
+        <span>总信息条数：0</span>
+        <ul class="pages" data-crrpage="1">
+            <li class="left_page">
+                <span class="iconfont icon-fangxiang-zuo"></span>
+            </li>
+            <li class="right_page">
+                <span class="iconfont icon-fangxiang-you"></span>
+            </li>
+        </ul>
+    </div>
+</div>

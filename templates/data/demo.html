@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script>
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+
+        if (window.location.href.indexOf('#') <= -1 || window.location.href.indexOf('#home') > -1){
+            update_crr_chatfx_data()
+            // get_user_list()
+        }
+    })
+
+
+    // 更新对话趋势分析
+    function update_crr_chatfx_data() {
+        var chartDom = document.getElementById('zheXianTu');
+        var myChart = echarts.init(chartDom);
+        var option;
+        option = {
+            //title: {
+            //    text: '当前时间访问量'
+            //},
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['今日访问量']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '今日访问量',
+                    type: 'line',
+                    stack: 'Total',
+                    data: {{ optionDatas or '' }},
+                    smooth: true,
+                    areaStyle: {
+                        color: '#00c9d1',
+                        opacity: 0.5,
+                        origin:"start"
+                    },
+                    lineStyle: {
+                        color: '#00c9d1'
+                    }
+                }
+            ]
+        };
+        option && myChart.setOption(option);
+    }
+
+
+    </script>
+
+</head>
+<body>
+
+
+    <div style="display: flex; justify-content: space-between;">
+
+        <div class="panelBox" style="width: calc(100% - 315px);">
+            <div class="head">
+                <div class="tit">
+                    <span>对话趋势分析</span>
+                    <i class="iconfont icon-tishi1" style="margin-left: 5px; vertical-align: -1px;"></i>
+                </div>
+                <div style="cursor: pointer; text-align: right; position: relative; float: right;">
+                    <input type="text" class="form-control mr-sm-2" name="cu_account" placeholder="账户" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                    <input type="text" class="form-control mr-sm-2 selectDateYMD" onmouseenter="ddd1()" name="cu_data_date" placeholder="日期" aria-label="" style="width: 180px;display: inline-block;margin-bottom: 0px !important;">
+                    <span class="iconfont icon-sousuo" style="font-size: 20px;margin-right: 5px;vertical-align: -2px;" onclick=""></span>
+                    <span class="iconfont icon-shuaxin" onclick=""></span>
+                </div>
+            </div>
+            <div class="conta">
+                <div id="zheXianTu" style="height: 300px;"></div>
+            </div>
+        </div>
+
+        <div class="panelBox" style="width: 300px; margin-bottom: 20px; margin-left: 15px;">
+            <div class="head">
+                <div class="tit">
+                    <span>系统公告</span>
+                    <i class="iconfont icon-tishi1" style="margin-left: 5px; vertical-align: -1px;"></i>
+                </div>
+            </div>
+            <div class="conta" style="height: 300px; overflow-y: scroll; width: 100%;">
+                <div style="position: relative; overflow: hidden; margin:30px auto; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <span class="iconfont icon-wushuju" style="font-size: 80px; color: #c6f1f3;"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</body>
+</html>

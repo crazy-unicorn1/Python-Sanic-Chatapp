@@ -1,0 +1,2005 @@
+    <style>
+        .table tr td {vertical-align: middle !important;}
+        .online_total{width: 100%;position: relative;display: flex;justify-content: space-around;align-items : center;height: 40px;font-size: 12px;}
+        .customerBox{width: 100%;position: relative;box-sizing: border-box;height: calc(100% - 40px);}
+        .customerBox .navTabs{position: relative;overflow: hidden;box-sizing: border-box;height: 50px;font-size: 12px;display: flex;align-items : center;justify-content: space-around;color: #a4b5cf;}
+        .customerBox .navTabs li {position: relative;background: #f5f5f5;width: 50%;height: 50px;display: flex;align-items : center;text-align: center;justify-content: center;cursor: pointer;}
+        .navTabs li.active{color: #00c9d1;background: #FFFFFF;}
+        .customerBox .customerList{position: relative;overflow-y: scroll;width: 100%;height: calc(100% - 50px);box-sizing: border-box;}
+        .customerList .nor_onCustomer, .customerList .fsh_onCustomer{position: relative;overflow: hidden;box-sizing: border-box;padding: 20px 0;text-align: center;font-size: 13px; }
+        .customerList .finishTab, .customerList .normalTab, .customerList .nor_onCustomer{display: none;}
+        .customerList .show{display: block;}
+        .chatBox{position: absolute;left: 460px;right: 0;top: 0;bottom: 0;z-index: 998;width: auto;overflow-y: hidden;box-sizing: border-box; overflow-x: scroll; min-width: 1200px;}
+        .chatManageBox{position: absolute;height: 100%;width: calc(100% - 490px);background-color: rgb(247 247 247); display: none; min-width: 690px; -ms-transition: all .3s ease; -moz-transition: all .3s ease; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease;}
+        .chatManageBox .messageTop{height: calc(100% - 222px);width: 100%;background: #FFFFFF;}
+        .messageTop .headCaoZuo{line-height: 39px;height: 50px;margin-bottom: 5px;padding: 5px;background-color: rgb(249, 249, 249);color: rgb(57, 61, 73);border-bottom: 1px solid rgb(238, 238, 238);font-size: 16px;font-weight: 500;margin-top: 0px;display: flex;justify-content:space-between;}
+
+        /* 在线状态 */
+        .onlineState{width: 32px; height: 32px; position: relative; box-sizing: border-box; border-radius: 100%;background: #0babfe; padding: 3px; display: flex; justify-content: center; align-items: center; color: #FFFFFF; margin-left: 10px; top: 3px;}
+        .chatOperation{position: relative;overflow: hidden;box-sizing: border-box;display: flex;align-items: center;justify-content: flex-end;height: 100%;}
+        .chatOperation li{position: relative;display: flex;align-items: center;flex-direction: column;justify-content: center;color: #a4b5cf;height: 36px;width: 36px;line-height: 20px;font-size: 12px;margin: 0 10px;cursor: pointer;}
+        .chatOperation li.jieshu{color: #ff5656;}
+
+        /* 聊天信息列表 */
+        .chatContent{width: 100%;height: calc(100% - 58px);position: relative;box-sizing: border-box;overflow-y: scroll; padding-bottom: 30px;}
+        /* 聊天操作栏 */
+        .messgeBottom{width: 100%;height: 222px;background: #FFFFFF;position: relative;box-sizing: border-box; pointer-events: none;cursor: none;}
+        .sendOption{line-height: 39px;height: 40px;padding: 5px;background-color: rgb(249, 249, 249);color: rgb(57, 61, 73);border: 1px solid rgb(238, 238, 238);font-size: 16px;font-weight: 500;margin-top: 0px;display: flex;justify-content:space-between;}
+        .sendOption .quick{width: 50%;position: relative;font-size: 13px;line-height: 40px;text-align: right;display: flex;align-items: center;justify-content: flex-end;cursor: pointer;color: #dadada;}
+        .sendOption .additional{width: 50%;position: relative;font-size: 13px;line-height: 40px;text-align: right;display: flex;align-items: center;justify-content: flex-start;}
+        .sendOption .additional i{cursor: pointer;}
+        .messgeBottom .editText{position: relative;box-sizing: border-box;overflow: hidden;margin: 10px;height: 122px !important;border: 1px solid #dde0ed;padding: 12px;}
+        .messgeBottom .editText textarea{width: 100%;height: 100%;position: relative;background: #FFFFFF;resize: none;line-height: 25px;color: rgb(57, 61, 73);font-size: 13px;margin: 0;border: none;}
+        /* 右侧信息 */
+        .chatBox .infoBox{position: absolute;width: 480px;height: 100%;right: 0px; display: none; -ms-transition: all .3s ease; -moz-transition: all .3s ease; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease; overflow: hidden}
+        .borbox{height: 50px;border-bottom: 1px solid #eee;padding: 0 12px 0;overflow-x: auto;overflow-y: hidden;background: #FFFFFF;display: flex;align-items: center;justify-content: space-around;}
+        .borbox li{height: 100%;width: calc(100% / 3);position: relative;padding: 0 15px;display: flex;flex-direction:column;justify-content: center;text-align: center;font-size: 13px;color: #a4b5cf;line-height: 20px;cursor: pointer;}
+        .borbox li.active{color: #00c9d1;}
+        .itemInfoBox{position: relative;box-sizing: border-box;overflow: hidden;}
+        .infoBack{width: 100%;position: relative;overflow: hidden;box-sizing: border-box;padding: 5px 20px;margin-top: 10px;background: #FFFFFF;display: flex;flex-flow: wrap;justify-content: flex-start;}
+        .sheBei .shebeiOvh{position: relative;width: 50%;box-sizing: border-box;overflow: hidden;display: flex; align-items: center;}
+
+        /* 当前客户 */
+        .customerItem{position: relative;padding: 10px 10px 8px;overflow: hidden;box-sizing: border-box;cursor: pointer;margin-bottom: 1px;-ms-transition: all .3s ease; -moz-transition: all .3s ease; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease;}
+        .customerItem.active, .customerItem.activeTwo, .customerItem.activeThree{background-color: rgb(224, 254, 255);border-right: 3px solid rgb(0, 201, 209);}
+        .customerItem:hover{color: #00c9d1;}
+
+        /* 消息列表 */
+        .chat-block{margin-top: 0;padding: 10px;position: relative;overflow: hidden;box-sizing: border-box;padding-bottom: 30px;}
+        .chat-block.chatL .inside{float: left; display: inline-block; width: 100%;}
+        .chat-block.chatR .inside{float: right; display: inline-block; width: 100%;}
+        .chat-block .userImage{width: 45px;height: 45px;box-shadow: 0.1rem 0.1rem 0.3rem 0rem #d9dfe4;margin-top: 6px;border-radius: 50%;}
+        .chat-block.chatL .userImage{float: left; background-color: #0babfe; color: #FFFFFF; display: flex;justify-content : center;align-items : center; position: relative;  left: 5px;}
+        .chat-block.chatR .userImage{float: right;background-color: #ffffff;}
+        .chat-block .chat-name{display: block;font-size: 12.4px;line-height: 30px;letter-spacing: 0.2px;font-weight: 400;color: #999;}
+        .chat-block.chatL .chat-name{margin-left: 60px;text-align: left;}
+        .chat-block.chatL .chat-name .time {color: #aaaaaa;margin-left: 10px;}
+        .chat-block.chatR .chat-name{margin-right: 60px;text-align: right;}
+        .chat-block.chatR .chat-name .time {color: #aaaaaa;margin-left: 10px;}
+        .chat-block .chatting-content{display: block;position: relative;box-sizing: border-box;line-height: 20px;}
+        .chat-block .chatting-content .msgStatu{ font-size: 18px; margin-right: 8px; }
+        .chat-block.chatL .chatting-content{margin-left: 60px;}
+        .chatting-content p {margin-bottom: 0px;}
+        .chat-block .chatting-content .conBox{font-size: 12.5px;max-width: 80%;margin-bottom: 0px; padding: 7px 10px;margin-top: 4px;min-width: 30px;color: rgb(0, 0, 0);display: inline-block;word-break: inherit;word-wrap: break-word;white-space: pre-wrap;}
+        .chat-block.chatL .chatting-content .conBox{border-radius: 0px 15px 15px;border: 1px solid rgb(218, 238, 255);background-color: rgb(218, 238, 255) !important;}
+        .chat-block.chatR .chatting-content{margin-right: 60px; text-align: right}
+        .chat-block.chatR .chatting-content .conBox{border-radius: 15px 0px 15px 15px;border: 1px solid #e7e7e7;background-color: #e7e7e7 !important; text-align: left;}
+        .chat-block .chatting-content .contentImage{min-width: 15%; max-width: 20%; padding: 0 !important; overflow: hidden;}
+        .chat-block .chatting-content .contentImage img{background-color: #eeeeee;min-width: 100px;min-height: 100px;position: relative;}
+
+        .cahtCzBtn{position: relative; width: calc(100% - 20% - 60px); pointer-events: auto;cursor: default;}
+        .chat-block.chatR .chatting-content .conFile{background-color: #e7e7e7;padding: 0px 10px;position: relative;box-sizing: border-box; overflow: hidden;display: flex;justify-content: left;height: 70px;align-items: center;}
+        .chat-block.chatL .chatting-content .conFile{background-color: #e7e7e7;padding: 0px 10px;position: relative;box-sizing: border-box; overflow: hidden;display: flex;justify-content: left;height: 70px;align-items: center;}
+        .conFile .xiaZai{position: absolute; top: 0;  right: 0; bottom: 0; left: 0; background: rgba(255, 255, 255, 0.8); display: flex; justify-content: center; align-items: center; color: #00c9d1; cursor: pointer; -ms-transition: all .5s ease; -moz-transition: all .5s ease; -webkit-transition: all .5s ease; -o-transition: all .5s ease; transition: all .5s ease;display: none;}
+        .conFile .xiaZai a{color: #00c9d1;}
+        .conFile .xiaZai a .iconfont{font-size: 46px;}
+        .chat-block.chatR .chatting-content .conFile:hover .xiaZai{display: flex;}
+        .chat-block.chatL .chatting-content .conFile:hover .xiaZai{display: flex;}
+
+
+        .color_red{color: red !important;}
+        .CmItemnlineNumber{background: #dd4b39;display: none; font-size: 8px; color: #FFFFFF; z-index: 99; padding: 1px 5px; overflow: hidden;text-align: center;border-radius: 50%; position: absolute; right: 9px; line-height: 16px; top: -5px;}
+
+        .headCaoZuo .userportrait{padding: 8px 12px;position: absolute;color: #fff;line-height: 1;left: 20px;top: 55px;z-index: 999;border-radius: 3px;background: #00c9d1; font-size: 13px; display: none;}
+        .headCaoZuo .userportrait:before{content: "";position: absolute;top: -18px;float: left;width: 0;height: 0;border-width: 9px;border-style: solid;border-color: transparent transparent #00c9d1 transparent;}
+
+        .chatManageBox .monitorChat{width: 100%;background-color: #fff8e0;padding: 5px 8px;line-height: 25px;display: none;}
+        .chatManageBox .uploadLoading{position: absolute;top: 50px; height: calc(100% - 270px); bottom: 0;right: 0;left: 0;z-index: 999;background-color:rgba(0,0,0,0.3);display: none;align-items: center;justify-content: center;flex-direction: column;}
+
+        .mingPian h2{font-size: 15px; color: #00c9d1; text-align: left; padding: 7px 0 7px 10px; border-bottom: 1px solid #e6e6e6; width: 100%; position: relative; margin-bottom: 0px;display: flex;justify-content: space-between;align-items: center;}
+        .mingPian .form-item{position: relative; overflow: hidden; display: flex; justify-content: left; align-items: center;padding: 5px 5px 15px 10px;}
+        .mingPian .form-item input, .mingPian .form-item textarea{color: #666666; font-size: 13px; width: 165px; margin-bottom: 0 !important; }
+
+        .retract_message{position: absolute; width: 65px;height: 22px;background-color: #FFF;right: 0;bottom: -30px;border-radius: 5px;border: 1px solid #ddd;text-align: center;line-height: 22px;font-size: 11px !important;cursor: pointer;color: #6c757d;box-sizing: border-box;display: none;}
+
+        /* 快捷回复 */
+        .chatManageBox .shortcutsBox{position: fixed;bottom: 222px;right: 490px;z-index: 9999;box-sizing: border-box; display: none;}
+        .chatManageBox .shortcutsBox::after{position: absolute;content: '';right: 10px;bottom: -20px;width: 0;height: 0;border-width: 10px;border-style: solid;border-color:  #fff transparent transparent transparent;}
+        .chatManageBox .shortcutsBox .kjie{position: relative;box-shadow: 0px 0px 9.2px 0.8px rgb(41 41 41 / 15%);cursor: pointer;background-color: #FFFFFF;box-sizing: border-box;width: 270px;height: 460px;overflow: hidden;border-radius: 3px;}
+        .kjie .kj_head{height: 40px;border-bottom: 1px solid #eee;position: relative;overflow: hidden;color: #00c9d1;text-align: left;line-height: 40px;padding: 0 15px;font-size: 14px;}
+        .kjie .kj_list{position: relative;padding: 10px 10px;box-sizing: border-box;overflow: hidden;height: calc(100% - 40px);overflow-y: scroll;}
+        .kjie .kj_list li{position: relative;border-bottom: 1px dashed #eee;line-height: 39px;font-size: 13px;color: #666666;padding: 0 5px;white-space: nowrap;  /* 禁止换行 */overflow: hidden;  /* 超出隐藏 */text-overflow: ellipsis;  /* 超出内容显示省略号 */box-sizing: border-box;}
+        .kjie .kj_list li:last-child{border: none;}
+        .kjie .kj_list li:hover{background-color: rgb(249, 249, 249);}
+
+        /*筛选*/
+        .selectComment{border-bottom: 1px solid #eee;height: 60px;line-height: 60px;padding: 0 20px;display: flex;justify-content: left;align-items: center;font-size: 12px;}
+        #hhListLoading{position: relative; height: 300px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;display: none;}
+        #contLoading{position: relative; height: 300px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;}
+
+        /* 粘贴板上传图片 */
+        .clipboardModal{position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(0, 0, 0, 0.3); z-index: 999; display: flex; justify-content: center; align-items: center;display: none;}
+        .clipboardModal .cpintre{position: relative; background-color: #FFFFFF; border-radius: 10px; min-width: 30%; overflow: hidden; max-width: 60%;}
+        .cpintre .head{position: relative; height: 50px; line-height: 50px; text-align: left;padding: 0 20px;}
+        .cpintre .botBox{position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; color: #FFFFFF;}
+        .cpintre .contBox{height: 200px; padding: 0 20px; margin-bottom: 10px; min-height: 50px; position: relative; overflow: hidden; box-sizing: border-box; display: flex; justify-content: center; align-items: center; width: 100%;}
+        .cpintre .contBox img{display: inline-block; height: 100%; max-width: 96%;}
+        .botBox span.btnCancel, .botBox span.btnConfirm{width: 50%; position: relative; display: flex; align-items: center; justify-content: center; padding: 10px; cursor: pointer;}
+        .botBox span.btnCancel{background-color: rgb(0, 201, 209);}
+        .botBox span.btnConfirm{background-color: rgb(52, 86, 175);}
+
+        /* 右键 */
+        #YouJianBox{width: 150px;height: 230px;background: #fff;position: fixed;left: 460px; box-shadow: 0 0 6px rgba(0,0,0,0.15); border-radius: 3px; box-sizing: border-box; display: none;}
+        #YouJianBox::after{position: absolute;content: '';top: 2px;left: -20px;width: 0;height: 0;border-width: 10px;border-style: solid;border-color: transparent #fff transparent transparent;}
+        #YouJianBox ul{position: relative;box-sizing: border-box;padding: 5px}
+        #YouJianBox li{display: block;height: 30px;margin: 5px auto 0;padding-left: 10px;color: #748192;font-size: 13px;cursor: pointer;line-height: 30px;}
+        #YouJianBox li:hover{background: rgba(206, 206, 206, 0.13);}
+
+        /* 切换同事 */
+        .selectMyTs{padding: 0 16px 0 20px; background-color: #FFFFFF; box-sizing: border-box; display: block;  border-top: 1px solid #eef0f6; box-shadow: 2px 3px 5px #f4f6fb; position: relative; z-index: 1; color: rgba(4,15,66,.3);}
+        .selectMyTs .active{color: rgba(4,15,66,.9);}
+        .selectMyTs span{cursor: pointer;}
+        .selectMyTs .tsName{width: 30%; color: rgba(4,15,66,.9); text-align: right; padding-right: 10px; display: none; color: #00c9d1;}
+
+        .selectTsList{position: absolute;box-sizing: border-box;right: 30px;display: none;}
+        .selectTsList .popover-arrow{position: absolute;display: block;width: 8.48528137px;height: 8.48528137px;background: 0 0;border-style: solid;border-width: 4.24264069px;transform: rotate(45deg);top: -5px;border-color: #fff transparent transparent #fff;box-shadow: -2px -2px 5px rgba(0,0,0,.06);right: 16px;}
+        .selectTsList .popoverBox{width: 300px;position: relative;background-color: #fff;background-clip: padding-box;border-radius: 4px;box-shadow: 0 2px 8px rgba(0,0,0,.15);box-sizing: border-box;color: rgba(4,15,66,.9);font-size: 12px;}
+        .selectTsList .popoverBox .popover-htit{display: flex;justify-content: space-between;align-items: center;padding: 12px 16px;border-bottom: 1px solid #eef0f6;box-sizing: border-box;color: #00c9d1;font-weight: 500;}
+        .popoverBox .popoverCont{position: relative;overflow-y: scroll;max-height: 300px;min-height: 100px;padding: 12px 16px;}
+        .popoverBox .popoverCont .no-Cer{position: relative;display: none;margin: 50px auto 0;text-align: center;}
+        .popoverBox .popoverFoot{position: relative;padding: 12px 16px;border-top: 1px solid #eef0f6;display: flex;justify-content: space-between;align-items: center;}
+        .popoverBox .popoverFoot label.qChu, .popoverBox .popoverFoot label.qXuan{cursor: pointer;}
+        .popoverCont .popoItme{display: flex;justify-content: space-between;align-items: center;padding: 5px 0px;position: relative;box-sizing: border-box;cursor: pointer;-ms-transition: all .3s ease; -moz-transition: all .3s ease; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease;margin-bottom: 5px;}
+        .popoverCont .popoItme img{display: inline-block;position: relative;height: 30px;border-radius: 100%;overflow: hidden;width: 30px;margin-right: 10px;}
+        .serviceName{-ms-transition: all .3s ease; -moz-transition: all .3s ease; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease;}
+        .popoverCont .popoItme:hover .serviceName{color: #00c9d1;}
+
+        .chatContent .chat-block.chatR p{text-align: left;}
+
+        .chat-block .chatting-content .msgStatu{ font-size: 18px; margin-right: 8px; position: relative; top: 10px;}
+        .msgStatu .iconfont{font-size: 18px;}
+        .msgStatu .iconfont.icon-shibai-01{color: red;}
+        .msgStatu .iconfont.icon-jiazai2, .msgStatu .iconfont.icon-round{color: #999;}
+        .msgStatu .iconfont.icon-round_check {color: #5bba50;}
+
+        .translateBtn{font-size: 25px;margin-right: 8px;position: relative;top: 10px;margin-left: 10px;cursor: pointer;opacity: .6;}
+        .translateBtn .icon-fanyi3{font-size: 25px;}
+        .translateText{background-color: white;padding: 5px 10px;border-radius: 10px;color: #5c5c5c;margin-top: 8px;}
+
+        .radio-input-control {
+            width: 30px  !important;
+        }
+        .radio-input-label {
+            display: inline-block; width: auto  !important; 
+        }
+        @media only screen and (max-width: 640px) {
+            .selectComment{
+                border-bottom: 1px solid #eee;
+                height: 60px;
+                line-height: 60px;
+                padding: 0 0px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 12px;
+            }
+
+            .radio-input-control {
+                width: 55px !important;
+            } 
+            .radio-input-label {
+                display: inline-block;width: auto  !important; 
+                margin-left: 20px;
+            }
+
+            .middle-float-right{
+                position: absolute;
+                right: 0px;
+                top: 45%;
+                background-color: #00000021;
+                padding: 5px;
+                color: white;            
+            }
+            .chatBox{
+                position: absolute;
+                left: 0px;
+                right: 0;top: 0;bottom: 0;
+                z-index: 0;
+                width: 100%;
+                min-width: 300px;
+            }
+            .online_total{
+                width: 100%;
+                position: relative;
+                display: flex;justify-content: space-around;
+                align-items : center;
+                height: 30px;
+                font-size: 12px;
+            }
+            .chatBox .infoBox
+            {
+                visibility: hidden;
+                z-index: 100000;
+                position: absolute;
+                width: 80%;
+            }
+            .messgeBottom .editText{
+                height: 90px !important;
+            }
+            .chatManageBox{
+                position: absolute;
+                height: calc(100% - 20px);
+                width: 100% !important;
+                min-width: 300px;
+            }
+            .chatOperation li{margin: 0 0; width: 30px; height: auto;}
+            .infoBox{
+                border: 1px solid rgb(197, 197, 197);
+                background-color: white !important;
+            }
+
+            .mingPian .form-item textarea{
+                width: 100% !important;
+            }
+
+            .mingPian .form-item input, .mingPian .form-item select{width: 50%; }
+            .form-item{ width: 100%;}
+            .chat-block.chatR .chatting-content{margin-right: 0px;}
+            .chat-block .chatting-content .contentImage {min-width: 15%; max-width: 50%; height: auto;}
+            video {width: 80%; height: atuo;}
+        }
+    </style>
+    <script src="/static/iconfont/iconfont.js"></script>
+    <style>
+        .icon {width: 1em;height: 1em;vertical-align: -0.15em;fill: currentColor;overflow: hidden;}
+        .rotate{animation: rotate 1s linear infinite;}
+        @keyframes rotate {
+            0% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script>
+        var clipboardFile = null;
+        var winOneName = 'chatWindowOne';
+        var winTwoName = 'chatWindowTwo';
+        var winThreeName = 'chatWindowThree';
+        var crrOperationWinName = $("#crrOperationWinName")
+        var is_mousemove_win1 = false;
+        var is_mousemove_win2 = false;
+        var is_mousemove_win3 = false;
+        var translate_state = {{ translate_state }};
+        var automati_close_time = {{ automati_close_time }};
+        var automati_creply_time = {{ automati_creply_time }};
+        var automati_creply = '{{ automati_creply }}';
+        
+        var isDesktop = true;
+
+        $(document).ready(function () {
+            var ua = navigator.userAgent.toLowerCase();
+            var isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+            var isTabletDevice = /ipad|android|android 3.0|xoom|sch-i800|playbook|tablet|kindle/i.test(ua);
+
+            isDesktop = !isMobileDevice && !isTabletDevice;
+        })
+
+        // 数据初始化
+        $(function () {
+
+            $('[data-toggle="tooltip"]').tooltip()
+
+            // 点击上传图片按钮
+            $(".uploadImage").change(function(e) {
+
+                e.stopImmediatePropagation();
+                const crrWinObj = $(this).parents('div.chatManageBox')
+                if ($(this).get(0).files.length <= 0){
+                    return
+                }
+                let fileBoj = $(this).get(0).files[0];
+                let conversation_id = $.trim(crrWinObj.find('.chatWinConversationId').val());
+                if (!conversation_id){ return }
+
+                const uploadLoadingObj = crrWinObj.find('.uploadLoading')
+                uploadLoadingObj.css('display', 'flex');
+                let cagtContentObj = crrWinObj.find(".chatContent");
+                cagtContentObj.animate({ scrollTop: 0}, 0);
+                cagtContentObj.css('overflow-y', 'hidden')
+
+                xtajax.post({
+                    'url': chatPageUrl,
+                    'data': {'action': 'chack_Fileformat', 'fileName': fileBoj.name},
+                    'success': function (data) {
+                        if (data.code === 200){
+                            chatUploadImage(fileBoj, crrWinObj, conversation_id)
+                        }else {
+                            uploadLoadingObj.css('display', 'none');
+                            cagtContentObj.css('overflow-y', 'scroll');
+                            cagtContentObj.scrollTop(cagtContentObj[0].scrollHeight);
+                            return alert(data.message);
+                        }
+                    }
+                })
+
+            })
+
+            // 发送信息
+            $(".send_text_btn").on('click', function () {
+                let crrWinObj = $(this).parent().parent().parent().parent();
+                let messageContent = $.trim(crrWinObj.find(".messageContent").val());
+                let conversation_id = getWinConversationId(crrWinObj.attr('id'));
+                if (!messageContent || !conversation_id){return ''}
+                let crrUuid = randomUuid();
+                let _data = {'service_id': service_id, 'conversation_id': conversation_id, 'text': messageContent, 'temporary_data_id': crrUuid, 'action': 'sendMsg'}
+                websocket_emit(socket_app, 'customerServiceMsg', _data)
+
+                let crr_time = new Date();
+                let daTime = formatDate(crr_time, 'MM-dd hh:mm');
+                const crrStamp = parseInt(Date.now()/1000);
+                let crrhtml = '<div class="chat-block chatR" data-timeStamp="' + crrStamp + '"' + ' data-temporary-uuid="' + crrUuid  + '" data-msgStatu="0">' +
+                    '<div class="inside">' +
+                        '<img src="' + service_portrait + '" alt="" class="userImage">' +
+                        '<div class="chat-name">' + service_name +
+                        '<span class="time">' + daTime + '</span>' +
+                        '</div>' +
+                        '<div class="chatting-content">' +
+                            '<span class="msgStatu"><i class="iconfont icon-jiazai2"></i></span>' +
+                            '<div class="conBox">' + messageContent + '</div>' +
+                            '<div class="retract_message">撤回消息</div>' +
+                        '</div></div></div>'
+                const cagtContentObj = crrWinObj.find(".chatContent");
+                cagtContentObj.append(crrhtml);
+                cagtContentObj.scrollTop(cagtContentObj[0].scrollHeight);
+                crrWinObj.find('.messageContent').val('');
+                $("#crrOperationWinName").val(crrWinObj.attr('id'))
+                msgStatu_timing_func($('div[data-temporary-uuid="data-temporary-uuid"]'))
+
+                let _datdda = {'conversation_id': conversation_id, 'text': ''}
+                websocket_emit(socket_app, 'severRelyStatu', _datdda)
+                let conversation_obj = $("#"+conversation_id)
+                if (conversation_obj.attr('data-wdState') === '1'){
+                    conversation_obj.attr('data-wdState','0');
+                    conversation_obj.attr('data-wdcount', '0');
+                    conversation_obj.find('.timingText').text('00:00:00');
+                    conversation_obj.find('.timingText').removeClass('color_red');
+                    conversation_obj.find('.CmItemnlineNumber').text('0').hide();
+                }
+            })
+
+            // 回车键发送消息
+            $(".messageContent").keydown(function (e) {
+                if ((e.ctrlKey == true) && (e.key == "Enter")) {
+                    var mtxt = $(this);
+                    mtxt.val(mtxt.val() + '\n');
+                }else if(e.key == "Enter" && !e.ctrlKey){
+                    e.preventDefault();
+                    $(this).parent().parent().find(".send_text_btn").click();
+                }
+            })
+
+            //保存联系人
+            $("#saveCustomerBtn").on('click', function () {
+                let winOneShow = false;
+                let winTwoShow = false;
+                let winThreeShow = false;
+                let winTotal = 0;
+                let crrWinObj;
+                if ($("#chatWindowOne").css('display') !== 'none'){
+                    winOneShow = true
+                    winTotal += 1
+                    crrWinObj = $("#chatWindowOne")
+                }
+                if ($("#chatWindowTwo").css('display') !== 'none'){
+                    winTwoShow = true
+                    winTotal += 1
+                    crrWinObj = $("#chatWindowTwo")
+                }
+                if ($("#chatWindowThree").css('display') !== 'none'){
+                    winThreeShow = true
+                    winTotal += 1
+                    crrWinObj = $("#chatWindowThree")
+                }
+
+                let username = $.trim($("#username").val());
+                let gender = $("input[name='genderRadios']:checked").val();
+                let email = $.trim($("#email").val());
+                let telephone = $.trim($("#telephone").val());
+                let telegram = $.trim($("#telegram").val());
+                let address = $.trim($("#address").val());
+                let note = $.trim($("#note").val());
+                let category = $.trim($("#category").val());
+                let conversation_id = $.trim(crrWinObj.find('.chatWinConversationId').val());
+                if (!username){return xtalert.alertErrorToast('请输入姓名！')}
+                let _data = {
+                    'action': 'saveCustomer',
+                    'conversation_id': conversation_id,
+                    'username': username,
+                    'gender': gender,
+                    'email': email,
+                    'telephone': telephone,
+                    'telegram': telegram,
+                    'address': address,
+                    'note': note,
+                    'category': category
+                }
+
+                websocket_emit(socket_app, 'customerInfo', _data)
+                $("#"+conversation_id).find('.customerName').text(username);
+                crrWinObj.find(".crr_customer_name").text(username);
+                return xtalert.alertSuccessToast('请输入姓名！')
+            })
+
+            // 显示快捷语句
+            $(".quick").on('click', function (e) {
+                const shortcutsBoxObj = $(this).next();
+                shortcutsBoxObj.show();
+                $(document).one("click", function(){
+                    shortcutsBoxObj.hide();
+                });
+                e.stopPropagation();
+            })
+            $(".shortcutsBox").on("click", function(e){
+                e.stopPropagation();
+            });
+
+            // 发送快捷语句
+            $(".kj_list li").on('click', function (e) {
+                const crrWinObj = $(this).parents('.chatManageBox')
+                if (!crrWinObj){return false}
+                Swal({
+                    title: false,
+                    text: '请求中...',
+                    showCloseButton: false,
+                    showCancelButton: false,
+                    showconfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                let datatext = $(this).attr('data-datatext');
+                crrWinObj.find(".messageContent").val(datatext);
+                xtalert.close();
+            })
+
+            // 结束对话
+            $(".jieshu").on('click', function () {
+                const crrObj = $(this);
+                const crrWinObj = crrObj.parents('.chatManageBox')
+                xtalert.alertConfirm({
+                    'msg':'确定结束该对话？',
+                    'confirmCallback': function () {
+                        closeConversation(crrWinObj)
+                    }
+                })
+            })
+            baguetteBox.run('.chatContent');
+
+            $('input:radio[name="commentType"]').click(function(){
+                $(".finishList").empty();
+                $(".fsh_onCustomer").hide();
+                $("#hhListLoading").css('display', 'flex');
+                let commentType = $("input[name='commentType']:checked").val();
+                let _data = {'service_id': service_id, 'commentType': commentType};
+                websocket_emit(socket_app, 'serverGetFinishList', _data);
+            });
+
+            // 点击上传文件
+            $(".uploadfile").change(function(e) {
+                e.stopImmediatePropagation();
+                const crrWinObj = $(this).parents('.chatManageBox')
+                let conversation_id = crrWinObj.find('.chatWinConversationId').val()
+                if ($(this).get(0).files.length <= 0){
+                    return
+                }
+                let _file_size =  $(this).get(0).files[0].size;
+                const fileObj = $(this).get(0).files[0];
+                xtajax.post({
+                    'url': chatPageUrl,
+                    'data': {'action': 'check_file_format', 'filename': $(this).get(0).files[0].name, 'file_size':_file_size, 'conversation_id': conversation_id},
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            uploadfile_func(crrWinObj, fileObj, conversation_id);
+                        }else {
+                            xtalert.alertError(data.message);
+                        }
+                    }
+                })
+            })
+
+            // 监控粘贴板上传图片
+            $(".messageContent").bind("paste",function(e){
+                // 获取文本值
+                let textl = event.clipboardData.getData('text');
+
+                if (event.clipboardData.files.length <=0 ){
+                    return;
+                }
+
+                let file = event.clipboardData.files[0];
+                // 判断类型
+                if (!(/^image\/[jpeg|png|gif|jpg]/.test(file.type))) {
+                    return;
+                }
+
+                let crrWinObj = $(this).parents('.chatManageBox')
+                if (!crrWinObj){return;}
+                $("#crrOperationWinName").val(crrWinObj.attr('id'))
+
+                // 读取成base64
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (event) {
+                    $("#clipboardPicPreview").attr('src', event.target.result);
+                    $(".clipboardModal").css('display', 'flex');
+                }
+                clipboardFile = file;
+            })
+
+            // 消息撤回按钮显示处理
+            $(".chatContent").on('mouseenter', '.chat-block.chatR', function () {
+                const timeStamp = $(this).attr('data-timeStamp')
+                if (timeStamp){
+                    //if ( parseInt(Date.now() / 1000) - parseInt(timeStamp) < 3 * 60){
+                    $(this).find('.retract_message').show(0);
+                    //}
+                }
+            })
+            $(".chatContent").on('mouseleave', '.chat-block.chatR', function () {
+                $(this).find('.retract_message').hide(0);
+            })
+
+            // 撤回消息处理
+            $(".chatContent").on('click', '.retract_message', function () {
+                const fboj = $(this).parent().parent().parent();
+                const data_uuid = fboj.attr('data-uuid');
+                const crrWinObj = fboj.parents('.chatManageBox');
+
+                const conversation_id = crrWinObj.find('.chatWinConversationId').val()
+                if (!data_uuid || !conversation_id){return false;}
+                let _data = {
+                    'data_uuid': data_uuid,
+                    'conversation_id': conversation_id,
+                }
+                $("#crrOperationWinName").val(crrWinObj.attr('id'))
+                websocket_emit(socket_app, 'serviceRetractMessage', _data)
+            })
+
+            // 客户列表右键
+            $(".customerList").on('contextmenu', '.customerItem', function (e) {
+                e.stopPropagation();
+                if (e.which === 3){
+                    let is_gly = {{ is_gly }};
+                    if($(".selctDisplay").find('span').eq(1).hasClass('active') && !is_gly){
+                        $("#YouJianBox").find('.yj_heimingdan').hide();
+                        $("#YouJianBox").find('.yj_jieshu').hide();
+                    }else {
+                        $("#YouJianBox").find('.yj_heimingdan').show();
+                        $("#YouJianBox").find('.yj_jieshu').show();
+                    }
+
+                    let ccrH = $(this)[0].offsetTop + 50;
+                    $("#YouJianBox").css('top',ccrH+'px');
+                    $("#YouJianBox").show(0);
+                    $("#YouJianBox").attr('data-chatid', $(this).attr('id'))
+                    $(document).one("click", function(){
+                        $("#YouJianBox").hide();
+                        $("#YouJianBox").attr('data-chatid', '');
+                    });
+                    return false;
+                }
+            })
+
+            // 关闭聊天窗口
+            $(".colseChat").on('click', function () {
+                const crrWinObj = $(this).parents('.chatManageBox')
+                const ConversationId = crrWinObj.find('.chatWinConversationId').val();
+                const ConversationIdObj = $("#"+ConversationId)
+                if (ConversationId){
+                    if (crrWinObj.attr('id') === winOneName){
+                        ConversationIdObj.siblings().removeClass('active');
+                        ConversationIdObj.removeClass('active');
+                    }else if(crrWinObj.attr('id') === winTwoName){
+                        ConversationIdObj.siblings().removeClass('activeTwo');
+                        ConversationIdObj.removeClass('activeTwo');
+                    }else if(crrWinObj.attr('id') === winThreeName){
+                        ConversationIdObj.siblings().removeClass('activeThree');
+                        ConversationIdObj.removeClass('activeThree');
+                    }
+                }
+
+                xtalert.alertConfirm({
+                    'msg':'确定关闭该聊天窗口？',
+                    'confirmCallback': function () {
+                        winAutomationFunc(crrWinObj);
+                        crrWinObj.hide();
+                        crrWinObj.find('.chat-block').remove();
+                        crrWinObj.find(".crr_customer_name").text('');
+                        crrWinObj.find('.chatWinConversationId').val('');
+                    }
+                })
+            })
+
+            //jQuery实时监听input值变化
+            $(".messageContent").on("input valuechange",function(){
+                const crrWinObj = $(this).parents('.chatManageBox')
+                let strText = $(this).val();
+                let conversation_id = crrWinObj.find('.chatWinConversationId').val();
+                let _data = {'service_id': service_id, 'conversation_id': conversation_id, 'text': strText}
+                websocket_emit(socket_app, 'severRelyStatu', _data)
+            });
+
+            // 切换我的和同事会话列表
+            $(".selctDisplay span").on('click', function () {
+                $(".nor_onCustomer").hide()
+                $("#contLoading").css('display', 'flex')
+                if ($(this).attr('data-selectdata') === 'my'){
+                    $(".selectMyTs").find('.tsName').hide()
+                    $(".normalTab").find('.customerItem').remove();
+                    websocket_emit(socket_app, 'conversationList', {'service_id': service_id})
+                }else{
+                    $(".selectMyTs").find('.tsName').show();
+                    $(".selectMyTs .tsName").find('span').text('全部');
+                    let request_data = {
+                        'action': 'serverConversationList',
+                        'service_id': service_id,
+                    }
+                    $(".normalTab").find('.customerItem').remove();
+                    websocket_emit(socket_app, 'serverConversationList', request_data)
+                }
+
+                if(!$(this).hasClass('active')){
+                    $(this).addClass('active')
+                }
+                $(this).siblings().removeClass('active')
+            })
+
+            // 选择同事会话弹窗
+            $(".tsName span").on('click', function (e) {
+                websocket_emit(socket_app, 'serverConversationList', {'action': 'ServerConversationTotal', 'service_id': service_id})
+                $(".selectTsList").fadeIn();
+                $(document).one("click", function(){
+                    $(".selectTsList").fadeOut();
+                });
+                e.stopPropagation();
+            })
+            
+            $(".selectTsList .qChu").on('click', function (e) {
+                e.stopPropagation();
+            })
+
+            $(".popoverCont").on('click', '.popoItme', function () {
+                let this_service_id = $(this).attr('data-serviceid');
+                if (!this_service_id){ return false;}
+                $(".selectMyTs .tsName").find('span').text($(this).find('.serviceName').text());
+                let request_data = {
+                    'action': 'getTargetServerConversationList',
+                    'target_service_id': this_service_id,
+                }
+                websocket_emit(socket_app, 'serverConversationList', request_data)
+            })
+
+            $(".selectAll").on('click', function () {
+                $(".selectMyTs .tsName").find('span').text('全部');
+                let request_data = {
+                    'action': 'serverConversationList',
+                    'service_id': service_id,
+                }
+                websocket_emit(socket_app, 'serverConversationList', request_data)
+            })
+
+            $("body").mousemove(function(event){
+                if ($('#chatWindowOne').length > 0){
+                    if ($.contains($('#chatWindowOne')[0], event.target) || $('#chatWindowOne')[0] === event.target){
+                        is_mousemove_win1 = true
+                        is_mousemove_win2 = false
+                        is_mousemove_win3 = false
+                    }else if ($.contains($('#chatWindowTwo')[0], event.target) || $('#chatWindowTwo')[0] === event.target){
+                        is_mousemove_win1 = false
+                        is_mousemove_win2 = true
+                        is_mousemove_win3 = false
+                    }else if ($.contains($('#chatWindowThree')[0], event.target) || $('#chatWindowThree')[0] === event.target){
+                        is_mousemove_win1 = false
+                        is_mousemove_win2 = false
+                        is_mousemove_win3 = true
+                    }else{
+                        is_mousemove_win1 = false
+                        is_mousemove_win2 = false
+                        is_mousemove_win3 = false
+                    }
+                }
+            });
+
+            document.onkeydown = function (e) {
+                if ((e.ctrlKey === true) && (e.altKey === true) && e.keyCode === 84) {
+                    if (is_mousemove_win1){
+                        post_from_html('transferConversation_html', $('#chatWindowOneConversationId').val(), '请选择接收的客服')
+                    }else if (is_mousemove_win2){
+                        post_from_html('transferConversation_html', $('#chatWindowTwoConversationId').val(), '请选择接收的客服')
+                    }else if (is_mousemove_win3){
+                        post_from_html('transferConversation_html', $('#chatWindowThreeConversationId').val(), '请选择接收的客服')
+                    }
+                }else if ((e.ctrlKey === true) && (e.altKey === true) && e.keyCode === 88) {
+                    if (is_mousemove_win1){
+                        closeConversation($('#chatWindowOne'))
+                    }else if (is_mousemove_win2){
+                        closeConversation($('#chatWindowTwo'))
+                    }else if (is_mousemove_win3){
+                        closeConversation($('#chatWindowThree'))
+                    }
+                }
+            }
+
+            $(".qiehuan").on('click', function () {
+                let infoObj = $(".infoBox");
+                if (infoObj.css('display') === 'block'){
+                    if (infoObj.css('width') === '480px'){
+                        infoObj.css('width', '0px')
+                        $('.chatManageBox').css('width', '100%')
+                    }else{
+                        infoObj.css('width', '480px')
+                        $('.chatManageBox').css('width', 'calc(100% - 490px)')
+                    }
+                }
+            })
+
+            $(".qiehuan1").on('click', function () {
+                $(".infoBox").css("visibility", "visible");
+            })
+
+            $(".chatContent").on('mousewheel DOMMouseScroll', function () {
+                var top = $(this).scrollTop();
+                var crrContObj = $(this);
+                if ($(this).find('.dataLoading').css('display') === 'none' && top === 0){
+                    let fobj = $(this).find('.chat-block').eq(0);
+                    let msg_id = fobj.attr('data-uuid');
+                    if (!msg_id){return}
+                    $(this).find('.dataLoading').show();
+                    xtajax.get({
+                        'url': chatPageUrl,
+                        'data': {'action': 'getPrevConversation', 'msg_id': msg_id, 'site_code': site_code},
+                        'success': function (data) {
+                            if (data.code === 200){
+                                let html = getChatInfoHtml(data.data);
+                                fobj.before(html);
+                                let scrollPosition = fobj.offset().top - crrContObj.offset().top
+                                crrContObj.scrollTop(scrollPosition)
+                                crrContObj.find('.dataLoading').hide();
+                            }else{
+                                setTimeout(function () {
+                                    crrContObj.find('.dataLoading').hide();
+                                }, 1000)
+                            }
+                        }
+                    })
+
+                }else{
+
+                }
+            })
+
+        })
+
+        // 生成信息html
+        function getChatInfoHtml(data_json) {
+            let info_datas = data_json.info_data;
+            let infoHtml = '';
+            $.each(info_datas, function (i, item) {
+                let ctt_customer_name = ''
+                let service_data = item.service_data;
+                if (data_json.customer_data.username){
+                    ctt_customer_name = data_json.customer_data.username
+                }else {
+                    ctt_customer_name = data_json.customer_name
+                }
+                if (item.is_service){
+                    if (item.content_type === 'text'){
+                    infoHtml += '<div class="chat-block chatR" data-timeStamp="' + item.timeStamp + '" data-uuid="' + item.uuid + '">' +
+                    '<div class="inside">' +
+                        '<img src="' + service_data.portrait + '" alt="" class="userImage">' +
+                        '<div class="chat-name">' + service_data.service_name +
+                        '<span class="time">' + item.create_time + '</span>' +
+                        '</div>' +
+                        '<div class="chatting-content">'
+                        if (item.customer_reading_state){
+                            infoHtml += '<span class="msgStatu"><i class="iconfont icon-round_check"></i></span>'
+                        }else{
+                            infoHtml += '<span class="msgStatu"><i class="iconfont icon-round"></i></span>'
+                        }
+                        infoHtml += '<div class="conBox">' + item.text + '</div>' +
+                        '</div></div></div>'
+                    }else if (item.content_type === 'picture'){
+                        infoHtml += '<div class="chat-block chatR" data-uuid="' + item.uuid + '">' +
+                                '<div class="inside">' +
+                                    '<img src="' + service_data.portrait + '" alt="" class="userImage">' +
+                                        '<div class="chat-name">' + service_data.service_name +
+                                        '<span class="time">' + item.create_time + '</span>' +
+                                    '</div>' +
+                                    '<div class="chatting-content">'
+                                        if (item.customer_reading_state){
+                                            infoHtml += '<span class="msgStatu"><i class="iconfont icon-round_check"></i></span>'
+                                        }else{
+                                            infoHtml += '<span class="msgStatu"><i class="iconfont icon-round"></i></span>'
+                                        }
+                                        infoHtml += '<div class="conBox contentImage">' +
+                                            '<a href="' + item.file_path + '">' +
+                                                '<img src="' + item.file_path + '" alt="" style="width: 100%; display: inline-block;">' +
+                                            '</a>' +
+                                        '</div>' +
+                                    '</div></div></div>'
+                    }
+                    else if(item.content_type === ContentTypes.FILE){
+                        infoHtml += '<div class="chat-block chatR" data-uuid="' + item.uuid + '">' +
+                        '<div class="inside">' +
+                            '<img src="' + service_data.portrait + '" alt="" class="userImage">' +
+                            '<div class="chat-name">' + service_data.service_name +
+                            '<span class="time">' + item.create_time + '</span>' +
+                            '</div>' +
+                            '<div class="chatting-content">'
+                                if (item.customer_reading_state){
+                                    infoHtml += '<span class="msgStatu"><i class="iconfont icon-round_check"></i></span>'
+                                }else{
+                                    infoHtml += '<span class="msgStatu"><i class="iconfont icon-round"></i></span>'
+                                }
+                                '<div class="conBox">'+
+                                '<div class="conFile">' +
+                                    '<div style="position: relative; box-sizing: border-box; display: flex; align-items: center;">' +
+                                        '<i class="iconfont icon-file-word-fill" style="font-size: 49px; color: #6c757d;"></i>' +
+                                    '</div>' +
+                                    '<div style="position: relative;box-sizing: border-box;display: flex;flex-direction: column;line-height: 20px;font-size: 12px;color: #545b62;margin-left: 15px;min-width: 120px;text-align: left;">' +
+                                        '<span style="max-width: 180px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis; position: relative; display: block;">'+ item.filename +'</span>' +
+                                        '<span>' + item.file_size + 'KB</span>' +
+                                    '</div>' +
+                                    '<div class="xiaZai">' +
+                                        '<a onclick="download_func(\'' + item.file_path + '\')">' +
+                                            '<i class="iconfont icon-yunxiazai1"></i>' +
+                                        '</a></div></div>' +
+                            '</div></div></div></div>'
+                    }
+                }
+                if (item.is_customer){
+                    if (item.content_type === 'text'){
+                    infoHtml += '<div class="chat-block chatL">' +
+                    '<div class="inside">' +
+                        '<div class="userImage">' +
+                            '<span class="iconfont icon-windows-fill" style="font-size: 23px;"></span>' +
+                        '</div>' +
+                        '<div class="chat-name">' + ctt_customer_name +
+                            '<span class="time">' + item.create_time + '</span>' +
+                        '</div>' +
+                        '<div class="chatting-content">' +
+                            '<div class="conBox">' + item.text + '</div>'
+                        if (translate_state){
+                            infoHtml += '<span class="translateBtn" onclick="translateText_func($(this),\''+item.uuid+'\')"><i class="iconfont icon-fanyi3"></i></span>'
+                        }
+                        infoHtml += '</div></div></div>'
+                    }else if (item.content_type === 'picture'){
+                        infoHtml += '<div class="chat-block chatL">' +
+                        '<div class="inside">' +
+                            '<div class="userImage">' +
+                                '<span class="iconfont icon-windows-fill" style="font-size: 23px;"></span>' +
+                            '</div>' +
+                            '<div class="chat-name">' + ctt_customer_name +
+                                '<span class="time">' + item.create_time + '</span>' +
+                            '</div>' +
+                            '<div class="chatting-content">' +
+                                '<div class="conBox contentImage">' +
+                                    '<a href="' + item.file_path + '">' +
+                                        '<img src="' + item.file_path + '" alt="" style="width: 100%; display: inline-block;">' +
+                                    '</a></div>' +
+                            '</div></div></div>'
+                    }
+                    else if (item.content_type === 'video'){
+                        infoHtml += '' +
+                        '                    <div class="chat-block chatL">\n' +
+                        '                        <div class="inside">\n' +
+                        '                            <div class="userImage">\n' +
+                        '                                <span class="iconfont icon-windows-fill" style="font-size: 23px;"></span>\n' +
+                        '                            </div>\n' +
+                            '<div class="chat-name">' + ctt_customer_name +
+                                '<span class="time">' + item.create_time + '</span>' +
+                            '</div>' +
+                        '                            <div class="chatting-content">\n' +
+                        '                                <div class="conBox" style="white-space: normal;">\n' +
+                        '                                    <div class="conFile" style="background: none;">\n' +
+                        '                                        <div style="position: relative; box-sizing: border-box; display: flex; align-items: center;">\n' +
+                        '                                            <i class="iconfont icon-shipin2" style="font-size: 49px; color: #6c757d;"></i>\n' +
+                        '                                        </div>\n' +
+                        '                                        <div style="position: relative;box-sizing: border-box;display: flex;flex-direction: column;line-height: 20px;font-size: 12px;color: #545b62;margin-left: 15px;min-width: 120px;text-align: left;">\n' +
+                        '                                            <span style="max-width: 180px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis; position: relative; display: block;">' + item.filename + '</span>\n' +
+                        '                                            <span>' + item.file_size + 'KB</span>\n' +
+                        '                                        </div>\n' +
+                        '                                        <div class="xiaZai">\n' +
+                        '                                            <a onclick="download_func(\'' + item.file_path + '\')"><i class="iconfont icon-yunxiazai1"></i></a>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                </div>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                    </div>'
+                    }
+                }
+            })
+            infoHtml += '<div class="chat-block" style="padding-bottom: 50px;">' +
+                '<div style="display: block; text-align: center; font-size: 12px; color: rgb(153, 153, 153); margin-top: 10px; border-top: rgb(242 242 242) solid 1px; padding-top: 30px;">'+ data_json.end_time +'&emsp;&emsp;会话结束， 接待客服：' + data_json.service_data.service_name + '</div>' +
+            '</div>'
+
+            return infoHtml
+        }
+
+        // 点击上传图片处理
+        function chatUploadImage(fileBoj, crrWinObj, conversation_id) {
+            const uploadLoadingObj = crrWinObj.find('.uploadLoading')
+            uploadLoadingObj.css('display', 'flex');
+            var formdata = new FormData();
+            formdata.append("upload", fileBoj);
+            formdata.append("action", 'chatUploadImage');
+            formdata.append("conversation_id", conversation_id);
+            xtajax.post({
+                'url': chatPageUrl,
+                'data': formdata,
+                'contentType':false,
+                'processData': false,
+                'success': function (data) {
+                    $("#crrOperationWinName").val(crrWinObj.attr('id'))
+                    uploadLoadingObj.css('display', 'none');
+                    let cagtContentObj = crrWinObj.find(".chatContent");
+                    cagtContentObj.css('overflow-y', 'scroll');
+                    cagtContentObj.scrollTop(cagtContentObj[0].scrollHeight);
+                    if (data.code === 200){
+                        websocket_emit(socket_app, 'serverPicUpload', {'image': data.message, 'service_id': service_id, 'conversation_id': conversation_id, 'dataType': ContentTypes.PICTURE});
+                    }else{
+                        return alert(data.message);
+                    }
+                }
+            })
+        }
+
+        // 结束会话
+        function closeConversation(crrWinObj) {
+            const ConversationId = crrWinObj.find('.chatWinConversationId').val();
+            if (!crrWinObj){return false;}
+
+            websocket_emit(socket_app, 'closeConversation', {'data_id': ConversationId});
+            winAutomationFunc(crrWinObj);
+
+            $("#" + ConversationId).remove();
+            crrWinObj.find(".crr_customer_name").text('');
+            crrWinObj.find('.chat-block').remove();
+            crrWinObj.find('.chatWinConversationId').val('');
+            if ($(".normalTab div.customerItem").length <= 0){
+                $(".nor_onCustomer").show();
+            }
+        }
+
+        // win结束对话
+        function winCloseConversation() {
+            let chatid = $("#YouJianBox").attr('data-chatid');
+            xtalert.alertConfirm({
+                'msg':'确定结束该对话？',
+                'confirmCallback': function () {
+                    if($(".selctDisplay").find('span').eq(1).hasClass('active')){
+                        websocket_emit(socket_app, 'closeConversation', {'data_id': chatid, 'is_admin_colse': true});
+                    }else {
+                        websocket_emit(socket_app, 'closeConversation', {'data_id': chatid});
+                    }
+                    let result_ls = ChackWinConversationId(chatid)
+                    const crrWinObj = result_ls[0]
+                    const crrIdwinSatte = result_ls[1]
+                    if (crrIdwinSatte){
+                        winAutomationFunc(crrWinObj);
+                        crrWinObj.find(".crr_customer_name").text('');
+                        crrWinObj.find('.chat-block').remove();
+                        crrWinObj.find('.chatWinConversationId').val('');
+                    }
+                    $("#" + chatid).remove();
+                    if ($(".normalTab div.customerItem").length <= 0){
+                        $(".nor_onCustomer").show();
+                    }
+                }
+            })
+
+        }
+
+        // base64  to blob二进制
+        function dataURItoBlob(dataURI) {
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]; // mime类型
+            var byteString = atob(dataURI.split(',')[1]); //base64 解码
+            var arrayBuffer = new ArrayBuffer(byteString.length); //创建缓冲数组
+            var intArray = new Uint8Array(arrayBuffer); //创建视图
+
+            for (var i = 0; i < byteString.length; i++) {
+                intArray[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([intArray], {type: mimeString});
+        }
+
+        // 上传文件处理
+        function uploadfile_func(crrWinObj, file_obj, conversation_id) {
+            const uploadLoadingObj = crrWinObj.find('.uploadLoading')
+            uploadLoadingObj.css('display', 'flex');
+            var formdata = new FormData();
+            formdata.append("upload", file_obj);
+            formdata.append("action", 'uploadFile');
+            formdata.append("conversation_id", conversation_id);
+            xtajax.post({
+                'url': chatPageUrl,
+                'data': formdata,
+                'contentType':false,
+                'processData': false,
+                'progress': showprogressFunc,
+                'success': function (data) {
+                    uploadLoadingObj.hide();
+                    let filePath = data.data.filePath;
+                    const crrUuid = randomUuid();
+                    let _data = {'service_id': service_id, 'conversation_id': conversation_id, 'filePath': filePath,
+                        'text': '', 'filename': data.data.lod_filename, 'file_size': data.data.size, 'dataType': ContentTypes.FILE
+                        , 'action': 'updateFile'
+                    };
+
+                    let crr_time = new Date();
+                    let daTime = formatDate(crr_time, 'MM-dd hh:mm');
+
+                    const crrStamp = parseInt(Date.now()/1000);
+                    _data['temporary_data_id'] = crrUuid
+                    let crrhtml = '<div class="chat-block chatR" data-timeStamp="' + crrStamp + '="' + ' data-temporary-uuid="' + crrUuid  + '">' +
+                        '<div class="inside">' +
+                            '<img src="' + service_portrait + '" alt="" class="userImage">' +
+                            '<div class="chat-name">' + service_name +
+                            '<span class="time">' + daTime + '</span>' +
+                            '</div>' +
+                            '<div class="chatting-content">' +
+                                '<span class="msgStatu"><i class="iconfont icon-jiazai2"></i></span>' +
+                                '<div class="conBox">'+
+                                '<div class="conFile">' +
+                                    '<div style="position: relative; box-sizing: border-box; display: flex; align-items: center;">' +
+                                        '<i class="iconfont icon-file-word-fill" style="font-size: 49px; color: #6c757d;"></i>' +
+                                    '</div>' +
+                                    '<div style="position: relative;box-sizing: border-box;display: flex;flex-direction: column;line-height: 20px;font-size: 12px;color: #545b62;margin-left: 15px;min-width: 120px;text-align: left;">' +
+                                        '<span style="max-width: 180px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis; position: relative; display: block;">'+ data.data.lod_filename +'</span>' +
+                                        '<span>' + data.data.size + 'KB</span>' +
+                                    '</div>' +
+                                    '<div class="xiaZai">' +
+                                        '<a onclick="download_func(\'' + data.data.filePath + '\')">' +
+                                            '<i class="iconfont icon-yunxiazai1"></i>' +
+                                        '</a></div></div>' +
+                            '</div>' +
+                            '<div class="retract_message">撤回消息</div>' +
+                        '</div>' +
+                        '</div></div>'
+
+                    let video_types = ['.wmv', '.saf', '.rm', '.rmvb', '.mp4', '.3gp', '.mov', '.m4v', '.avi', '.dat', '.mkv']
+                    let _ftype_arr = data.data.filePath.split(".");
+                    let _ftype = _ftype_arr[_ftype_arr.length - 1];
+                    let _ftype_to = "." + _ftype.toLocaleLowerCase();
+                    let videoindex = $.inArray(_ftype_to, video_types);
+
+                    if(videoindex >= 0) {
+                        _data['filetype'] = "video";
+                    }
+                    else {
+                        _data['filetype'] = "file";
+                    }
+
+                    const chatContetnObj = crrWinObj.find('.chatContent')
+                    chatContetnObj.append(crrhtml);
+                    chatContetnObj.scrollTop(chatContetnObj[0].scrollHeight);
+                    crrWinObj.find('.uploadfile').val('');
+                    websocket_emit(socket_app, 'customerServiceMsg', _data)
+                }
+            })
+        }
+
+        // 获取上传进度
+        function showprogressFunc(evt) {
+            var loaded = evt.loaded;
+            var tot = evt.total;
+            var percent = Math.floor(100*loaded/tot);
+            $(".uploadText").text('上传中, 进度：' + percent + '%')
+        }
+
+        // 切换会话列表
+        function switch_func(sf_type, tabObj) {
+            if (sf_type === 'underway'){
+                $('.normalTab').addClass('show').siblings().removeClass('show');
+                $(".selectMyTs").show();
+            }else{
+                $(".selectMyTs").hide();
+                $(".finishList").empty();
+                $('.finishTab').addClass('show').siblings().removeClass('show');
+                $(".fsh_onCustomer").hide();
+                $("#hhListLoading").css('display', 'flex');
+                let commentType = $("input[name='commentType']:checked").val();
+                let _data = {'service_id': service_id, 'commentType': commentType};
+                websocket_emit(socket_app, 'serverGetFinishList', _data);
+            }
+            tabObj.addClass('active').siblings().removeClass('active');
+        }
+
+        // 获取会话信息
+        function getConversationInfo(chatWindowsObj, conversation_id, crrobj, is_Finish) {
+
+            if (!$("#chatWindowOneConversationId").val()){
+                chatWindowsObj = $("#chatWindowOne")
+            }
+            if ($("#chatWindowOneConversationId").val()===conversation_id || $("#chatWindowTwoConversationId").val()===conversation_id || $("#chatWindowThreeConversationId").val()===conversation_id){
+                return false;
+            }
+
+            const crrCahtWindows = chatWindowsObj.attr('id');
+            if (crrCahtWindows === 'chatWindowOne'){
+                crrobj.siblings().removeClass('active');
+                crrobj.addClass('active');
+                $("#chatWindowOneConversationId").val(conversation_id)
+                $(".notChat").hide(0)
+            }else if(crrCahtWindows === 'chatWindowTwo'){
+                crrobj.siblings().removeClass('activeTwo');
+                crrobj.addClass('activeTwo');
+                $("#chatWindowTwoConversationId").val(conversation_id)
+            }else if(crrCahtWindows === 'chatWindowThree'){
+                crrobj.siblings().removeClass('activeThree');
+                crrobj.addClass('activeThree');
+                $("#chatWindowThreeConversationId").val(conversation_id)
+            }else {
+                return false;
+            }
+
+            if (crrobj.attr('data-finish') === '1'){
+                chatWindowsObj.find('.jieshu').hide();
+                chatWindowsObj.find('.messgeBottom').css('pointer-events', 'none')
+            }else{
+                chatWindowsObj.find('.jieshu').show();
+                chatWindowsObj.find('.messgeBottom').css('pointer-events', 'auto')
+            }
+
+            if(!is_Finish){
+                let data_wdCount = parseInt(crrobj.attr('data-wdCount'));
+                chatWindowsObj.find(".messgeBottom").css('pointer-events','auto').css('cursor','default');
+                chatWindowsObj.find(".cahtCzBtn").css('pointer-events','auto').css('cursor','default');
+
+                if (data_wdCount > 0){
+                    let totalWdNumber = parseInt($.trim($("#totalWdNumber").text()));
+                    if (totalWdNumber - data_wdCount <= 0){
+                        $("#totalWdNumber").text('0').hide();
+                    }else {
+                        $("#totalWdNumber").text((totalWdNumber - data_wdCount).toString());
+                    }
+                }
+                crrobj.attr('data-wdcount', '0');
+                crrobj.find('.CmItemnlineNumber').text('0').hide();
+            }
+            if(! isDesktop){
+                $(".sideListBox.width-80-percent--mobile").fadeOut();
+            }
+
+            chatWindowsObj.find('.chat-block').remove();
+            chatWindowsObj.find(".chatLoading").show();
+            websocket_emit(socket_app, 'conversationInfo', {'data_id': conversation_id});
+        }
+
+        // 发送指定消息
+        function send_message(messageContent, conversation_id, is_automatic, crrUuid, is_problem='0') {
+            if (!crrUuid){
+                return
+            }
+            let _data = {'service_id': service_id, 'conversation_id': conversation_id, 'text': messageContent, 'temporary_data_id': crrUuid
+                        , 'action': 'sendMsgTo'
+            };
+            let crr_time = new Date();
+            let daTime = formatDate(crr_time, 'MM-dd hh:mm');
+            if (is_automatic){
+                _data['is_automatic'] = true;
+            }
+            _data['is_problem'] = is_problem;
+
+            let crrWinObj;
+            let crrIdwinSatte = false;
+            if ($("#chatWindowOneConversationId").val() === conversation_id){
+                crrIdwinSatte = true
+                crrWinObj = $("#chatWindowOne")
+            }else if($("#chatWindowTwoConversationId").val() === conversation_id){
+                crrIdwinSatte = true
+                crrWinObj = $("#chatWindowTwo")
+            }else if($("#chatWindowThreeConversationId").val() === conversation_id){
+                crrIdwinSatte = true
+                crrWinObj = $("#chatWindowThree")
+            }
+            const crrStamp = parseInt(Date.now() / 1000);
+            if (crrIdwinSatte){
+                let crrhtml = '<div class="chat-block chatR" data-timeStamp="' + crrStamp + '"'  + ' data-temporary-uuid="' + crrUuid  + '">' +
+                    '<div class="inside">' +
+                        '<img src="' + service_portrait + '" alt="" class="userImage">' +
+                        '<div class="chat-name">' + service_name +
+                        '<span class="time">' + daTime + '</span>' +
+                        '</div>' +
+                        '<div class="chatting-content">' +
+                            '<span class="msgStatu"><i class="iconfont icon-jiazai2"></i></span>' +
+                            '<div class="conBox">' + messageContent + '</div>' +
+                        '</div></div></div>'
+                const chatContetnObj = crrWinObj.find('.chatContent');
+                chatContetnObj.append(crrhtml);
+                chatContetnObj.scrollTop(chatContetnObj[0].scrollHeight);
+            }
+            websocket_emit(socket_app, 'customerServiceMsg', _data)
+        }
+
+        // 确定上传图片
+        function btnConfirm_func() {
+            $("#clipboardPicPreview").attr('src', '');
+            $(".clipboardModal").css('display', 'none');
+
+            const crrWinObj = $("#"+$("#crrOperationWinName").val())
+            const conversation_id = crrWinObj.find('.chatWinConversationId').val();
+
+            if (!conversation_id){ return }
+            xtajax.post({
+                'url': chatPageUrl,
+                'data': {'action': 'chack_Fileformat', 'fileName': clipboardFile.name},
+                'success': function (data) {
+                    if (data.code === 200){
+                        crrWinObj.find(".uploadLoading").css('display', 'flex');
+                        chatUploadImage(clipboardFile, crrWinObj, conversation_id)
+                        crrWinObj.find(".uploadLoading").css('display', 'none');
+                    }else {
+                        return alert('文件格式不正确！')
+                    }
+                }
+            })
+        }
+        
+        // 获取当前激活的窗口
+        function getActiveWindow() {
+            let wds = [];
+            if ($("#chatWindowOne").css('display') !== 'none'){
+                wds.push('chatWindowOne')
+            }
+            if ($("#chatWindowTwo").css('display') !== 'none'){
+                wds.push('chatWindowTwo')
+            }
+            if ($("#chatWindowThree").css('display') !== 'none'){
+                wds.push('chatWindowThree')
+            }
+            return wds
+        }
+        
+        // 获取当前会话ID
+        function getWinConversationId(winName) {
+            if (winName === winOneName){
+                return $("#chatWindowOneConversationId").val()
+            }else if(winName === winTwoName){
+                return $("#chatWindowTwoConversationId").val()
+            }else if(winName === winThreeName){
+                return $("#chatWindowThreeConversationId").val()
+            }else{
+                return false;
+            }
+        }
+
+        // 根据会话ID获取当前窗口对象
+        function getConversationIdWinObj(conversationId) {
+            if ($("#chatWindowOneConversationId").val() === conversationId){
+                return $("#"+winOneName)
+            }else if($("#chatWindowTwoConversationId").val() === conversationId){
+                return $("#"+winTwoName)
+            }else if($("#chatWindowThreeConversationId").val() === conversationId){
+                return $("#"+winThreeName)
+            }
+        }
+        
+        // 拉黑
+        function post_heimingdan_data(data_uuid) {
+            let duration = $.trim($("#duration").val());
+            if (!duration){return xtalert.showValidationError('请选择时长！')}
+            xtajax.post({
+                'url': chatPageUrl,
+                'data': {'action': 'add_heimingdan_data', 'data_uuid': data_uuid, 'duration': duration},
+                'success': function (data) {
+                    if (data.code === 200){
+                        xtalert.alertSuccessToast('操作成功！')
+                        setTimeout(function () {
+                            const crrWinObj = getConversationIdWinObj(data_uuid)
+                            if (crrWinObj){
+                                closeConversation(crrWinObj)
+                            }
+                        }, 500)
+                    }
+                }
+            })
+        }
+
+        // 保存联系人
+        function saveCustomerBtn2(conversation_id) {
+            const crrWinObj = getConversationIdWinObj(conversation_id)
+            if (!crrWinObj){return }
+            let username = $.trim($("#info_username").val());
+            let gender = $("input[name='info_genderRadios']:checked").val();
+            let email = $.trim($("#info_email").val());
+            let telephone = $.trim($("#info_telephone").val());
+            let telegram = $.trim($("#info_telegram").val());
+            let address = $.trim($("#info_address").val());
+            let note = $.trim($("#info_note").val());
+            if (!username){return xtalert.showValidationError('请输入姓名！')}
+            let _data = {
+                'action': 'saveCustomer',
+                'conversation_id': conversation_id,
+                'username': username,
+                'gender': gender,
+                'email': email,
+                'telephone': telephone,
+                'telegram': telegram,
+                'address': address,
+                'note': note,
+            }
+            websocket_emit(socket_app, 'customerInfo', _data)
+            $("#"+conversation_id).find('.customerName').text(username);
+            crrWinObj.find(".crr_customer_name").text(username);
+            return xtalert.alertSuccessToast('保存成功！')
+        }
+        
+        // 转接客户
+        function transferConversation(conversation_id) {
+            if (!conversation_id){ return false;}
+            let select_service_id = $("input[name='select_service_id']:checked").val();
+            if (!select_service_id){return xtalert.showValidationError('请选择接收客服！')}
+            websocket_emit(socket_app, 'transferConversation', {'conversation_id': conversation_id, 'select_service_id': select_service_id})
+            Swal({
+                title: false,
+                text: '操作中，请稍等...',
+                showCloseButton: false,
+                showCancelButton: false,
+                showconfirmButton: false,
+                allowOutsideClick: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
+        
+        // check select
+        function checkSelectService(crrObj) {
+            crrObj.find('input').attr('checked', true)
+        }
+            
+        // 信息翻译
+        function translateText_func(chatObj, data_uuid) {
+            chatObj.find('.iconfont').removeClass('icon-fanyi3').addClass('icon-jiazai2')
+            xtajax.post({
+                'url': chatPageUrl,
+                'data': {'action': 'translateText', 'data_uuid': data_uuid},
+                'success': function (data) {
+                    let ftext = '<div class="translateText">'+data.message+'</div>';
+                    chatObj.prev().append(ftext);
+                    chatObj.css('cursor', 'not-allowed');
+                    chatObj.css('pointer-events', 'none');
+                    chatObj.find('.iconfont').removeClass('icon-jiazai2').addClass('icon-duihao').css('color', '#5bba50')
+                }
+            })
+        }
+        
+        function onClickHideSidebar(){
+            $(".sideListBox.width-80-percent--mobile").fadeOut();
+        }
+
+        function onClickHideInfoBox(){
+            $(".infoBox").css("visibility", "hidden");
+        }
+
+        var touchStartX = 0;
+        var touchEndX = 0;
+        var minSwipeDistance = 50; // Minimum distance (in pixels) for swipe to be considered
+
+        $(document).on("touchstart", function (event) {
+            touchStartX = event.originalEvent.touches[0].pageX;
+        });
+
+        $(document).on("touchmove", function (event) {
+            touchEndX = event.originalEvent.touches[0].pageX;
+            var swipeDistance = touchEndX - touchStartX;
+
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                // Determine swipe direction
+                if (swipeDistance > 0) {
+                    $(".sideListBox.width-80-percent--mobile").fadeIn();
+
+                } else {
+                    $(".sideListBox.width-80-percent--mobile").fadeOut();
+                }
+            }
+        });
+    </script>
+
+    <div class="sideListBox width-80-percent--mobile">
+        <div class="customerBox">
+            <ul class="navTabs">
+                <li class="chatTab active" onclick="switch_func('underway', $(this))"><i class="iconfont icon-ai25"></i>&ensp;对话中</li>
+                <li class="chatTab" onclick="switch_func('finish', $(this))"><i class="iconfont icon-end"></i>&ensp;已结束</li>
+            </ul>
+
+            <div class="customerList">
+
+                <div class="normalTab show">
+
+                    <div class="selectMyTs no-touch">
+                        <div style="display: flex; height: 44px; min-height: 44px; padding: 10px 0; justify-content: space-between; align-items: center; font-size: 12px;">
+                            <div class="selctDisplay">
+                                <span data-selectdata="my" class="active" style="margin-right: 15px;">我的</span>
+                                <span data-selectdata="ts" class="">同事</span>
+                            </div>
+                            <div class="tsName">
+                                <span>全部</span>
+                            </div>
+                        </div>
+
+                        <div class="selectTsList">
+                            <div class="popover-arrow"></div>
+                            <div class="popoverBox">
+                                <div class="popover-htit">选择同事会话</div>
+                                <div class="popoverCont">
+                                    <div class="no-Cer">暂无数据</div>
+                                    <!--
+                                    <div class="popoItme">
+                                        <div>
+                                            <img src="/assets/images/keFuLogo.png" alt="">
+                                            <span class="serviceName">TK88-客服001</span>
+                                        </div>
+                                        <div>
+                                            <span class="badge badge-pill badge-danger">3</span>
+                                        </div>
+                                    </div>
+                                    -->
+                                </div>
+                                <div class="popoverFoot">
+                                    <div style="display: flex; align-items: center;">
+                                        <div class="form-check form-check-inline mr-5 selectAll">
+                                            <!--
+                                            <input class="form-check-input" type="checkbox" id="seleTsAll" value="option1" style="margin-right: 8px;" aria-label="">
+                                            -->
+                                            <label class="form-check-label qXuan" for="inlineCheckbox1">全选</label>
+                                        </div>
+                                        <!--
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label qChu" for="inlineCheckbox2">清除</label>
+                                        </div>
+                                        -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nor_onCustomer">当前无对话，请查看其它对话</div>
+
+                    <div id="contLoading">
+                        <img style="width: 230px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+                    </div>
+
+                </div>
+
+                <div class="finishTab">
+
+                    <div class="selectComment">
+                        <span class="hidden--mobile">筛选：</span>
+                        <div class="form-check form-check-inline ml-3">
+                            <input class="form-check-input" type="radio" name="commentType" id="commentAll" value="commentAll" checked>
+                            <label class="form-check-label" for="commentAll">全部</label>
+                        </div>
+                        <div class="form-check form-check-inline ml-1">
+                            <input class="form-check-input" type="radio" name="commentType" id="commentOn" value="commentOn">
+                            <label class="form-check-label" for="commentOn">已评论</label>
+                        </div>
+                        <div class="form-check form-check-inline ml-1">
+                            <input class="form-check-input" type="radio" name="commentType" id="commentOff" value="commentOff">
+                            <label class="form-check-label" for="commentOff">未评论</label>
+                        </div>
+                    </div>
+                    <div class="fsh_onCustomer">暂无无数据</div>
+
+                    <div class="finishList">
+
+                    </div>
+
+                    <div id="hhListLoading">
+                        <img style="width: 230px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+                    </div>
+                </div>
+
+                <div id="YouJianBox" class="no-touch" data-chatid="">
+                    <ul>
+                        <li onclick="getConversationInfo($('#chatWindowOne'), $('#YouJianBox').attr('data-chatid'), $('#'+$('#YouJianBox').attr('data-chatid')))">
+                            <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" style=" width: 12px;height: 12px;position: relative;vertical-align: -1px; margin-right: 3px;">
+                                <path d="M938.666667 138.666667v576a53.393333 53.393333 0 0 1-53.333334 53.333333h-74.666666V266.666667a53.393333 53.393333 0 0 0-53.333334-53.333334H256V138.666667a53.393333 53.393333 0 0 1 53.333333-53.333334h576a53.393333 53.393333 0 0 1 53.333334 53.333334z m-224 117.333333H138.666667a53.393333 53.393333 0 0 0-53.333334 53.333333v576a53.393333 53.393333 0 0 0 53.333334 53.333334h576a53.393333 53.393333 0 0 0 53.333333-53.333334V309.333333a53.393333 53.393333 0 0 0-53.333333-53.333333z" fill="#748192"></path>
+                            </svg>
+                            窗口1打开
+                        </li>
+                        <li onclick="getConversationInfo($('#chatWindowTwo'), $('#YouJianBox').attr('data-chatid'), $('#'+$('#YouJianBox').attr('data-chatid')))">
+                            <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" style=" width: 12px;height: 12px;position: relative;vertical-align: -1px; margin-right: 3px;">
+                                <path d="M938.666667 138.666667v576a53.393333 53.393333 0 0 1-53.333334 53.333333h-74.666666V266.666667a53.393333 53.393333 0 0 0-53.333334-53.333334H256V138.666667a53.393333 53.393333 0 0 1 53.333333-53.333334h576a53.393333 53.393333 0 0 1 53.333334 53.333334z m-224 117.333333H138.666667a53.393333 53.393333 0 0 0-53.333334 53.333333v576a53.393333 53.393333 0 0 0 53.333334 53.333334h576a53.393333 53.393333 0 0 0 53.333333-53.333334V309.333333a53.393333 53.393333 0 0 0-53.333333-53.333333z" fill="#748192"></path>
+                            </svg>
+                            窗口2打开
+                        </li>
+                        <li onclick="getConversationInfo($('#chatWindowThree'), $('#YouJianBox').attr('data-chatid'), $('#'+$('#YouJianBox').attr('data-chatid')))">
+                            <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" style=" width: 12px;height: 12px;position: relative;vertical-align: -1px; margin-right: 3px;">
+                                <path d="M938.666667 138.666667v576a53.393333 53.393333 0 0 1-53.333334 53.333333h-74.666666V266.666667a53.393333 53.393333 0 0 0-53.333334-53.333334H256V138.666667a53.393333 53.393333 0 0 1 53.333333-53.333334h576a53.393333 53.393333 0 0 1 53.333334 53.333334z m-224 117.333333H138.666667a53.393333 53.393333 0 0 0-53.333334 53.333333v576a53.393333 53.393333 0 0 0 53.333334 53.333334h576a53.393333 53.393333 0 0 0 53.333333-53.333334V309.333333a53.393333 53.393333 0 0 0-53.333333-53.333333z" fill="#748192"></path>
+                            </svg>
+                            窗口3打开
+                        </li>
+                        <li onclick="$('.normalTab').prepend($('#'+$('#YouJianBox').attr('data-chatid'))); $('.normalTab').prepend($('.selectMyTs')); $('#'+$('#YouJianBox').attr('data-chatid')).find('.icon-zhiding').show(0)">
+                            <svg class="icon" viewBox="0 0 1024 1024" style=" width: 12px;height: 12px;position: relative;vertical-align: -1px; margin-right: 3px;">
+                                <path d="M951.296 424.96L1024 352.256 671.744 0 599.04 72.704l70.144 70.656-168.96 168.96a296.96 296.96 0 0 0-286.72 75.264L143.36 458.24 72.704 387.584 0 460.8l245.248 245.248-139.776 139.776 72.704 72.704 140.288-140.288L563.2 1024l72.704-72.704-70.144-70.656 70.144-70.144a296.96 296.96 0 0 0 75.776-287.232l168.96-168.96z" fill="#748192"></path>
+                            </svg>
+                            置顶客户
+                        </li>
+                        <li class="yj_heimingdan" onclick="post_from_html('get_heimingdan_html', $('#YouJianBox').attr('data-chatid'), '加入黑名单')">
+                            <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style=" width: 12px;height: 12px;position: relative;vertical-align: -1px; margin-right: 3px;">
+                                <path d="M450.784288 402.236084c105.525382 0 191.080943-77.265758 191.080943-172.490539 0-95.208409-85.554538-172.4537-191.080943-172.4537-105.524358 0-191.038988 77.246315-191.038988 172.4537C259.744277 324.970326 345.258906 402.236084 450.784288 402.236084zM668.053684 523.375072c-53.728692-50.107211-154.756643-69.840648-220.816175-71.90568-208.853725-6.587022-378.465704 214.18822-378.465704 478.444766 0 8.742105 0.185218 17.557888 0.623193 26.263154l448.840518 0c-14.010085-13.970176-32.774451-40.086997-37.456077-74.90806C480.77944 725.969233 494.789525 602.488921 668.053684 523.375072zM761.693364 581.641103c-113.791649 0-206.003817 92.242867-206.003817 205.994608 0 113.787556 92.211145 205.995631 206.003817 205.995631 113.792673 0 206.003817-92.207052 206.003817-205.995631C967.696158 673.882947 875.485013 581.641103 761.693364 581.641103zM761.693364 934.778956c-81.277118 0-147.149385-65.871243-147.149385-147.142222 0-33.211403 11.408841-63.531965 29.992081-88.184435l205.346855 205.334575C825.229422 923.367045 794.941606 934.778956 761.693364 934.778956zM891.06485 856.32514l-198.101847-198.057845c20.62883-10.972912 43.74634-17.773805 68.729338-17.773805 81.274048 0 147.150408 65.872267 147.150408 147.142222C908.843772 812.580846 902.038786 835.732126 891.06485 856.32514z" fill="#748192"></path>
+                            </svg>
+                            拉黑客户
+                        </li>
+                        <li class="yj_jieshu" onclick="winCloseConversation()">
+                            <i class="iconfont icon-jieshu1" style=" position: relative;vertical-align: -1px; margin-right: 1px; font-size: 15px;"></i>
+                            结束对话
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="online_total">
+            <div class="crrOnlineCount">我的访客：<span class="onumber">0</span></div>
+            <div class="onlineTotalCount">在线访客：<span class="onumber">0</span></div>
+            <div class="crrReception_count">接待上限：<span class="onumber">{{ crrReception_count or 0 }}</span></div>
+        </div>
+
+        <div class = "middle-float-right hidden-desktop" onclick="onClickHideSidebar()">
+            &#10094;
+        </div>
+    </div>
+
+    <div class="chatBox">
+
+        <input type="hidden" id="crrOperationWinName" aria-label="">
+
+        <div id="chatWindowOne" class="chatManageBox">
+            <input type="hidden" class="chatWinConversationId" id="chatWindowOneConversationId">
+
+            <div class="messageTop">
+
+                <div class="headCaoZuo">
+                    <div style="position: relative; width: 60px;">
+                        <span class="onlineState">
+                            <img src="/assets/chat/images/computer.png" alt="" style="width: 35px; height: 35px; position: relative;">
+                        </span>
+                        <span class="userportrait">暂时离开</span>
+                    </div>
+                    <div style="position: relative; width: 20%; text-align: left;">
+                        <span class="crr_customer_name" style="font-size: 13px; color: #545b62;"></span>
+                    </div>
+                    <div class="cahtCzBtn">
+                        <ul class="chatOperation no-touch">
+                            <li class="qiehuan hidden--mobile" >
+                                <i class="iconfont icon-shouqi2-01"></i>
+                                <span class="hidden--mobile">切换</span>
+                            </li>
+                            <li class="qiehuan1 hidden--desktop" >
+                                <i class="iconfont icon-shouqi2-01"></i>
+                                <span class="hidden--mobile">切换</span>
+                            </li>
+                            <li class="chatInfo" style="display: none;" >
+                                <i class="iconfont icon-jurassic_project"></i>
+                                <span class="hidden--mobile">信息</span>
+                            </li>
+                            <li class="zhuanjie" onclick="post_from_html('transferConversation_html', $('#chatWindowOneConversationId').val(), '请选择接收的客服', 600, '/site_admin/chatService')" >
+                                <i class="iconfont icon-zhuanfa"></i>
+                                <span class="hidden--mobile">转接</span>
+                            </li>
+                            <li class="lahei" onclick="post_from_html('get_heimingdan_html', $('#chatWindowOneConversationId').val(),'加入黑名单','', '/site_admin/chatService')" >
+                                <i class="iconfont icon-heimingdan"></i>
+                                <span class="hidden--mobile">拉黑</span>
+                            </li>
+                            <li class="colseChat" >
+                                <i class="iconfont icon-guanbixiao" style="font-size: 12px;"></i>
+                                <span class="hidden--mobile">关闭</span>
+                            </li>
+                            <li class="jieshu" >
+                                <i class="iconfont icon-jieshu1"></i>
+                                <span class="hidden--mobile">结束</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chatContent">
+                    <div class="dataLoading" style="display: none; height: 50px; text-align: center; overflow: hidden; position: relative; line-height: 50px;">
+                        <svg class="icon rotate" aria-hidden="true" style="width: 1.5em; height: 1.5em;">
+                            <use xlink:href="#icon-jiazai3"></use>
+                        </svg>
+                    </div>
+                    
+                    <div class="chatLoading" style="display: none;">
+                        <img src="/assets/chat/images/loading-0.gif" alt="" style="height: 300px; display: block; margin: 150px auto 0;">
+                    </div>
+                </div>
+                <div class="uploadLoading">
+                    <img src="/public/chat/images/loading3.gif" alt="" style="width: 50px;">
+                    <div style="font-size: 13px; color: #53b6d4; margin-top: 20px;" class="uploadText">上传中</div>
+                </div>
+                <div class="monitorChat"></div>
+            </div>
+
+            <div class="messgeBottom">
+                <div class="sendOption">
+                    <div class="additional">
+                        <!--
+                        <i class="iconfont icon-biaoqing" style="margin: 0 15px; font-size: 20px; color: #dadada;"></i>
+                        -->
+                        <i class="iconfont icon-charutupian" style="margin: 0 15px; font-size: 20px; color: #dadada; position: relative; box-sizing: border-box; overflow: hidden; display: inline-block; cursor: pointer;">
+                            <input type="file" class="uploadImage" alt="请选择图片" style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;opacity: 0;-ms-filter: 'alpha(opacity=0)';cursor: pointer;">
+                        </i>
+                        <i class="iconfont icon-a-wenjianjiawenjian" style="margin: 0 15px; font-size: 20px; color: #dadada; position: relative; box-sizing: border-box; overflow: hidden; display: inline-block; cursor: pointer;">
+                            <input type="file" class="uploadfile" alt="请选择文件" style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;opacity: 0;-ms-filter: 'alpha(opacity=0)';cursor: pointer;">
+                        </i>
+                    </div>
+                    <div class="quick">
+                        <i class="iconfont icon-icon_reply" style="font-size: 12px; margin-right: 2px;"></i>
+                        <span class="kj_text">快捷回复</span>
+                    </div>
+                    <div class="shortcutsBox">
+                        <div class="kjie">
+                            <div class=kj_head>
+                                <span>快捷方式</span>
+                            </div>
+                            <ul class="kj_list">
+                                {{ kj_list_html | safe }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="editText">
+                    <textarea name="" class="messageContent" cols="30" rows="10" aria-label="" style="margin: 0"></textarea>
+                </div>
+                <div style="text-align: right; padding: 0 10px;">
+                    <div class="btn-group">
+                        <input type="hidden" id="crr_customer_id" name="" aria-label="">
+                        <button type="button" class="btn btn-secondary send_text_btn" style="padding: 5px 10px 5px 15px; font-size: 12px; line-height: 18px; background: #00c9d1; border-color: #00c9d1;">发送</button>
+                        <button type="button" style="font-size: 12px; line-height: 18px; background: #00c9d1; border-color: #00c9d1;" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference" data-toggle="dropdown" aria-expanded="false" data-reference="parent">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                            <a class="dropdown-item" href="#" style="font-size: 13px; color: rgb(57, 61, 73);">Enter 发送</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="chatWindowTwo" class="chatManageBox" style="display: none;">
+            <input type="hidden" class="chatWinConversationId" id="chatWindowTwoConversationId">
+
+            <div class="messageTop">
+
+                <div class="headCaoZuo">
+                    <div style="position: relative; width: 60px;">
+                        <span class="onlineState">
+                            <img src="/assets/chat/images/computer.png" alt="" style="width: 35px; height: 35px; position: relative;">
+                        </span>
+                        <span class="userportrait">暂时离开</span>
+                    </div>
+                    <div style="position: relative; width: 20%; text-align: left;">
+                        <span class="crr_customer_name" style="font-size: 13px; color: #545b62;"></span>
+                    </div>
+                    <div class="cahtCzBtn">
+                        <ul class="chatOperation no-touch">
+                            <li class="qiehuan" >
+                                <i class="iconfont icon-shouqi2-01"></i>
+                                <span>切换</span>
+                            </li>
+                            <li class="chatInfo" onclick="post_from_html('get_sideInfo_html', $('#chatWindowTwoConversationId').val(),'信息', '/site_admin/chatService')" >
+                                <i class="iconfont icon-jurassic_project"></i>
+                                <span>信息</span>
+                            </li>
+                            <li class="zhuanjie" onclick="post_from_html('transferConversation_html', $('#chatWindowTwoConversationId').val(), '请选择接收的客服', '/site_admin/chatService')" >
+                                <i class="iconfont icon-zhuanfa"></i>
+                                <span>转接</span>
+                            </li>
+                            <li class="lahei" onclick="post_from_html('get_heimingdan_html', $('#chatWindowTwoConversationId').val(),'加入黑名单')" >
+                                <i class="iconfont icon-heimingdan"></i>
+                                <span>拉黑</span>
+                            </li>
+                            <li class="colseChat" >
+                                <i class="iconfont icon-guanbixiao" style="font-size: 12px;"></i>
+                                <span>关闭</span>
+                            </li>
+                            <li class="jieshu" >
+                                <i class="iconfont icon-jieshu1"></i>
+                                <span>结束</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chatContent">
+                    <!--
+                    <div class="chat-block" style="padding-bottom: 20px;">
+                        <div style="display: block; text-align: center; font-size: 12px; color: rgb(153, 153, 153); margin-top: 10px;">您撤回了一条消息</div>
+                    </div>
+                    -->
+                    <div class="chatLoading" style="display: none;">
+                        <img src="/assets/chat/images/loading-0.gif" alt="" style="height: 300px; display: block; margin: 150px auto 0;">
+                    </div>
+                </div>
+                <div class="uploadLoading">
+                    <img src="/public/chat/images/loading3.gif" alt="" style="width: 50px;">
+                    <div style="font-size: 13px; color: #53b6d4; margin-top: 20px;" class="uploadText">上传中</div>
+                </div>
+                <div class="monitorChat"></div>
+            </div>
+
+            <div class="messgeBottom">
+                <div class="sendOption">
+                    <div class="additional">
+                        <!--
+                        <i class="iconfont icon-biaoqing" style="margin: 0 15px; font-size: 20px; color: #dadada;"></i>
+                        -->
+                        <i class="iconfont icon-charutupian" style="margin: 0 15px; font-size: 20px; color: #dadada; position: relative; box-sizing: border-box; overflow: hidden; display: inline-block; cursor: pointer;">
+                            <input type="file" class="uploadImage" alt="请选择图片"  style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;opacity: 0;-ms-filter: 'alpha(opacity=0)';cursor: pointer;">
+                        </i>
+                        <i class="iconfont icon-a-wenjianjiawenjian" style="margin: 0 15px; font-size: 20px; color: #dadada; position: relative; box-sizing: border-box; overflow: hidden; display: inline-block; cursor: pointer;">
+                            <input type="file" class="uploadfile" alt="请选择文件" style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;opacity: 0;-ms-filter: 'alpha(opacity=0)';cursor: pointer;" >
+                        </i>
+                    </div>
+                    <div class="quick">
+                        <i class="iconfont icon-icon_reply" style="font-size: 12px; margin-right: 2px;"></i>
+                        <span class="kj_text">快捷回复</span>
+                    </div>
+                    <div class="shortcutsBox">
+                        <div class="kjie">
+                            <div class=kj_head>
+                                <span>快捷方式</span>
+                            </div>
+                            <ul class="kj_list">
+                                {{ kj_list or '' }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="editText">
+                    <textarea name="" class="messageContent" cols="30" rows="10" aria-label="" style="margin: 0"></textarea>
+                </div>
+                <div style="text-align: right; padding: 0 10px;">
+                    <div class="btn-group">
+                        <input type="hidden" id="crr_customer_id" name="" aria-label="">
+                        <button type="button" class="btn btn-secondary send_text_btn" style="padding: 5px 10px 5px 15px; font-size: 12px; line-height: 18px; background: #00c9d1; border-color: #00c9d1;">发送</button>
+                        <button type="button" style="font-size: 12px; line-height: 18px; background: #00c9d1; border-color: #00c9d1;" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference" data-toggle="dropdown" aria-expanded="false" data-reference="parent">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                            <a class="dropdown-item" href="#" style="font-size: 13px; color: rgb(57, 61, 73);">Enter 发送</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="chatWindowThree" class="chatManageBox" style="display: none;">
+            <input type="hidden" class="chatWinConversationId" id="chatWindowThreeConversationId">
+
+            <div class="messageTop">
+
+                <div class="headCaoZuo">
+                    <div style="position: relative; width: 60px;">
+                        <span class="onlineState">
+                            <img src="/assets/chat/images/computer.png" alt="" style="width: 35px; height: 35px; position: relative;">
+                        </span>
+                        <span class="userportrait">暂时离开</span>
+                    </div>
+                    <div style="position: relative; width: 20%; text-align: left;">
+                        <span class="crr_customer_name" style="font-size: 13px; color: #545b62;"></span>
+                    </div>
+                    <div class="cahtCzBtn">
+                        <ul class="chatOperation no-touch">
+                            <li class="qiehuan" >
+                                <i class="iconfont icon-shouqi2-01"></i>
+                                <span>切换</span>
+                            </li>
+                            <li class="chatInfo" onclick="post_from_html('get_sideInfo_html', $('#chatWindowThreeConversationId').val(),'信息')" >
+                                <i class="iconfont icon-jurassic_project"></i>
+                                <span>信息</span>
+                            </li>
+                            <li class="zhuanjie" onclick="post_from_html('transferConversation_html', $('#chatWindowThreeConversationId').val(), '请选择接收的客服')" >
+                                <i class="iconfont icon-zhuanfa"></i>
+                                <span>转接</span>
+                            </li>
+                            <li class="lahei" onclick="post_from_html('get_heimingdan_html', $('#chatWindowThreeConversationId').val(),'加入黑名单')" >
+                                <i class="iconfont icon-heimingdan"></i>
+                                <span>拉黑</span>
+                            </li>
+                            <li class="colseChat" >
+                                <i class="iconfont icon-guanbixiao" style="font-size: 12px;"></i>
+                                <span>关闭</span>
+                            </li>
+                            <li class="jieshu" >
+                                <i class="iconfont icon-jieshu1"></i>
+                                <span>结束</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chatContent">
+                    <!--
+                    <div class="chat-block" style="padding-bottom: 20px;">
+                        <div style="display: block; text-align: center; font-size: 12px; color: rgb(153, 153, 153); margin-top: 10px;">您撤回了一条消息</div>
+                    </div>
+                    -->
+                    <div class="chatLoading" style="display: none;">
+                        <img src="/assets/chat/images/loading-0.gif" alt="" style="height: 300px; display: block; margin: 150px auto 0;">
+                    </div>
+                </div>
+                <div class="uploadLoading">
+                    <img src="/public/chat/images/loading3.gif" alt="" style="width: 50px;">
+                    <div style="font-size: 13px; color: #53b6d4; margin-top: 20px;" class="uploadText">上传中</div>
+                </div>
+                <div class="monitorChat"></div>
+            </div>
+
+            <div class="messgeBottom">
+                <div class="sendOption">
+                    <div class="additional">
+                        <!--
+                        <i class="iconfont icon-biaoqing" style="margin: 0 15px; font-size: 20px; color: #dadada;"></i>
+                        -->
+                        <i class="iconfont icon-charutupian" style="margin: 0 15px; font-size: 20px; color: #dadada; position: relative; box-sizing: border-box; overflow: hidden; display: inline-block; cursor: pointer;">
+                            <input type="file" class="uploadImage" alt="请选择图片" style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;opacity: 0;-ms-filter: 'alpha(opacity=0)';cursor: pointer;">
+                        </i>
+                        <i class="iconfont icon-a-wenjianjiawenjian" style="margin: 0 15px; font-size: 20px; color: #dadada; position: relative; box-sizing: border-box; overflow: hidden; display: inline-block; cursor: pointer;">
+                            <input type="file" class="uploadfile" alt="请选择文件" style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;opacity: 0;-ms-filter: 'alpha(opacity=0)';cursor: pointer;" >
+                        </i>
+                    </div>
+                    <div class="quick">
+                        <i class="iconfont icon-icon_reply" style="font-size: 12px; margin-right: 2px;"></i>
+                        <span class="kj_text">快捷回复</span>
+                    </div>
+                    <div class="shortcutsBox">
+                        <div class="kjie">
+                            <div class=kj_head>
+                                <span>快捷方式</span>
+                            </div>
+                            <ul class="kj_list">
+                                {{ kj_list or '' }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="editText">
+                    <textarea name="" class="messageContent" cols="30" rows="10" aria-label="" style="margin: 0"></textarea>
+                </div>
+                <div style="text-align: right; padding: 0 10px;">
+                    <div class="btn-group">
+                        <input type="hidden" id="crr_customer_id" name="" aria-label="">
+                        <button type="button" class="btn btn-secondary send_text_btn" style="padding: 5px 10px 5px 15px; font-size: 12px; line-height: 18px; background: #00c9d1; border-color: #00c9d1;">发送</button>
+                        <button type="button" style="font-size: 12px; line-height: 18px; background: #00c9d1; border-color: #00c9d1;" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference" data-toggle="dropdown" aria-expanded="false" data-reference="parent">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                            <a class="dropdown-item" href="#" style="font-size: 13px; color: rgb(57, 61, 73);">Enter 发送</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="infoBox">
+            <ul class="borbox hidden--mobile">
+                <li class="active">
+                    <i class="iconfont icon-xinxi"></i>
+                    <span>信息</span>
+                </li>
+            </ul>
+            <div class="itemInfoBox">
+                <div class="infoBack sheBei" style="display: none;">
+                    <div class="shebeiOvh clientType">
+                        <img src="/assets/chat/images/computer.png" alt="" style="display: inline-block;width: 20px;height: 20px;">
+                        <span style="position: relative; margin-left: 5px; color: #00c9d1; font-size: 14px; line-height: 39px;"></span>
+                    </div>
+                    <div class="shebeiOvh systemType">
+                        <img src="/assets/chat/images/Windows.png" alt="" style="display: inline-block;width: 20px;height: 20px;">
+                        <span style="position: relative; margin-left: 5px; color: #00c9d1; font-size: 14px; line-height: 39px;"></span>
+                    </div>
+                    <div class="shebeiOvh browserType">
+                        <img src="/assets/chat/images/guge.png" alt="" style="display: inline-block;width: 20px;height: 20px; top: -2px; position: relative;">
+                        <i class="iconfont icon-browser" style="font-size: 18px; position: relative; top: 2px; color: #0babfe; display: none;"></i>
+                        <span style="position: relative; margin-left: 5px; color: #00c9d1; font-size: 14px; line-height: 39px;"></span>
+                    </div>
+                    <div class="shebeiOvh ip">
+                        <img src="/assets/chat/images/IP.png" alt="" style="display: inline-block;width: 20px;height: 20px;">
+                        <span style="position: relative; margin-left: 5px; color: #00c9d1; font-size: 14px; line-height: 39px; vertical-align: -1px; white-space: nowrap; overflow: hidden; width: calc(100% - 30px); text-overflow: ellipsis; display: inline-block;"></span>
+                    </div>
+                    <div class="shebeiOvh ipPosition">
+                        <img src="/assets/chat/images/weizhi.png" alt="" style="display: inline-block;width: 20px;height: 20px;">
+                        <span style="position: relative; margin-left: 5px; color: #00c9d1; font-size: 14px; line-height: 39px; white-space: nowrap; overflow: hidden; width: calc(100% - 30px); text-overflow: ellipsis; display: inline-block;"></span>
+                    </div>
+                </div>
+
+                <div class="infoBack mingPian" style="padding-left: 10px; padding-right: 10px; display: none;">
+                    <h2>
+                        <span>名片</span>
+                        <span class="kfConfirmBtn" id="saveCustomerBtn">保存</span>
+                    </h2>
+                    <div class="form-inline" style="color: #999; width: 100%;">
+                        <div class="form-item">
+                            <span class="text-danger" style="position: absolute; top: 10px; left: 0px;">*</span>
+                            <lable class="hidden--mobile">姓名：</lable>
+                            <input type="text" class="form-control mb-2 mr-sm-2" name="telephone" id="username" value="" placeholder="姓名" aria-label="" style="margin-right: 15px !important; width: 34% !important;">
+                            <lable class="hidden--mobile">性别：</lable>
+                            <div style="width: 20%; position: relative; overflow: hidden; box-sizing: border-box; display: flex; justify-content: left; align-items: center;">
+                                <input class="form-check-input radio-input-control" type="radio" name="genderRadios" id="male" value="male" >
+                                <label class="form-check-label radio-input-label">男</label>
+                            </div>
+                            <div style="width: 20%; position: relative; overflow: hidden; box-sizing: border-box; display: flex; justify-content: left; align-items: center;">
+                                <input class="form-check-input radio-input-control" type="radio" name="genderRadios" id="female" value="female" >
+                                <label class="form-check-label radio-input-label">女</label>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <lable class="hidden--mobile">邮箱：</lable>
+                            <input type="text" class="form-control mb-2 mr-sm-2" name="email" id="email" value="邮箱" placeholder="邮箱" aria-label="" style="margin-right: 15px !important;">
+                            <lable class="hidden--mobile">电话：</lable>
+                            <input type="text" class="form-control mb-2 mr-sm-2" name="telephone" id="telephone" value="" placeholder="电话" aria-label="">
+                        </div>
+                        <div class="form-item">
+                            <lable class="hidden--mobile">telegram：</lable>
+                            <input type="text" class="form-control mb-2 mr-sm-2" name="telegram" id="telegram" value="" placeholder="telegram" aria-label="" style="margin-right: 15px !important;">
+                            <label for="category" class="hidden--mobile">类别:</label>
+                            <select class="form-control" name="category" id="category" placeholder="类别">
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <lable class="hidden--mobile">地址：</lable>
+                            <input type="text" class="form-control mb-2 mr-sm-2" name="address" id="address" value="" placeholder="地址" aria-label="" style="margin-right: 0px !important; width: 330px">
+                        </div>
+                        <div class="form-item">
+                            <lable class="hidden--mobile">说明：</lable>
+                            <textarea class="form-control" placeholder="说明" rows="3" id="note" style="margin-right: 0px !important; width: 330px" aria-placeholder="说明"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="historyInfoBox" style="display: none;">
+
+            </div>
+            <div style="position: absolute; right: 0px; top: 0px; padding: 5px 7px; font-size: 31px; font-weight: 700; color: #80808091;" class="hidden--desktop" onclick="onClickHideInfoBox()">
+                &times;
+            </div>
+        </div>
+
+        <div class="notChat" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">
+            <div style="position: relative; width: 300px; height: 300px; box-sizing: border-box; overflow: hidden; text-align: center">
+                <span style="display: flex; justify-content: center; align-items: center; width: 100px; text-align: center; font-size: 100px; position: relative; height: 100px; margin: auto;">
+                    <i class="iconfont icon-kefu" style="color: rgb(174, 206, 249); font-size: 100px;"></i>
+                </span>
+                <div style="font-size: 16px;color: rgba(4,15,66,.9);line-height: 24px;font-weight: 500;padding: 16px 0 0;">当前无选中对话</div>
+                <div style="color: rgba(4,15,66,.6);font-size: 14px;padding-top: 8px;">没有需要处理的对话，休息一下吧！</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="clipboardModal">
+
+        <div class="cpintre">
+            <div class="head">
+                <span style="font-size: 14px; font-weight: 600;">确定上传该图片？</span>
+            </div>
+            <div class="contBox">
+                <img id="clipboardPicPreview" src="" alt="">
+            </div>
+            <div class="botBox">
+                <span class="btnCancel" onclick="$('#clipboardPicPreview').attr('src', '');$('.clipboardModal').css('display', 'none');">取消</span>
+                <span class="btnConfirm" onclick="btnConfirm_func()">确定</span>
+            </div>
+        </div>
+
+    </div>

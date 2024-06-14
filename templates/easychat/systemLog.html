@@ -1,0 +1,99 @@
+<style>
+    a.aSetup {
+        color: #212b36;
+        cursor: pointer;
+    }
+
+    a.aSetup:hover {
+        color: #00c9d1;
+        cursor: pointer;
+    }
+</style>
+<script>
+
+    $(function () {
+        request_data(1, true)
+    })
+
+    function ddd() {
+        $.picker_YY_HH_DD_HH_MM_SS('.pickerdate');
+    }
+
+    // 请求数据
+    function request_data(page, reset) {
+        let note = '';
+        let account = '';
+        let create_time = '';
+        let operation_type = '';
+        if (reset) {
+            $("select[name='operation_type']").val(operation_type);
+            $("input[name='note']").val(note);
+            $("input[name='account']").val(account);
+            $("input[name='create_time']").val(create_time);
+        } else {
+            operation_type = $.trim($("select[name='operation_type']").val());
+            note = $.trim($("input[name='note']").val());
+            create_time = $.trim($("input[name='create_time']").val());
+            account = $.trim($("input[name='account']").val());
+        }
+        $("#table_loading").css('display', 'flex');
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': systemlogListPageUrl,
+            'data': { 'action': 'get_systemlog_datas', 'page': page ? page : 1, 'operation_type': operation_type, 'note': note, 'create_time': create_time, 'account': account },
+            'success': function (data) {
+                if (data.code === 200) {
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.table_html);
+                    $(".dataTableBottom").empty().append(data.data.dataTableBottom_html);
+                    $("#table_loading").css('display', 'none');
+                }
+            }
+        })
+    }
+
+</script>
+
+<div class="navHead hidden--mobile">
+    <span><a class="aSetup" onclick="$('.setupNav').click();">系统设置</a> | 系统日志</span>
+</div>
+
+<div class="dataTableBox">
+    <div class="dataList">
+        <div class="form-inline" style="margin-bottom: 10px;border-bottom: 1px solid #dee2e6;margin-top: 10px;">
+            <lable class="hidden--mobile">搜索：</lable>
+            {{ operation_type_select | safe }}
+            <input type="text" class="form-control mb-2 mr-sm-2" name="account" placeholder="账户" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2" name="note" placeholder="备份" aria-label="">
+            <input type="text" class="form-control mb-2 mr-sm-2 pickerdate select-history" onmouseenter="ddd()"
+                name="create_time" placeholder="日期" aria-label="">
+
+            <span class="btn btn-primary mb-2 subBtn ml-2" style="padding: 3px 13px; " onclick="request_data(1)"><i
+                    class="iconfont icon-sousuo"></i></span>
+            <span class="btn btn-default cancelBnt ml-2" style="padding: 5px 13px; margin-bottom: 7px; "
+                onclick="request_data(1, true)"><i class="iconfont icon-zhongzhi1" style="font-size: 13px;"></i></span>
+
+        </div>
+        <div class="table-scroll">
+            <table class="table table-bordered table-hover text-center" style="min-width: 600px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>操作时间</td>
+                        <td>网站</td>
+                        <td>用户</td>
+                        <td>操作类型</td>
+                        <td>IP</td>
+                        <td>备注</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="table_loading">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="dataTableBottom"></div>
+</div>

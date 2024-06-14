@@ -1,0 +1,379 @@
+<style>
+    a.aSetup {
+        color: #212b36;
+        cursor: pointer;
+    }
+
+    a.aSetup:hover {
+        color: #00c9d1;
+        cursor: pointer;
+    }
+</style>
+<script>
+    $(function () {
+        request_data(1, true);
+    })
+
+    // 选择日期时间
+    function ddd() {
+        $.single_YY_MM_DD('.selectDateYMD');
+    }
+
+    // 请求数据
+    function request_data(page, reset) {
+        let role_code = '';
+        let username = '';
+        let account = '';
+        let agentadmin_account = '';
+        let site_name = '';
+        if (reset) {
+            $("select[name='role_code']").val(role_code);
+            $("input[name='username']").val(username);
+            $("input[name='account']").val(account);
+            $("input[name='agentadmin_account']").val(agentadmin_account);
+            $("input[name='site_name']").val(site_name);
+        } else {
+            role_code = $.trim($("select[name='role_code']").val());
+            username = $.trim($("input[name='username']").val());
+            account = $.trim($("input[name='account']").val());
+            agentadmin_account = $.trim($("input[name='agentadmin_account']").val());
+            site_name = $.trim($("input[name='site_name']").val());
+        }
+        $("#table_loading").css('display', 'flex');
+        $(".pages").attr('data-crrpage', page);
+        xtajax.get({
+            'url': userManagePageUrl,
+            'data': { 'action': 'get_userManage_datas', 'page': page ? page : 1, 'role_code': role_code, 'username': username, 'account': account, 'agentadmin_account': agentadmin_account, 'site_name': site_name },
+            'success': function (data) {
+                if (data.code === 200) {
+                    var parent = $(".table > tbody");
+                    var allChildren = parent.children();
+                    var unwantedChildren = allChildren.slice(1);
+                    unwantedChildren.remove();
+                    parent.append(data.data.table_html);
+                    $(".dataTableBottom").empty().append(data.data.dataTableBottom_html);
+                    $("#table_loading").css('display', 'none');
+                }
+            }
+        })
+    }
+
+    function post_update_statu_um(action, data_uuid, msg, redi_url, get_url) {
+        if (data_uuid == '' || typeof (data_uuid) == 'undefined' || data_uuid == 'undefined') { xtalert.alertError('要更新的ID不能为空!'); return false }
+        if (action == '' || typeof (action) == 'undefined' || action == 'undefined') { var action = 'statu' }
+        if (typeof (redi_url) == 'undefined' || redi_url == 'undefined') { var redi_url = '' }
+        if (typeof (get_url) == 'undefined' || get_url == 'undefined') { var get_url = '' }
+        if (typeof (msg) == 'undefined' || msg == 'undefined') { var msg = '确定操作？' }
+        xtalert.alertConfirm({
+            'msg': msg,
+            'confirmCallback': function () {
+                xtajax.post({
+                    'url': userManagePageUrl,
+                    'data': { 'action': action, 'data_uuid': data_uuid },
+                    'success': function (data) {
+                        if (data.code === 200) {
+                            xtalert.alertSuccessToast('操作成功！')
+                            let tt = setTimeout(function () {
+                                let page = parseInt($(".pages").attr('data-crrpage'));
+                                request_data(page);
+                            }, 1000)
+                        } else {
+                            return xtalert.alertError(data.message)
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    // 提交用户信息
+    function add_user_data() {
+        let portrait = $.trim($("#portrait").val());
+        let account = $.trim($("#account").val());
+        let telephone = $.trim($("#telephone").val());
+        let password = $.trim($("#password").val());
+        let confirmPassword = $.trim($("#confirmPassword").val());
+        let username = $.trim($("#username").val());
+        let email = $.trim($("#email").val());
+        let nickname = $.trim($("#nickname").val());
+        let role_code = $.trim($("#role_code").val());
+        let reception_count = $.trim($("#reception_count").val());
+        let responsible_site = $.trim($("#responsible_site").val());
+        let create_admin_count = $.trim($("#create_admin_count").val());
+        let create_cust_service_count = $.trim($("#create_cust_service_count").val());
+
+        let site_name = $.trim($("#site_name").val());
+        let site_link = $.trim($("#site_link").val());
+        let site_language = $.trim($("#site_language").val());
+        let use_domain = $.trim($("#use_domain").val());
+        let finish_time = $.trim($("#finish_time").val());
+        let zy_finish_time = $.trim($("#zy_finish_time").val());
+
+        if (!account) { return xtalert.showValidationError('请输入账户！') }
+        if (!role_code) { return xtalert.showValidationError('请选择角色！') }
+        if (!username) { return xtalert.showValidationError('请输入姓名！') }
+        if (!password) { return xtalert.showValidationError('请输入密码！') }
+        if (!confirmPassword) { return xtalert.showValidationError('请输入确认密码！') }
+        if (password && !confirmPassword) { return xtalert.showValidationError('请输入确定密码！') }
+        if (password && password !== confirmPassword) { return xtalert.showValidationError('新密码和确认密码不一致！') }
+        if (password.length < 6) { return xtalert.showValidationError('密码不能小于6位!') }
+        if (password.length > 16) { return xtalert.showValidationError('密码不能大于16位!') }
+
+        if (role_code === 'administrator') {
+            if (!use_domain) {
+                return xtalert.showValidationError('请选择客服访问域名！')
+            }
+            if (!finish_time) {
+                return xtalert.showValidationError('请选择网站到期时间！')
+            }
+            if (!site_name) { return xtalert.showValidationError('请输入接入的网站名称！') }
+            if (!site_link) { return xtalert.showValidationError('请输入接入的网站链接！') }
+            if (!create_cust_service_count) { return xtalert.showValidationError('请输入网站客服创建上限量！') }
+        }
+        if (role_code === 'agentadmin') {
+            if (!zy_finish_time) {
+                return xtalert.showValidationError('请选择租用到期时间！')
+            }
+            if (!create_admin_count) {
+                return xtalert.showValidationError('请输入网站接入上限！')
+            }
+            if (!create_cust_service_count) { return xtalert.showValidationError('请输入网站客服创建上限量！') }
+        }
+        if (role_code === 'customerservice') {
+            if ($("#responsible_site").length > 0) {
+                if (!responsible_site) {
+                    return xtalert.showValidationError('请选择负责网站！')
+                }
+            }
+        }
+
+        let data = {
+            'action': 'add_user_data',
+            'portrait': portrait,
+            'account': account,
+            'telephone': telephone,
+            'password': password,
+            'confirmPassword': confirmPassword,
+            'username': username,
+            'nickname': nickname,
+            'email': email,
+            'role_code': role_code,
+            'reception_count': reception_count,
+            'finish_time': finish_time,
+            'zy_finish_time': zy_finish_time,
+            'responsible_site': responsible_site,
+            'create_admin_count': create_admin_count,
+            'create_cust_service_count': create_cust_service_count,
+
+            'site_name': site_name,
+            'site_link': site_link,
+            'site_language': site_language,
+            'use_domain': use_domain,
+        };
+        Swal({
+            title: false,
+            text: '操作中，请稍等...',
+            showCloseButton: false,
+            showCancelButton: false,
+            showconfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        xtajax.post({
+            'url': userManagePageUrl,
+            'data': data,
+            'success': function (data) {
+                if (data.code === 200) {
+                    xtalert.alertSuccessToast('用户添加成功！')
+                    let tt = setTimeout(function () {
+                        let page = parseInt($(".pages").attr('data-crrpage'));
+                        request_data(page);
+                    }, 1000)
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+    // 提交用户信息
+    function edit_user_data(data_id, role_code) {
+        let portrait = $.trim($("#portrait_edit").val());
+        let telephone = $.trim($("#telephone_edit").val());
+        let newPassword = $.trim($("#newPassword_edit").val());
+        let confirmPassword = $.trim($("#confirmPassword_edit").val());
+        let username = $.trim($("#username_edit").val());
+        let nickname = $.trim($("#nickname_edit").val());
+        let email = $.trim($("#email_edit").val());
+        let reception_count = $.trim($("#reception_count").val());
+
+        let create_admin_count = $.trim($("#create_admin_count").val());
+        let create_cust_service_count = $.trim($("#create_cust_service_count").val());
+        let zy_finish_time = $.trim($("#zy_finish_time").val());
+        if (!username) { return xtalert.showValidationError('请输入用户姓名！') }
+        if (newPassword && !confirmPassword) { return xtalert.showValidationError('请输入确定密码！') }
+        if (newPassword && newPassword !== confirmPassword) { return xtalert.showValidationError('新密码和确认密码不一致！') }
+        let data = {
+            'action': 'edit_user_data',
+            'data_uuid': data_id,
+            'telephone': telephone,
+            'username': username,
+            'nickname': nickname,
+            'email': email,
+            'portrait': portrait,
+            'reception_count': reception_count,
+        };
+        if (newPassword && confirmPassword) {
+            data['newPassword'] = newPassword
+        }
+        if (role_code === 'agentadmin') {
+            if (!zy_finish_time) {
+                return xtalert.showValidationError('请选择租用到期时间！')
+            }
+            if (!create_admin_count) {
+                return xtalert.showValidationError('请输入网站接入上限！')
+            }
+            if (!create_cust_service_count) {
+                return xtalert.showValidationError('请输入创建客服上限！')
+            }
+
+            data['zy_finish_time'] = zy_finish_time
+            data['create_admin_count'] = create_admin_count
+            data['create_cust_service_count'] = create_cust_service_count
+        }
+
+        Swal({
+            title: false,
+            text: '操作中，请稍等...',
+            showCloseButton: false,
+            showCancelButton: false,
+            showconfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        xtajax.post({
+            'url': userManagePageUrl,
+            'data': data,
+            'success': function (data) {
+                if (data.code === 200) {
+                    xtalert.alertSuccessToast('用户修改成功！')
+                    let tt = setTimeout(function () {
+                        let page = parseInt($(".pages").attr('data-crrpage'));
+                        request_data(page);
+                    }, 1000)
+                } else {
+                    return xtalert.alertError(data.message);
+                }
+            }
+        })
+    }
+
+    //验证手机号
+    function vailPhone() {
+        var phone = '';
+        var flag = false;
+        var message = "";
+        var myreg = /^(((13[0-9]{1})|(14[0-9]{1})|(17[0]{1})|(15[0-3]{1})|(15[5-9]{1})|(18[0-9]{1}))+\d{8})$/;
+        if (phone === '' || !phone) {
+            message = "手机号码不能为空！";
+        } else if (phone.length !== 11) {
+            message = "请输入有效的手机号码！";
+        } else if (!myreg.test(phone)) {
+            message = "请输入有效的手机号码！";
+        } else {
+            flag = true;
+        }
+        return flag;
+    }
+
+    // check role
+    function checkRole_func(crr_role_code) {
+        if (crr_role_code === 'agentadmin') {
+            $("#zy_finish_time").parent().show();
+            $("#create_admin_count").parent().show();
+        } else {
+            $("#zy_finish_time").parent().hide();
+            $("#create_admin_count").parent().hide();
+        }
+
+        if (crr_role_code === 'customerservice' || crr_role_code === 'administrator') {
+            $("#reception_count").parent().show();
+        } else {
+            $("#reception_count").parent().hide();
+        }
+
+        if (crr_role_code === 'customerservice') {
+            if ($("#responsible_site").length > 0) {
+                $("#responsible_site").parent().show();
+            } else {
+                $("#responsible_site").parent().hide();
+            }
+        }
+
+        if (crr_role_code === 'administrator') {
+            $("#site_name").parent().show();
+            $("#site_link").parent().show();
+            $("#site_language").parent().show();
+            $("#use_domain").parent().show();
+            $("#finish_time").parent().show();
+        } else {
+            $("#site_name").parent().hide();
+            $("#site_link").parent().hide();
+            $("#site_language").parent().hide();
+            $("#use_domain").parent().hide();
+        }
+        if (crr_role_code === 'agentadmin' || crr_role_code === 'administrator') {
+            $("#create_cust_service_count").parent().show();
+        } else {
+            $("#create_cust_service_count").parent().hide();
+        }
+    }
+
+</script>
+
+<div class="navHead hidden--mobile">
+    <span><a class="aSetup" onclick="$('.setupNav').click();">系统设置</a> | 角色管理</span>
+</div>
+
+<div class="dataTableBox">
+    <div class="dataList">
+        <div class="form-inline" style="margin-bottom: 10px;border-bottom: 1px solid #dee2e6;margin-top: 10px;">
+            <lable class="hidden--mobile">搜索：</lable>
+            {{ select_user_html | safe }}
+            <span class="btn btn-primary mb-2 mr-sm-2 subBtn" style="padding: 5px 13px; margin: 0 15px 5px 0;"
+                onclick="request_data(1)">提交</span>
+            <span class="btn btn-default ml-1 cancelBnt"
+                style="padding: 5px 13px; margin-bottom: 7px; margin-right: 10px;"
+                onclick="request_data(1, true)">重置</span>
+            <span class="btn btn-primary subBtn" style="padding: 5px 13px; margin-bottom: 7px; margin-right: 0px;"
+                onclick="post_from_html('add_user_html', '', '{{ createText }}', '', '/site_admin/userManage')">{{
+                createText }}</span>
+        </div>
+
+        <div class="table-scroll">
+            <table class="table table-hover table-bordered text-center" style="min-width: 600px;">
+                <tbody>
+                    <tr style="background-color: #fafafa;">
+                        <td>账户</td>
+                        <td>用户名</td>
+                        <td>昵称</td>
+                        <td>角色</td>
+                        <td>手机号</td>
+                        <td>负责网站</td>
+                        <td>接待上限</td>
+                        <td>对话权限</td>
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="table_loading">
+                <img style="width: 290px; display: block;" src="/public/chat/images/loading-0.gif" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="dataTableBottom"></div>
+</div>
